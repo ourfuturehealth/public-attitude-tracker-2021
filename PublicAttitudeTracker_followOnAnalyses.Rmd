@@ -1,0 +1,62 @@
+---
+title: "Follow on analysis of Kantar Public Attitude Tracker datat 2021"
+author: "K L Purves"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+
+output:
+  html_document:
+    keep_md: true # save images
+    self_contained: true
+    code_folding: hide
+    df_print: paged
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+    number_sections: false
+    highlight: monochrome
+    theme: cerulean
+
+
+html_notebook:
+  theme: cerulean
+toc: yes
+---
+
+
+# set up
+
+## Environment
+```{r, include=FALSE}
+# clear global environment
+remove(list = ls())
+```
+
+
+```{r setup, warning=FALSE,echo=FALSE}
+
+# source in all functions in the function library folder
+files.sources = paste0("../functions/",list.files("../functions"))
+sapply(files.sources, source)
+
+
+knitr::opts_chunk$set(echo = TRUE,
+                      comment=NA,
+                      prompt=FALSE,
+                      cache=FALSE)
+
+# this chunk installs any required packages if you dont already have them in your local library. 
+# List of required package names
+
+packages <- c("ggplot2","gtsummary","kableExtra", 
+              "purrr", "skimr","readr",
+              "readxl","psych",
+              "haven",
+              "dplyr", "tidyr")
+
+# apply function to install and load functions as needed. Prints version to screen.
+# see function library for code (../functions)
+load_packages(packages)
+
+
+```
