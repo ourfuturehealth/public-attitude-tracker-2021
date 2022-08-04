@@ -299,3 +299,34 @@ levels(factor_df$RELIGIOSITY)
 table(factor_df$RELIGIOSITY)
 
 ```
+
+## recode variables
+
+recode dont know, prefer not to say and and missing response as NA (missing data) in the analytic data set. 
+
+Retain dont know and prefer not to say in factor df for summaries. 
+
+first remove missing data and set to NA in the factor dataset
+
+```{r set missing data to NA}
+
+factor_df <- factor_df %>%
+  mutate(across(where(is.factor), 
+                ~as.factor(case_when(. =="Missing reponse" ~ NA_character_, 
+                                     TRUE ~ as.character(.)))))
+  
+```
+
+
+then change all (dont know, orefer not to say, missing) to NA for the analytic data set
+
+```{r set all non responses to NA}
+
+regression_df <- factor_df %>%
+  mutate(across(where(is.factor), 
+                ~as.factor(case_when(. =="Don't know" ~ NA_character_,
+                                     . =="Prefer not to say" ~ NA_character_,
+                                     TRUE ~ as.character(.)))))
+```
+
+
