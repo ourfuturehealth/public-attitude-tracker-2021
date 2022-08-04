@@ -36,7 +36,7 @@ remove(list = ls())
 ```{r setup, warning=FALSE,echo=FALSE}
 
 # source in all functions in the function library folder
-files.sources = paste0("../functions/",list.files("../functions"))
+files.sources = paste0("./functions/",list.files("./functions"))
 sapply(files.sources, source)
 
 
@@ -318,7 +318,7 @@ factor_df <- factor_df %>%
 ```
 
 
-then change all (dont know, orefer not to say, missing) to NA for the analytic data set
+then change all (dont know, prefer not to say, missing) to NA for the analytic data set
 
 ```{r set all non responses to NA}
 
@@ -329,4 +329,21 @@ regression_df <- factor_df %>%
                                      TRUE ~ as.character(.)))))
 ```
 
+# Data preparation
 
+prepare lists of variables and parameters for modelling for all analyses.
+
+
+```{r list of vars for univariable analyses}
+
+vars <- c(Black_filter Asian_filter MDQuintile AGE_BAND SEX ETHNICITY ETHNICITY_LFS NUMPEOPLE NUMADULTS NUMCHILDU16 COHAB COHAB_BINARY MARSTAT CHILDHERE NumOwnChildrenU16HH OwnChildU16OutsideHH HHSTRUCTURE PLACEINHH INTERNET DEVICE_SMRTPHNE DEVICE_MOBILE DEVICE_LANDLINE DEVICE_TABLET DEVICE_CPU DEVICE_SMRTTV DEVICE_GAME DEVICE_STREAM DEVICE_WEAR DEVICE_TOTAL DIGPROF_BANK DIGPROF_FORMS DIGPROF_HINFO DIGPROF_APPOINT DIGPROF_APP FINNOW RELIGIOSITY RELIGION QUALTYPE EDUCATION DEGREE WorkingStatus_PrePandemic WorkingStatus_PrePandemic_Binary WorkingStatus WorkingStatus_Binary OCCUPATION_NSSEC TENURE LIFEEVENT PROSO_VOLUNTEER PROSO_DONATE PROSO_BLOOD PROSO_ORGAN PROSO_NONE PROSO4W_VOLUNTEER PROSO4W_DONATE PROSO4W_BLOOD PROSO4W_NONE DISABILITY DISAB1 DISAB2 DISABEVER GENFAM GENTEST GENTEST_1 GENTEST_2 GENTEST_3 GENTEST_4 GENTEST_5 GENTEST_5OPEN GENTTYP_1 GENTTYP_2 GENTTYP_3 GENTTYP_4 GENTTYP_5 DISABFAM AID HEALTH HRES_TRIAL HRES_FGROUP HRES_SURVEY HRES_NONE HRES_DK HACT12_1 HACT12_2 HACT12_3 HACT12_4 TRUSTGEN TRUSTORG_A TRUSTORG_B TRUSTORG_C TRUSTORG_D TRUSTORG_E SCIINT SCIINF SCITRU SCILIFE SCIBEN COVRES OFHAWARE VIDEO AUDIO UNDERST OFHACT OFHPAIR_A OFHPAIR_B OFHPAIR_C OFHPAIR_D OFHPAIR_E OFHBEN_1 OFHBEN_2 OFHBEN_3 OFHBEN_4 OFHBEN_5 OFHBEN_6 OFHBEN_7 OFHBEN_8 OFHBEN_9 OFHBENCL BARRSA_1 BARRSA_2 BARRSA_3 BARRSA_4 BARRSB_1 BARRSB_2 BLOODS_1 BLOODS_2 BLOODS_3 BLOODS_4 BLOODS_5 BLOODS_6 BLOODS_7 PRACBAR_1 PRACBAR_2 PRACBAR_3 GENFBACK_1 GENFBACK_2 GENFBACK_3 PARTNA PARTNB OFHACT2 RECONTACT)
+```
+
+# Data summaries 
+
+Summarise and plot raw data
+
+
+# Analyses
+
+Replicate Alice's regressions. identify which demographic features are important to use as covariates in multivariable regressions. 
