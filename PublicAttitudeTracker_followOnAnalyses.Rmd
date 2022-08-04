@@ -226,3 +226,76 @@ factor_df <- factor_df %>%
          MARSTAT == "Prefer not to say" ~ "Prefer not to say")))
          
 ```
+
+Add variable labels for the new variables and fix some confusing ones for existing variables.
+
+apply_labels function doesnt like character list input, so unfortunately very long function input. 
+
+```{r add variable labels}  
+
+factor_df = apply_labels(factor_df, 
+ofhact_agree="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", ofhact_all="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+ofhact_unsure="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
+Levels: NA = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+GENFBACK_prevent_agree="Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+GENFBACK_prevent_all="Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+GENFBACK_no_prevent_agree="Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+GENFBACK_no_prevent_all="Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+GENFBACK_ancestry_agree="Genetic feedback for ancestry?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+GENFBACK_ancestry_all="Genetic feedback for ancestry?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+OFHBEN_1="OFH will... advance medical research"
+,OFHBEN_2="OFH will... better treatments"
+,OFHBEN_3="OFH will... early detection"
+,OFHBEN_4="OFH will... help me"
+,OFHBEN_5="OFH will... help family/friends"
+,OFHBEN_6="OFH will... help community"
+,OFHBEN_7="OFH will... help people in UK"
+,OFHBEN_8="OFH will... help people in world"
+,OFHBEN_9="OFH will... help representation of people like me"
+,BARRSA_1="Comfortable health info in large database"
+,BARRSA_2="Comfortable share health info with OFH"
+,BARRSA_3="Comfortable how OFH use health info"
+,BARRSA_4="Comfortable OFH access to medical records"
+,BARRSB_1="Comfortable academics access to health records"
+,BARRSB_2="Comfortable companies access to health records"
+,BLOODS_1="Willing give sample if part of routine blood test"
+,BLOODS_2="Willing give sample if soley for OFH"
+,BLOODS_3="Difficult to give sample on weekday"
+,BLOODS_4="Difficult to give sample on weekend"
+,PRACBAR_2="have time for 10 min questionnaire"
+,PRACBAR_3="have time for 30 min questionnaire")
+
+```
+
+Fix  value label of religiosity variable  for clarity. First print old values and tale to make sure this works as intended.
+
+```{r print old vals and tables}
+
+levels(factor_df$RELIGIOSITY)
+table(factor_df$RELIGIOSITY)
+
+```
+
+```{r fix value labels}
+
+levels(factor_df$RELIGIOSITY) <- c("Missing reponse","Practising","Not practising","Not religious") 
+levels(factor_df$MARSTAT) <- c("Missing reponse","Married/civil partnership","Neither","Prefer not to say") 
+  
+```
+
+check this worked as expected
+
+```{r print new vals and tables}
+
+levels(factor_df$RELIGIOSITY)
+table(factor_df$RELIGIOSITY)
+
+```
