@@ -39,7 +39,6 @@ remove(list = ls())
 files.sources = paste0("./functions/",list.files("./functions"))
 sapply(files.sources, source)
 
-
 knitr::opts_chunk$set(echo = TRUE,
                       comment=NA,
                       prompt=FALSE,
@@ -328,6 +327,9 @@ regression_df <- factor_df %>%
                                      . =="Prefer not to say" ~ NA_character_,
                                      TRUE ~ as.character(.)))))
 ```
+
+
+
 
 # Data preparation
 
