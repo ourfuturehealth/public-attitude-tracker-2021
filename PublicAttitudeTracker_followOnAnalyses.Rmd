@@ -91,3 +91,138 @@ Skim new factor labelled data. We can use this for anything where labels are use
 
 skim(factor_df)
 ```
+
+# Data cleaning
+
+Aligned with Alice's approach. Create the same variables and recode in the same way she did in the preliminary analyses so I can extend these.
+
+## create new  variables dichotomousing or collapsing groups
+
+Would take part in our future health (**OFHACT**)
+
+*dichotomous (Yes, no + unsure)*
+**ofhact_agree**
+
+*three groups (Yes, No, Unsure)*
+**ofhact_all**
+
+*unsure vs no*
+**ofhact_unsure**
+
+
+Would want genetic feedback for preventable or treatable condition (**GENFBACK_1**)
+
+*dichotomous (yes, no + unsure)*
+**GENFBACK_prevent_agree**
+
+
+*three groups (yes, no, unsure)*
+**GENFBACK_prevent_all**
+
+Would want genetic feedback for NOT preventable or treatable condition (**GENFBACK_2**)
+
+*dichotomous (yes, no + unsure*
+**GENFBACK_no_prevent_agree**
+
+
+*three groups (Yes, no, unsure)*
+**GENFBACK_no_prevent_all**
+
+Would want genetic feedback for ancestry (**GENFBACK_3**)
+
+*dichotomous (yes, no + unsure*
+**GENFBACK_ancestry_agree**
+
+
+*three groups (Yes, no, unsure)*
+**GENFBACK_ancestry_all**
+
+
+##### variables to add
+
+* A summed variable summarising ease of use of internet for life admin (DIGPROF vars)
+* A summed variable summarising volunteering (PROSO vars)
+* A summed variable summarising research participation (sci vars??)
+* A summed variable summarising trust in science (TRUST vars and sci vars)
+
+
+```{r create new variables}
+
+factor_df <- factor_df %>%
+  mutate(ofhact_agree = 
+         as.factor(case_when(OFHACT == "Yes definitely" ~ "Yes", 
+         OFHACT == "Yes probably" ~ "Yes",
+         OFHACT == "No, probably not" ~ "No",
+         OFHACT == "No, definitely not" ~ "No",
+         OFHACT == "Not sure / it depends" ~ "No")),
+         
+         ofhact_all = 
+         as.factor(case_when(OFHACT == "Yes definitely" ~ "Yes", 
+         OFHACT == "Yes probably" ~ "Yes",
+         OFHACT == "No, probably not" ~ "No",
+         OFHACT == "No, definitely not" ~ "No",
+         OFHACT == "Not sure / it depends" ~ "Unsure")),
+         
+         ofhact_unsure = 
+         as.factor(case_when(OFHACT == "Yes definitely" ~ NA_character_, 
+         OFHACT == "Yes probably" ~ NA_character_,
+         OFHACT == "No, probably not" ~ "No",
+         OFHACT == "No, definitely not" ~ "No",
+         OFHACT == "Not sure / it depends" ~ "Unsure")),
+         
+         GENFBACK_prevent_agree = 
+         as.factor(case_when(GENFBACK_1 == "Yes definitely" ~ "Yes", 
+         GENFBACK_1 == "Yes probably" ~ "Yes",
+         GENFBACK_1 == "No, probably not" ~ "No",
+         GENFBACK_1 == "No, definitely not" ~ "No",
+         GENFBACK_1 == "Not sure / it depends" ~ "No",
+         GENFBACK_1 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         GENFBACK_prevent_all = 
+         as.factor(case_when(GENFBACK_1 == "Yes definitely" ~ "Yes", 
+         GENFBACK_1 == "Yes probably" ~ "Yes",
+         GENFBACK_1 == "No, probably not" ~ "No",
+         GENFBACK_1 == "No, definitely not" ~ "No",
+         GENFBACK_1 == "Not sure / it depends" ~ "Unsure",
+         GENFBACK_1 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         GENFBACK_no_prevent_agree = 
+         as.factor(case_when(GENFBACK_2 == "Yes definitely" ~ "Yes", 
+         GENFBACK_2 == "Yes probably" ~ "Yes",
+         GENFBACK_2 == "No, probably not" ~ "No",
+         GENFBACK_2 == "No, definitely not" ~ "No",
+         GENFBACK_2 == "Not sure / it depends" ~ "No",
+         GENFBACK_2 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         GENFBACK_no_prevent_all = 
+         as.factor(case_when(GENFBACK_2 == "Yes definitely" ~ "Yes", 
+         GENFBACK_2 == "Yes probably" ~ "Yes",
+         GENFBACK_2 == "No, probably not" ~ "No",
+         GENFBACK_2 == "No, definitely not" ~ "No",
+         GENFBACK_2 == "Not sure / it depends" ~ "Unsure",
+         GENFBACK_2 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         GENFBACK_ancestry_agree = 
+         as.factor(case_when(GENFBACK_3 == "Yes definitely" ~ "Yes", 
+         GENFBACK_3 == "Yes probably" ~ "Yes",
+         GENFBACK_3 == "No, probably not" ~ "No",
+         GENFBACK_3 == "No, definitely not" ~ "No",
+         GENFBACK_3 == "Not sure / it depends" ~ "No",
+         GENFBACK_3 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         GENFBACK_ancestry_all = 
+         as.factor(case_when(GENFBACK_3 == "Yes definitely" ~ "Yes", 
+         GENFBACK_3 == "Yes probably" ~ "Yes",
+         GENFBACK_3 == "No, probably not" ~ "No",
+         GENFBACK_3 == "No, definitely not" ~ "No",
+         GENFBACK_3 == "Not sure / it depends" ~ "Unsure",
+         GENFBACK_3 == "Prefer not to say" ~ "Prefer not to say")),
+         
+         MARSTAT = 
+         as.factor(case_when(MARSTAT == "Missing reponse" ~ "Missing reponse", 
+         MARSTAT == "Married" ~ "Married/civil partnership",
+         MARSTAT == "In a same-sex civil partnership" ~ "Married/civil partnership",
+         MARSTAT == "Neither" ~ "Neither",
+         MARSTAT == "Prefer not to say" ~ "Prefer not to say")))
+         
+```
