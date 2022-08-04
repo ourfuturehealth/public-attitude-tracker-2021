@@ -51,7 +51,7 @@ knitr::opts_chunk$set(echo = TRUE,
 packages <- c("ggplot2","gtsummary","kableExtra", 
               "purrr", "skimr","readr",
               "readxl","psych",
-              "haven",
+              "haven", "expss",
               "dplyr", "tidyr")
 
 # apply function to install and load functions as needed. Prints version to screen.
