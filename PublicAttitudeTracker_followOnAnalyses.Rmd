@@ -58,5 +58,36 @@ packages <- c("ggplot2","gtsummary","kableExtra",
 # see function library for code (../functions)
 load_packages(packages)
 
+```
 
+
+# read in raw data
+
+```{r read in raw data}
+#import data
+df <- read_sav("/Users/kirstinpurves/Library/CloudStorage/OneDrive-SharedLibraries-OurFutureHealth/Main Share - Documents/Our Future Health - Project Team/Behavioural Science/Public attitudes survey 2021/Raw data DO NOT EDIT/262323129-40C_Our Future Health_Dataset_FINAL.sav")
+```
+
+skim the data for missingness, completeness and unique values
+
+```{r quick view of file structure and contents, warning=FALSE}
+
+skim(df)
+
+```
+
+Turn character variables into factors using labels instead of values. Use is.labelled function from custom function library
+
+```{r convert to labelled factor}
+
+factor_df <- df %>%
+  mutate_if(is.labelled,as_factor)
+          
+```
+
+Skim new factor labelled data. We can use this for anything where labels are useful. Retain original df for dummy coding.
+
+```{r skim factor df}
+
+skim(factor_df)
 ```
