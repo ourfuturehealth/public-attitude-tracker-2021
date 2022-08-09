@@ -44,6 +44,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       prompt=FALSE,
                       cache=FALSE)
 
+
 # this chunk installs any required packages if you dont already have them in your local library. 
 # List of required package names
 
@@ -51,15 +52,39 @@ packages <- c("ggplot2","gtsummary","kableExtra",
               "purrr", "skimr","readr",
               "readxl","psych",
               "haven", "expss",
+              "summarytools",
               "dplyr", "tidyr")
 
 # apply function to install and load functions as needed. Prints version to screen.
 # see function library for code (../functions)
 load_packages(packages)
 
+
+
 ```
 
+Set up ggplot theme for the plots
 
+```{r ggplot theme}
+
+theme_personal <-  theme(
+    text = element_text(color = "black"),
+    axis.title = element_text(color = "black"),
+    axis.text = element_text(color = "black"),
+    axis.title.y = element_blank(), 
+    legend.background = element_blank(),
+    legend.box.background = element_blank(),
+    panel.background = element_blank(), 
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_line(
+      colour = "gray",
+      linetype = "dashed",
+      size = 0.2
+      ),
+    axis.ticks = element_blank()
+    )
+
+```
 # read in raw data
 
 ```{r read in raw data}
@@ -135,14 +160,6 @@ Would want genetic feedback for ancestry (**GENFBACK_3**)
 
 *three groups (Yes, no, unsure)*
 **GENFBACK_ancestry_all**
-
-
-##### variables to add
-
-* A summed variable summarising ease of use of internet for life admin (DIGPROF vars)
-* A summed variable summarising volunteering (PROSO vars)
-* A summed variable summarising research participation (sci vars??)
-* A summed variable summarising trust in science (TRUST vars and sci vars)
 
 
 ```{r create new variables}
@@ -226,6 +243,8 @@ factor_df <- factor_df %>%
          
 ```
 
+## labelling variables
+
 Add variable labels for the new variables and fix some confusing ones for existing variables.
 
 apply_labels function doesnt like character list input, so unfortunately very long function input. 
@@ -298,6 +317,95 @@ levels(factor_df$RELIGIOSITY)
 table(factor_df$RELIGIOSITY)
 
 ```
+
+## create summed variables 
+
+This will include
+* A summed variable summarising ease of use of internet for life admin (DIGPROF vars)
+* A summed variable summarising volunteering (PROSO vars)
+* A summed variable summarising research participation (sci vars??)
+* A summed variable summarising trust in science
+
+
+### Create vectors for the summary score items
+
+#### Digital proficiency 
+```{r sum score vectors digi proficiency}
+
+# Digital proficiency
+Digprof_cols <- factor_df %>%
+  select(contains("DIGPROF")) %>%
+  colnames() 
+
+lapply(factor_df[Digprof_cols],label) 
+
+```
+    
+#### Any lifetime pro social
+```{r sum score vectors prosocial ever}
+# Volunteering ever
+Volunteering.ever_cols <- factor_df %>%
+  select(contains("PROSO_")) %>%
+  colnames()
+
+lapply(factor_df[Volunteering.ever_cols],label)
+
+```
+
+#### Scientific trust
+```{r sum score vectors science}
+# Volunteering 4 weeks
+science_cols <- factor_df %>%
+  select(contains("SCI"),
+         -c("SCIINF","SCIINT")) %>%
+  colnames()
+
+lapply(factor_df[science_cols],label)
+
+```
+
+#### research participation
+
+```{r sum score vectors research participation}
+# Volunteering 4 weeks
+participation_cols <- factor_df %>%
+  select(contains("HRES")) %>%
+  colnames()
+
+lapply(factor_df[participation_cols],label)
+
+```
+
+create sum scores.
+
+**Digital proficiency scoring**
+
+Dont know = 0
+Not at all confident = 0
+Not very confident = 1
+Fairly confident = 2
+Very confident = 3
+
+minimum score = 0 (not at all confident on any)
+maximum score = 15 (very confident for all)
+
+
+**Pro social (Ever)**
+Yes = 1
+No = 0 
+
+minimum score = 0 (no volunteering ever)
+Maximum score = 3 (donated blood, donated money to charity, volunteered EVER)
+
+**Pro social (4 weeks)**
+Yes = 1
+No = 0 
+
+minimum score = 0 (no volunteering in the past 4 weeks)
+Maximum score = 3 (donated blood, donated money to charity, volunteered in the past 4 weeks)
+
+
+###### next::: create summed scores and add them to the variable lists.
 
 ## recode variables
 
@@ -466,11 +574,33 @@ pred.gen.vars <-c(
 "PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure",)
 ```
 
-# Data summaries 
-
+# Data summaries {.tabset}
 Summarise and plot raw data
 
+## Summary tables
+```{r tabular descriptions of variables}
+
+factor_df %>%
+  freq(OFHACT,plain.ascii = FALSE, style = "rmarkdown",     
+     totals     = FALSE, 
+     cumul      = FALSE)
+
+rror in freq(., sum_score_cols) : NULL is either NULL or does not exist
+> factor_df %>%
++ select(sum_score_cols) %>%
++ freq()
+
+```
+
+## Figures 
 
 # Analyses
 
+## univariable regressions 
 Replicate Alice's regressions. identify which demographic features are important to use as covariates in multivariable regressions. 
+
+(note, will use multinomial regression for the three outcome variables where we predict unsure alongside yes and no)
+
+
+## multivariable regressions
+
