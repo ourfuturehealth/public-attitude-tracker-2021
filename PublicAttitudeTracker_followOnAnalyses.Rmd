@@ -502,10 +502,6 @@ HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 i
 ```
 
 
-
-
-
-
 # Data preparation
 
 prepare lists of variables that we are interested in for data summaries,
@@ -513,7 +509,7 @@ and additional lists for predictors and outcomes we want to test in univariable 
 
 
 ***All variables***
-Note, using total score variables instrad of individual variables
+Note, using total score variables instead of individual variables where composites or sum scores exist
 ```{r list of vars for univariable analyses}
 all.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE", "AGE_BAND", 
@@ -526,16 +522,15 @@ all.vars <- c(
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
 "WorkingStatus", "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
-"OCCUPATION_NSSEC", "TENURE", "LIFEEVENT", "PROSO_VOLUNTEER", 
-"PROSO_DONATE", "PROSO_BLOOD", "PROSO_ORGAN", "PROSO_NONE", "PROSO4W_VOLUNTEER", 
-"PROSO4W_DONATE", "PROSO4W_BLOOD", "PROSO4W_NONE", "DISABILITY", 
+"OCCUPATION_NSSEC", "TENURE", "LIFEEVENT", "PROSO_EVER_TOTAL", 
+"PROSO4W_TOTAL","DISABILITY", 
 "DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
-"DISABFAM", "AID", "HEALTH", "HRES_TRIAL", "HRES_FGROUP", "HRES_SURVEY", 
-"HRES_NONE", "HRES_DK", "HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", 
+"HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRU", "SCILIFE", "SCIBEN", 
+"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL",
 "COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
@@ -575,6 +570,12 @@ gen.outcome.nonpreventable.all <- "GENFBACK_no_prevent_all"
 
 gen.outcome.ancestry.binary <- "GENFBACK_ancestry_agree"
 gen.outcome.ancestry.all <- "GENFBACK_ancestry_all"
+
+outcomes <- c("ofhact_agree","ofhact_all",
+              "GENFBACK_prevent_agree","GENFBACK_prevent_all",
+                  "GENFBACK_no_prevent_agree","GENFBACK_no_prevent_all",
+                  "GENFBACK_ancestry_agree","GENFBACK_ancestry_all")
+  
 ```
 
 ***independent variables***
@@ -584,19 +585,16 @@ pred.participate.vars <- c(
 "SEX", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_BANK", "DIGPROF_FORMS", "DIGPROF_HINFO", "DIGPROF_APPOINT", 
-"DIGPROF_APP", "FINNOW", "RELIGIOSITY", "RELIGION", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
- "LIFEEVENT", "PROSO_VOLUNTEER", 
-"PROSO_DONATE", "PROSO_BLOOD", "PROSO_ORGAN", "PROSO_NONE", "PROSO4W_VOLUNTEER", 
-"PROSO4W_DONATE", "PROSO4W_BLOOD", "PROSO4W_NONE", "DISABILITY", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
 "DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
-"DISABFAM", "AID", "HEALTH", "HRES_TRIAL", "HRES_FGROUP", "HRES_SURVEY", 
-"HRES_NONE", "HRES_DK", "HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL",
+"HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRU", "SCILIFE", "SCIBEN", 
+"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
@@ -617,19 +615,15 @@ pred.gen.vars <-c(
 "SEX", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_BANK", "DIGPROF_FORMS", "DIGPROF_HINFO", "DIGPROF_APPOINT", 
-"DIGPROF_APP", "FINNOW", "RELIGIOSITY", "RELIGION", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
- "LIFEEVENT", "PROSO_VOLUNTEER", 
-"PROSO_DONATE", "PROSO_BLOOD", "PROSO_ORGAN", "PROSO_NONE", "PROSO4W_VOLUNTEER", 
-"PROSO4W_DONATE", "PROSO4W_BLOOD", "PROSO4W_NONE", "DISABILITY", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
 "DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
-"DISABFAM", "AID", "HEALTH", "HRES_TRIAL", "HRES_FGROUP", "HRES_SURVEY", 
-"HRES_NONE", "HRES_DK", "HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRU", "SCILIFE", "SCIBEN", 
+"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
@@ -639,33 +633,75 @@ pred.gen.vars <-c(
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
 "PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure")
+
+all.pred.vars <- c(
+"MDQuintile",  "AGE_BAND", 
+"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
+ "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
+"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
+"DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
+"GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
+"GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
+"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
+"COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
+"OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
+"OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
+"OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
+"OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
+"BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
+"BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
+"BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
+"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure",
+"GENFBACK_prevent_agree", 
+"GENFBACK_prevent_all", "GENFBACK_no_prevent_agree", "GENFBACK_no_prevent_all", 
+"GENFBACK_ancestry_agree", "GENFBACK_ancestry_all","GENFBACK_1", 
+"GENFBACK_2", "GENFBACK_3")
 ```
 
 # Data summaries {.tabset}
 Summarise and plot raw data
 
-## Summary tables
-```{r tabular descriptions of variables, eval=F}
-
-factor_df %>%
-  freq(OFHACT,plain.ascii = FALSE, style = "rmarkdown",     
-     totals     = FALSE, 
-     cumul      = FALSE)
-
-
-factor_df %>%
-  select(sum_score_cols) %>%
-freq()
+## Frequency tables
+### demographic variables
+```{r tabular descriptions of demographic variables, eval=F}
 
 summarytools::dfSummary(
   factor_df[dem.vars],
-  graph.col = T,
+  graph.col = F,
+  valid.col = F,
+  labels.col = T)
+
+```
+### outcome variables
+```{r tabular descriptions of outcome variables, eval=F}
+
+summarytools::dfSummary(
+  factor_df[outcomes],
+  graph.col = F,
+  valid.col = F,
+  labels.col = T)
+
+```
+### predictor variables
+```{r tabular descriptions of outcome variables, eval=F}
+
+summarytools::dfSummary(
+  factor_df[all.pred.vars],
+  graph.col = F,
   valid.col = F,
   labels.col = T)
 
 ```
 
-## Figures 
+## Histograms
+### demographic variables
+
+ 
 
 # Analyses
 ## recode variables
