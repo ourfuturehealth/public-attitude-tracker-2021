@@ -52,7 +52,7 @@ packages <- c("ggplot2","gtsummary","kableExtra",
               "purrr", "skimr","readr",
               "readxl","psych",
               "haven", "expss",
-              "summarytools",
+              "summarytools","stringr",
               "dplyr", "tidyr")
 
 # apply function to install and load functions as needed. Prints version to screen.
@@ -330,6 +330,18 @@ This will include
 ### Create vectors for the summary score items
 
 #### Digital proficiency 
+
+**Digital proficiency scoring**
+
+Dont know = 0
+Not at all confident = 0
+Not very confident = 1
+Fairly confident = 2
+Very confident = 3
+
+minimum score = 0 (not at all confident on any)
+maximum score = 15 (very confident for all)
+
 ```{r sum score vectors digi proficiency}
 
 # Digital proficiency
@@ -342,13 +354,27 @@ lapply(factor_df[Digprof_cols],label)
 ```
     
 #### Any lifetime pro social
+
 ```{r sum score vectors prosocial ever}
 # Volunteering ever
 Volunteering.ever_cols <- factor_df %>%
-  select(contains("PROSO_")) %>%
+  select(contains("PROSO_"),
+         -"PROSO_NONE") %>%
   colnames()
 
 lapply(factor_df[Volunteering.ever_cols],label)
+
+```
+
+####  4 weeks pro social
+```{r sum score vectors prosocial 4 weeks}
+# Volunteering ever
+Volunteering.4_cols <- factor_df %>%
+  select(contains("PROSO4W_"),
+         -"PROSO4W_NONE") %>%
+  colnames()
+
+lapply(factor_df[Volunteering.4_cols],label)
 
 ```
 
@@ -369,14 +395,19 @@ lapply(factor_df[science_cols],label)
 ```{r sum score vectors research participation}
 # Volunteering 4 weeks
 participation_cols <- factor_df %>%
-  select(contains("HRES")) %>%
+  select(contains("HRES"),
+         -c("HRES_NONE","HRES_DK")) %>%
   colnames()
 
 lapply(factor_df[participation_cols],label)
 
 ```
 
-create sum scores.
+### create sum scores.
+
+use column vectors to mutate new columns
+
+#### Digital proficiency 
 
 **Digital proficiency scoring**
 
@@ -389,52 +420,88 @@ Very confident = 3
 minimum score = 0 (not at all confident on any)
 maximum score = 15 (very confident for all)
 
+```{r create digital proficiency sum score}
 
-**Pro social (Ever)**
+ factor_df <- factor_df %>%
+  mutate(DIGPROF_TOTAL = 0 + rowSums(factor_df[Digprof_cols] == "Not very confident") + 
+           (rowSums(factor_df[Digprof_cols] == "Fairly confident")*2) +
+           (rowSums(factor_df[Digprof_cols] == "Very confident")*3)) 
+
+
+factor_df = apply_labels(factor_df, 
+DIGPROF_TOTAL="Composite score indicating overall ease of use of internet for life admin. Minimum 0 indicating not at all confident and maximum of 15 indicating very confident")
+```
+
+#### Pro social 
+**Pro social (Ever) and pro social 4 weeks**
+
 Yes = 1
 No = 0 
 
 minimum score = 0 (no volunteering ever)
 Maximum score = 3 (donated blood, donated money to charity, volunteered EVER)
 
-**Pro social (4 weeks)**
+```{r create prosocial sum scores}
+
+ factor_df <- factor_df %>%
+  mutate(PROSO_EVER_TOTAL = 0 + rowSums(factor_df[Volunteering.ever_cols] == "Yes"),
+         PROSO4W_TOTAL = 0 + rowSums(factor_df[Volunteering.4_cols] == "Yes"),
+         ) 
+
+
+factor_df = apply_labels(factor_df, 
+PROSO_EVER_TOTAL="Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed",
+PROSO4W_TOTAL="Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+```
+
+#### Trust in science 
+
+Strongly agree = 2
+Agree = 1
+Neither agree nor disagree = 0
+Disagree -1
+Strongly disagree = -2
+Don't know = 0
+
+minimum score = -6 (strong distrust of science)
+maximum score = 6 (Strong trust in science)
+Score of 0 indicates neutrality
+
+```{r create trust in science  sum score}
+
+ factor_df <- factor_df %>%
+  mutate(SCITRUST_TOTAL = 0 + (rowSums(factor_df[science_cols] == "Strongly agree") * 2) +
+         (rowSums(factor_df[science_cols] == "Agree")) +
+         (rowSums(factor_df[science_cols] == "Disagree") * -1) +
+         (rowSums(factor_df[science_cols] == "Strongly disagree") * -2)
+         ) 
+
+
+factor_df = apply_labels(factor_df, 
+SCITRUST_TOTAL="Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+```
+
+#### Research participation
+
+
 Yes = 1
 No = 0 
 
-minimum score = 0 (no volunteering in the past 4 weeks)
-Maximum score = 3 (donated blood, donated money to charity, volunteered in the past 4 weeks)
+minimum score = 0 (never taken part in health research)
+Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
+
+```{r create research participation sum score}
+
+ factor_df <- factor_df %>%
+  mutate(HRES_TOTAL = 0 + (rowSums(factor_df[participation_cols] == "YES"))
+         ) 
 
 
-###### next::: create summed scores and add them to the variable lists.
-
-## recode variables
-
-recode dont know, prefer not to say and and missing response as NA (missing data) in the analytic data set. 
-
-Retain dont know and prefer not to say in factor df for summaries. 
-
-first remove missing data and set to NA in the factor dataset
-
-```{r set missing data to NA}
-
-factor_df <- factor_df %>%
-  mutate(across(where(is.factor), 
-                ~as.factor(case_when(. =="Missing reponse" ~ NA_character_, 
-                                     TRUE ~ as.character(.)))))
-  
+factor_df = apply_labels(factor_df, 
+HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
 ```
 
 
-then change all (dont know, prefer not to say, missing) to NA for the analytic data set
-
-```{r set all non responses to NA}
-
-regression_df <- factor_df %>%
-  mutate(across(where(is.factor), 
-                ~as.factor(case_when(. =="Don't know" ~ NA_character_,
-                                     . =="Prefer not to say" ~ NA_character_,
-                                     TRUE ~ as.character(.)))))
-```
 
 
 
@@ -446,6 +513,7 @@ and additional lists for predictors and outcomes we want to test in univariable 
 
 
 ***All variables***
+Note, using total score variables instrad of individual variables
 ```{r list of vars for univariable analyses}
 all.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE", "AGE_BAND", 
@@ -455,8 +523,7 @@ all.vars <- c(
 "PLACEINHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
 "DEVICE_LANDLINE", "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_SMRTTV", 
 "DEVICE_GAME", "DEVICE_STREAM", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_BANK", "DIGPROF_FORMS", "DIGPROF_HINFO", "DIGPROF_APPOINT", 
-"DIGPROF_APP", "FINNOW", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
 "WorkingStatus", "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
 "OCCUPATION_NSSEC", "TENURE", "LIFEEVENT", "PROSO_VOLUNTEER", 
@@ -585,16 +652,71 @@ factor_df %>%
      totals     = FALSE, 
      cumul      = FALSE)
 
-rror in freq(., sum_score_cols) : NULL is either NULL or does not exist
-> factor_df %>%
-+ select(sum_score_cols) %>%
-+ freq()
+
+factor_df %>%
+  select(sum_score_cols) %>%
+freq()
+
+summarytools::dfSummary(
+  factor_df[dem.vars],
+  graph.col = T,
+  valid.col = F,
+  labels.col = T)
 
 ```
 
 ## Figures 
 
 # Analyses
+## recode variables
+
+recode dont know, prefer not to say and and missing response as NA (missing data) in the analytic data set. 
+
+Retain dont know and prefer not to say in factor df for summaries. 
+
+Capture a list of variable labels as these get lost in the NA process
+
+```{r capture labels}
+
+label_list <- dput(sapply(df,label))
+
+label(factor_df) = as.list(label_list[match(names(factor_df), names(label_list))])
+
+```
+
+first remove missing data and set to NA in the factor dataset
+
+```{r set missing data to NA}
+
+
+factor_df <- factor_df %>%
+  mutate(across(where(is.factor), 
+                ~as.factor(case_when(. =="Missing reponse" ~ NA_character_, 
+                                     TRUE ~ as.character(.)))))
+  
+```
+
+
+
+then change all (dont know, prefer not to say, missing) to NA for the analytic data set
+
+```{r set all non responses to NA}
+
+regression_df <- factor_df %>%
+  mutate(across(where(is.factor), 
+                ~as.factor(case_when(. =="Don't know" ~ NA_character_,
+                                     . =="Prefer not to say" ~ NA_character_,
+                                     TRUE ~ as.character(.)))))
+```
+
+add labels back to data set
+
+```{r add labels to factor df}
+
+factor_df = apply_labels(factor_df,label_list)
+
+```
+
 
 ## univariable regressions 
 Replicate Alice's regressions. identify which demographic features are important to use as covariates in multivariable regressions. 
