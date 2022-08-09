@@ -638,14 +638,14 @@ pred.gen.vars <-c(
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
-"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure",)
+"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure")
 ```
 
 # Data summaries {.tabset}
 Summarise and plot raw data
 
 ## Summary tables
-```{r tabular descriptions of variables}
+```{r tabular descriptions of variables, eval=F}
 
 factor_df %>%
   freq(OFHACT,plain.ascii = FALSE, style = "rmarkdown",     
@@ -676,12 +676,8 @@ Retain dont know and prefer not to say in factor df for summaries.
 
 Capture a list of variable labels as these get lost in the NA process
 
-```{r capture labels}
-
-label_list <- dput(sapply(df,label))
-
-label(factor_df) = as.list(label_list[match(names(factor_df), names(label_list))])
-
+```{r capture labels, results='hide'}
+label_list <- dput(sapply(factor_df,label))
 ```
 
 first remove missing data and set to NA in the factor dataset
@@ -713,7 +709,8 @@ add labels back to data set
 
 ```{r add labels to factor df}
 
-factor_df = apply_labels(factor_df,label_list)
+label(factor_df) = as.list(label_list[match(names(factor_df), names(label_list))])
+label(regression_df) = as.list(label_list[match(names(regression_df), names(label_list))])
 
 ```
 
