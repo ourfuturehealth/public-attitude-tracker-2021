@@ -67,7 +67,7 @@ Set up ggplot theme for the plots
 
 ```{r ggplot theme}
 
-theme_personal <-  theme(
+theme_personal <-  function(){theme(
     text = element_text(color = "black"),
     axis.title = element_text(color = "black"),
     axis.text = element_text(color = "black"),
@@ -75,14 +75,18 @@ theme_personal <-  theme(
     legend.background = element_blank(),
     legend.box.background = element_blank(),
     panel.background = element_blank(), 
-    panel.grid.minor.x = element_blank(),
-    panel.grid.major.x = element_line(
+    panel.grid.minor.y = element_line(
+      colour = "gray",
+      linetype = "dashed",
+      size = 0.1
+      ),
+    panel.grid.major.y = element_line(
       colour = "gray",
       linetype = "dashed",
       size = 0.2
       ),
     axis.ticks = element_blank()
-    )
+    )}
 
 ```
 # read in raw data
@@ -587,15 +591,13 @@ pred.participate.vars <- c(
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
- "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
-"DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
-"GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
-"GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", 
+"GENFAM", "GENTEST",
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL",
 "HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
 "TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
-"COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
+"COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
@@ -617,14 +619,11 @@ pred.gen.vars <-c(
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
- "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
-"DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
-"GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
-"GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",  "GENFAM", "GENTEST", 
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
 "TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
-"COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
+"COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
@@ -641,27 +640,28 @@ all.pred.vars <- c(
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
- "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "DISABILITY", 
-"DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
-"GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
-"GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
+ "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "GENFAM", "GENTEST",  
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
 "TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
-"COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
-"OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
-"OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
+"COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
+ "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
 "OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
-"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure",
-"GENFBACK_prevent_agree", 
-"GENFBACK_prevent_all", "GENFBACK_no_prevent_agree", "GENFBACK_no_prevent_all", 
-"GENFBACK_ancestry_agree", "GENFBACK_ancestry_all","GENFBACK_1", 
-"GENFBACK_2", "GENFBACK_3")
+"PARTNA", "PARTNB", "OFHACT2", "RECONTACT")
+
+gated.pred.vars <- c("GENTEST_1", 
+"GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
+"GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5",
+"OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
+"OFHDK2_OPEN",)
 ```
+##### DOING/To DO
+finish cutting gated vars out of the variable lists
+create an aggreagte score for seeking information about different things 
 
 # Data summaries {.tabset}
 Summarise and plot raw data
