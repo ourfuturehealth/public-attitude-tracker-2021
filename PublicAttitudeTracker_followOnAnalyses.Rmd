@@ -69,9 +69,14 @@ Set up ggplot theme for the plots
 
 theme_personal <-  function(){theme(
     text = element_text(color = "black"),
-    axis.title = element_text(color = "black"),
-    axis.text = element_text(color = "black"),
+    title = element_text(size = 16),
+    axis.title = element_text(color = "black",
+                              size = 14),
+    axis.text = element_text(color = "black",
+                             size=10),
     axis.title.y = element_blank(), 
+    axis.line = element_line(colour = "black", 
+                      size = 1, linetype = "solid"),
     legend.background = element_blank(),
     legend.box.background = element_blank(),
     panel.background = element_blank(), 
@@ -331,10 +336,9 @@ first grab the labels to add back on after the transformation
 ```{r grab trust labels}
 
 trust_vars <- factor_df %>%
-  select(starts_with("TRUST")) %>%
   colnames() 
 
-trust_labels <- dput(sapply(factor_df[trust_vars],label))
+trust_labels <- dput(sapply(factor_df,label))
 ```
 
 then transform
@@ -710,8 +714,9 @@ gated.pred.vars <- c("GENTEST_1",
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5",
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
-"OFHDK2_OPEN",)
+"OFHDK2_OPEN")
 ```
+
 ##### DOING/To DO
 finish cutting gated vars out of the variable lists
 create an aggreagte score for seeking information about different things 
@@ -721,13 +726,9 @@ Summarise and plot raw data
 
 ## Frequency tables
 ### demographic variables
-```{r tabular descriptions of demographic variables, eval=F}
+```{r tabular descriptions of demographic variables}
 
-summarytools::dfSummary(
-  factor_df[dem.vars],
-  graph.col = F,
-  valid.col = F,
-  labels.col = T)
+frequency_and_plot(factor_df,ofhact_all)
 
 ```
 ### outcome variables
