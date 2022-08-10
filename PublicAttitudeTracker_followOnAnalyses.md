@@ -68,7 +68,7 @@ editor_options:
 
 ```
 ## 
-## To select columns from data: columns(mtcars, mpg, vs:carb)
+## To drop variable use NULL: let(mtcars, am = NULL) %>% head()
 ```
 
 ```
@@ -4621,15 +4621,11 @@ get histograms and frequency tables for all variables
 
 ```r
 for (i in dem.vars){
-  frequency_and_plot(factor_df,i)
+  frequency_and_plot(factor_df,all_of(i))
 }
 ```
 
 ```
-Note: Using an external vector in selections is ambiguous.
-ℹ Use `all_of(i)` instead of `i` to silence this message.
-ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
-This message is displayed once per session.
 Note: Using an external vector in selections is ambiguous.
 ℹ Use `all_of(variable)` instead of `variable` to silence this message.
 ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
@@ -5564,6 +5560,13 @@ Type: Factor
 for (i in outcomes){
   frequency_and_plot(factor_df,i)
 }
+```
+
+```
+Note: Using an external vector in selections is ambiguous.
+ℹ Use `all_of(i)` instead of `i` to silence this message.
+ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+This message is displayed once per session.
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-1.png)<!-- -->
