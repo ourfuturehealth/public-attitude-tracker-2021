@@ -1,10 +1,10 @@
 ---
-title: "Follow on analysis of Kantar Public Attitude Tracker datat 2021"
+title: "Data cleaning and preparation for Kantar Public Attitude Tracker 2022 data"
 author: "K L Purves"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-
 output:
   html_document:
+    
     keep_md: true # save images
     self_contained: true
     code_folding: hide
@@ -16,11 +16,11 @@ output:
     number_sections: false
     highlight: monochrome
     theme: cerulean
-
-
 html_notebook:
   theme: cerulean
 toc: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 
@@ -69,11 +69,11 @@ Set up ggplot theme for the plots
 
 theme_personal <-  function(){theme(
     text = element_text(color = "black"),
-    title = element_text(size = 16),
+    title = element_text(size = 12),
     axis.title = element_text(color = "black",
-                              size = 14),
+                              size = 10),
     axis.text = element_text(color = "black",
-                             size=10),
+                             size=9),
     axis.title.y = element_blank(), 
     axis.line = element_line(colour = "black", 
                       size = 1, linetype = "solid"),
@@ -261,10 +261,10 @@ apply_labels function doesnt like character list input, so unfortunately very lo
 ```{r add variable labels}  
 
 factor_df = apply_labels(factor_df, 
-ofhact_agree="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", ofhact_all="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
+ofhact_agree="Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", ofhact_all="Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
-ofhact_unsure="Based on what you now know about the Our Future Health research programme, would you take part in it if you were invited to?
+ofhact_unsure="Would you take part in it if you were invited to?
 Levels: NA = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
 GENFBACK_prevent_agree="Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
@@ -722,16 +722,20 @@ finish cutting gated vars out of the variable lists
 create an aggreagte score for seeking information about different things 
 
 # Data summaries {.tabset}
-Summarise and plot raw data
 
-## Frequency tables
-### demographic variables
-```{r tabular descriptions of demographic variables}
+get histograms and frequency tables for all variables
 
-frequency_and_plot(factor_df,ofhact_all)
+
+## demographic variables
+```{r freq demographic variables}
+
+for (i in dem.vars){
+  frequency_and_plot(factor_df,i)
+}
 
 ```
-### outcome variables
+
+## outcome variables
 ```{r tabular descriptions of outcome variables, eval=F}
 
 summarytools::dfSummary(
@@ -741,21 +745,8 @@ summarytools::dfSummary(
   labels.col = T)
 
 ```
-### predictor variables
-```{r tabular descriptions of outcome variables, eval=F}
+## predictor variables
 
-summarytools::dfSummary(
-  factor_df[all.pred.vars],
-  graph.col = F,
-  valid.col = F,
-  labels.col = T)
-
-```
-
-## Histograms
-### demographic variables
-
- 
 
 # Analyses
 ## recode variables

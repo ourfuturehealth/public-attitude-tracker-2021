@@ -4,52 +4,45 @@
 
 frequency_and_plot <- function(dataframe, variable){
   
-
   # set up plotting variables
   validn <- dataframe %>%
     filter(!is.na({{variable}})) %>%
     select({{variable}}) %>%
     count()
   
-  varname <- dataframe %>%
-    select({{variable}}) %>%
-    colnames()
   
-  varlabel <- label(dataframe[[varname]])
+  varlabel <- label(dataframe[[variable]])
   
 
   # conditionally create frequency graph depending on whether factor or numeric
   
-  if (class(dataframe[[varname]])[1] == "numeric") {
+  if (class(dataframe[[variable]])[1] == "numeric") {
     
-   
-    
-    plot <- ggplot(data.frame(dataframe), 
-       aes(x={{variable}})) +
+    print(ggplot(dataframe), 
+       aes_string(x=variable) +
        geom_bar() +
-      ggtitle(paste("Distribution of responses for",validn,"total valid respondents for",varname,sep=" ")) +
+      ggtitle(paste("Distribution of responses for",validn,"total valid respondents for",variable,sep=" ")) +
       labs(x=paste0("/n",varlabel)) +
-      scale_x_continuous(breaks = seq(min(dataframe[[varname]]),max(dataframe[[varname]]))) +
+      scale_x_continuous(breaks = seq(min(dataframe[[variable]]),max(dataframe[[variable]]))) +
       scale_y_continuous(breaks = seq(0,as.numeric(validn),100)) +
-  theme_personal()
+  theme_personal())
     
-    return(plot)
-
 }
   
-  if (class(dataframe[[varname]])[1] != "numeric") {
+  if (class(dataframe[[variable]])[1] != "numeric") {
     
-    ggplot(data.frame(dataframe), 
-         aes(x={{variable}})) +
+    print(ggplot(data.frame(dataframe), 
+         aes_string(x=variable)) +
       geom_bar() +
-      ggtitle(paste("Distribution of responses for",validn,"total valid respondents for",varname,sep=" ")) +
+      ggtitle(paste("Distribution of responses for",validn,"total valid respondents for",variable,sep=" ")) +
       scale_y_continuous(breaks = seq(0,as.numeric(validn),100)) +
   labs(x=varlabel) +
-  theme_personal()
+  theme_personal())
 }
 
-   dataframe %>%
-     select({{varname}}) %>%
-     freq()
+   show(dataframe %>%
+     select(variable) %>%
+     freq())
 
 }
+
