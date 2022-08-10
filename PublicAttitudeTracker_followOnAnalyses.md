@@ -41,6 +41,10 @@ editor_options:
 ```
 
 ```
+## #BlackLivesMatter
+```
+
+```
 ## 
 ## Attaching package: 'psych'
 ```
@@ -68,7 +72,7 @@ editor_options:
 
 ```
 ## 
-## To drop variable use NULL: let(mtcars, am = NULL) %>% head()
+## To select columns from data: columns(mtcars, mpg, vs:carb)
 ```
 
 ```
@@ -251,6 +255,8 @@ theme_personal <-  function(){theme(
                               size = 10),
     axis.text = element_text(color = "black",
                              size=9),
+    axis.text.x = element_text(angle = 45,
+                               hjust=1),
     axis.title.y = element_blank(), 
     axis.line = element_line(colour = "black", 
                       size = 1, linetype = "solid"),
@@ -3570,59 +3576,59 @@ factor_df <- factor_df %>%
          OFHACT == "Not sure / it depends" ~ "Unsure")),
          
          ofhact_unsure = 
-         as.factor(case_when(OFHACT == "Yes definitely" ~ NA_character_, 
-         OFHACT == "Yes probably" ~ NA_character_,
+         as.factor(case_when(OFHACT == "Yes, definitely" ~ NA_character_, 
+         OFHACT == "Yes, probably" ~ NA_character_,
          OFHACT == "No, probably not" ~ "No",
          OFHACT == "No, definitely not" ~ "No",
          OFHACT == "Not sure / it depends" ~ "Unsure")),
          
          GENFBACK_prevent_agree = 
-         as.factor(case_when(GENFBACK_1 == "Yes definitely" ~ "Yes", 
-         GENFBACK_1 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_1 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_1 == "Yes, probably" ~ "Yes",
          GENFBACK_1 == "No, probably not" ~ "No",
          GENFBACK_1 == "No, definitely not" ~ "No",
          GENFBACK_1 == "Not sure / it depends" ~ "No",
-         GENFBACK_1 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_1 == "Prefer not to say" ~ "No")),
          
          GENFBACK_prevent_all = 
-         as.factor(case_when(GENFBACK_1 == "Yes definitely" ~ "Yes", 
-         GENFBACK_1 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_1 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_1 == "Yes, probably" ~ "Yes",
          GENFBACK_1 == "No, probably not" ~ "No",
          GENFBACK_1 == "No, definitely not" ~ "No",
          GENFBACK_1 == "Not sure / it depends" ~ "Unsure",
-         GENFBACK_1 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_1 == "Prefer not to say" ~ "Unsure")),
          
          GENFBACK_no_prevent_agree = 
-         as.factor(case_when(GENFBACK_2 == "Yes definitely" ~ "Yes", 
-         GENFBACK_2 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_2 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_2 == "Yes, probably" ~ "Yes",
          GENFBACK_2 == "No, probably not" ~ "No",
          GENFBACK_2 == "No, definitely not" ~ "No",
          GENFBACK_2 == "Not sure / it depends" ~ "No",
-         GENFBACK_2 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_2 == "Prefer not to say" ~ "No")),
          
          GENFBACK_no_prevent_all = 
-         as.factor(case_when(GENFBACK_2 == "Yes definitely" ~ "Yes", 
-         GENFBACK_2 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_2 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_2 == "Yes, probably" ~ "Yes",
          GENFBACK_2 == "No, probably not" ~ "No",
          GENFBACK_2 == "No, definitely not" ~ "No",
          GENFBACK_2 == "Not sure / it depends" ~ "Unsure",
-         GENFBACK_2 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_2 == "Prefer not to say" ~ "Unsure")),
          
          GENFBACK_ancestry_agree = 
-         as.factor(case_when(GENFBACK_3 == "Yes definitely" ~ "Yes", 
-         GENFBACK_3 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_3 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_3 == "Yes, probably" ~ "Yes",
          GENFBACK_3 == "No, probably not" ~ "No",
          GENFBACK_3 == "No, definitely not" ~ "No",
          GENFBACK_3 == "Not sure / it depends" ~ "No",
-         GENFBACK_3 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_3 == "Prefer not to say" ~ "No")),
          
          GENFBACK_ancestry_all = 
-         as.factor(case_when(GENFBACK_3 == "Yes definitely" ~ "Yes", 
-         GENFBACK_3 == "Yes probably" ~ "Yes",
+         as.factor(case_when(GENFBACK_3 == "Yes, definitely" ~ "Yes", 
+         GENFBACK_3 == "Yes, probably" ~ "Yes",
          GENFBACK_3 == "No, probably not" ~ "No",
          GENFBACK_3 == "No, definitely not" ~ "No",
          GENFBACK_3 == "Not sure / it depends" ~ "Unsure",
-         GENFBACK_3 == "Prefer not to say" ~ "Prefer not to say")),
+         GENFBACK_3 == "Prefer not to say" ~ "Unsure")),
          
          MARSTAT = 
          as.factor(case_when(MARSTAT == "Missing reponse" ~ "Missing reponse", 
@@ -3647,17 +3653,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 ofhact_unsure="Would you take part in it if you were invited to?
 Levels: NA = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
 GENFBACK_prevent_agree="Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say",
 GENFBACK_prevent_all="Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say",
 GENFBACK_no_prevent_agree="Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say",
 GENFBACK_no_prevent_all="Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say",
 GENFBACK_ancestry_agree="Genetic feedback for ancestry?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say",
 GENFBACK_ancestry_all="Genetic feedback for ancestry?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends",
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say",
 OFHBEN_1="OFH will... advance medical research"
 ,OFHBEN_2="OFH will... better treatments"
 ,OFHBEN_3="OFH will... early detection"
@@ -3862,12 +3868,12 @@ OFHACT2 = "Based on what you now know about the Our Future Health research progr
 RECONTACT = "Recontact for future qualitative research", ofhact_agree = "Would you take part in it if you were invited to?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
 ofhact_all = "Would you take part in it if you were invited to?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
 ofhact_unsure = "Would you take part in it if you were invited to?\nLevels: NA = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends"
+GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say", 
+GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say", 
+GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
+GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say", 
+GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
+GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 )
 ```
 
@@ -4165,12 +4171,12 @@ list(ClientSerialNumber.ClientSerialNumber = "Client (external) serial number",
     ofhact_agree.ofhact_agree = "Would you take part in it if you were invited to?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
     ofhact_all.ofhact_all = "Would you take part in it if you were invited to?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
     ofhact_unsure.ofhact_unsure = "Would you take part in it if you were invited to?\nLevels: NA = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-    GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-    GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-    GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends", 
-    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends", 
-    GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends")
+    GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say", 
+    GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say", 
+    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
+    GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say", 
+    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
+    GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
 ```
 
 ## create summed variables 
@@ -4503,9 +4509,8 @@ dem.vars <- c(
 "SEX", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "MARSTAT", 
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
-"WorkingStatus", "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
-"OCCUPATION_NSSEC", "TENURE",  "DISABILITY", 
-"DISAB1", "DISAB2", "DISABEVER")
+"WorkingStatus", "WorkingStatus_Binary",
+"OCCUPATION_NSSEC", "TENURE")
 ```
 
 ***outcomes***
@@ -4556,7 +4561,8 @@ pred.participate.vars <- c(
 "GENFBACK_2", "GENFBACK_3", "PARTNA", "PARTNB", "OFHACT2", "RECONTACT", 
  "GENFBACK_prevent_agree", 
 "GENFBACK_prevent_all", "GENFBACK_no_prevent_agree", "GENFBACK_no_prevent_all", 
-"GENFBACK_ancestry_agree", "GENFBACK_ancestry_all")
+"GENFBACK_ancestry_agree", "GENFBACK_ancestry_all","DISABILITY", 
+"DISAB1",  "DISABEVER")
 
 
   
@@ -4579,14 +4585,15 @@ pred.gen.vars <-c(
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
-"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure")
+"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","ofhact_agree", "ofhact_all", "ofhact_unsure","DISABILITY", 
+"DISAB1",  "DISABEVER")
 
 all.pred.vars <- c(
 "MDQuintile",  "AGE_BAND", 
 "SEX", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  
 "EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "GENFAM", "GENTEST",  
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
@@ -4599,18 +4606,21 @@ all.pred.vars <- c(
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3",  
-"PARTNA", "PARTNB", "OFHACT2", "RECONTACT")
+"PARTNA", "PARTNB", "OFHACT2", "RECONTACT","DISABILITY", 
+"DISAB1",  "DISABEVER")
 
-gated.pred.vars <- c("GENTEST_1", 
+gated.pred.vars <- c("RELIGION","GENTEST_1", 
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5",
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
-"OFHDK2_OPEN")
+"OFHDK2_OPEN","DISAB2")
 ```
 
 ##### DOING/To DO
 finish cutting gated vars out of the variable lists
 create an aggreagte score for seeking information about different things 
+
+collapse occupation NSEC so that sub categories are all under the same bigger category 
 
 # Data summaries {.tabset}
 
@@ -5041,390 +5051,6 @@ Type: Factor
 
 ```
 Frequencies  
-OCCUPATION_SOC2010  
-Label: Standard Occupational Classification 2010 code  
-Type: Factor  
-
-                                                                           Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------------------------------------------------------- ------ --------- -------------- --------- --------------
-                                                                      -9    675    24.395         24.395    24.395         24.395
-                                   Chief executives and senior officials      4     0.145         24.539     0.145         24.539
-                                    Elected officers and representatives      0     0.000         24.539     0.000         24.539
-                      Production managers and directors in manufacturing     14     0.506         25.045     0.506         25.045
-                       Production managers and directors in construction      3     0.108         25.154     0.108         25.154
-                  Production managers and directors in mining and energy      1     0.036         25.190     0.036         25.190
-                                        Financial managers and directors     10     0.361         25.551     0.361         25.551
-                                           Marketing and sales directors     12     0.434         25.985     0.434         25.985
-                                       Purchasing managers and directors      4     0.145         26.129     0.145         26.129
-                              Advertising and public relations directors      0     0.000         26.129     0.000         26.129
-                                   Human resource managers and directors     13     0.470         26.599     0.470         26.599
-                 Information technology and telecommunications directors     11     0.398         26.997     0.398         26.997
-                                       Functional managers and directors     23     0.831         27.828     0.831         27.828
-                            Financial institution managers and directors     14     0.506         28.334     0.506         28.334
-                    Managers and directors in transport and distribution      7     0.253         28.587     0.253         28.587
-                       Managers and directors in storage and warehousing      2     0.072         28.659     0.072         28.659
-                                                Officers in armed forces      2     0.072         28.731     0.072         28.731
-                                                  Senior police officers      2     0.072         28.804     0.072         28.804
-         Senior officers in fire, ambulance, prison and related services      1     0.036         28.840     0.036         28.840
-                Health services and public health managers and directors     15     0.542         29.382     0.542         29.382
-                                  Social services managers and directors      3     0.108         29.490     0.108         29.490
-                          Managers and directors in retail and wholesale     15     0.542         30.033     0.542         30.033
-                Managers and proprietors in agriculture and horticulture      1     0.036         30.069     0.036         30.069
-      Managers and proprietors in forestry, fishing and related services      3     0.108         30.177     0.108         30.177
-                        Hotel and accommodation managers and proprietors      3     0.108         30.286     0.108         30.286
-          Restaurant and catering establishment managers and proprietors      8     0.289         30.575     0.289         30.575
-                             Publicans and managers of licensed premises      1     0.036         30.611     0.036         30.611
-                                             Leisure and sports managers      4     0.145         30.755     0.145         30.755
-                                  Travel agency managers and proprietors      1     0.036         30.791     0.036         30.791
-                                           Health care practice managers      0     0.000         30.791     0.000         30.791
-         Residential, day and domiciliary  care managers and proprietors      5     0.181         30.972     0.181         30.972
-                                   Property, housing and estate managers      9     0.325         31.297     0.325         31.297
-                                         Garage managers and proprietors      2     0.072         31.370     0.072         31.370
-                  Hairdressing and beauty salon managers and proprietors      0     0.000         31.370     0.000         31.370
-                      Shopkeepers and proprietors – wholesale and retail     10     0.361         31.731     0.361         31.731
-                      Waste disposal and environmental services managers      2     0.072         31.803     0.072         31.803
-                              Managers and proprietors in other services     34     1.229         33.032     1.229         33.032
-                                                     Chemical scientists      0     0.000         33.032     0.000         33.032
-                                   Biological scientists and biochemists      4     0.145         33.177     0.145         33.177
-                                                     Physical scientists      1     0.036         33.213     0.036         33.213
-                                        Social and humanities scientists      2     0.072         33.285     0.072         33.285
-                                Natural and social science professionals      2     0.072         33.357     0.072         33.357
-                                                         Civil engineers      3     0.108         33.466     0.108         33.466
-                                                    Mechanical engineers      4     0.145         33.610     0.145         33.610
-                                                    Electrical engineers      3     0.108         33.719     0.108         33.719
-                                                   Electronics engineers      0     0.000         33.719     0.000         33.719
-                                        Design and development engineers      2     0.072         33.791     0.072         33.791
-                                        Production and process engineers      2     0.072         33.863     0.072         33.863
-                                               Engineering professionals      7     0.253         34.116     0.253         34.116
-                                                  IT specialist managers     19     0.687         34.803     0.687         34.803
-                                       IT project and programme managers      7     0.253         35.056     0.253         35.056
-                  IT business analysts, architects and systems designers      8     0.289         35.345     0.289         35.345
-                      Programmers and software development professionals     26     0.940         36.285     0.940         36.285
-                                Web design and development professionals      3     0.108         36.393     0.108         36.393
-             Information technology and telecommunications professionals     17     0.614         37.008     0.614         37.008
-                                              Conservation professionals      1     0.036         37.044     0.036         37.044
-                                               Environment professionals      2     0.072         37.116     0.072         37.116
-                                       Research and development managers      5     0.181         37.297     0.181         37.297
-                                                   Medical practitioners     20     0.723         38.020     0.723         38.020
-                                                           Psychologists      6     0.217         38.236     0.217         38.236
-                                                             Pharmacists      6     0.217         38.453     0.217         38.453
-                                                    Ophthalmic opticians      2     0.072         38.525     0.072         38.525
-                                                    Dental practitioners      5     0.181         38.706     0.181         38.706
-                                                           Veterinarians      3     0.108         38.815     0.108         38.815
-                                                   Medical radiographers      0     0.000         38.815     0.000         38.815
-                                                             Podiatrists      0     0.000         38.815     0.000         38.815
-                                                    Health professionals      6     0.217         39.031     0.217         39.031
-                                                        Physiotherapists      4     0.145         39.176     0.145         39.176
-                                                 Occupational therapists      1     0.036         39.212     0.036         39.212
-                                          Speech and language therapists      1     0.036         39.248     0.036         39.248
-                                                   Therapy professionals      2     0.072         39.321     0.072         39.321
-                                                                  Nurses     48     1.735         41.055     1.735         41.055
-                                                                Midwives      2     0.072         41.128     0.072         41.128
-                                 Higher education teaching professionals     11     0.398         41.525     0.398         41.525
-                                Further education teaching professionals     17     0.614         42.140     0.614         42.140
-                              Secondary education teaching professionals     24     0.867         43.007     0.867         43.007
-                    Primary and nursery education teaching professionals     49     1.771         44.778     1.771         44.778
-                          Special needs education teaching professionals      3     0.108         44.886     0.108         44.886
-                      Senior professionals of educational establishments     17     0.614         45.501     0.614         45.501
-                                Education advisers and school inspectors     10     0.361         45.862     0.361         45.862
-                            Teaching and other educational professionals     19     0.687         46.549     0.687         46.549
-                                                   Barristers and judges      0     0.000         46.549     0.000         46.549
-                                                              Solicitors      4     0.145         46.693     0.145         46.693
-                                                     Legal professionals      7     0.253         46.946     0.253         46.946
-                                     Chartered and certified accountants      9     0.325         47.271     0.325         47.271
-                            Management consultants and business analysts     16     0.578         47.850     0.578         47.850
-                 Business and financial project management professionals     14     0.506         48.356     0.506         48.356
-                                 Actuaries, economists and statisticians     10     0.361         48.717     0.361         48.717
-                             Business and related research professionals     10     0.361         49.078     0.361         49.078
-                     Business, research and administrative professionals      5     0.181         49.259     0.181         49.259
-                                                              Architects      0     0.000         49.259     0.000         49.259
-                                                  Town planning officers      0     0.000         49.259     0.000         49.259
-                                                      Quantity surveyors      3     0.108         49.368     0.108         49.368
-                                                     Chartered surveyors      2     0.072         49.440     0.072         49.440
-                                   Chartered architectural technologists      1     0.036         49.476     0.036         49.476
-                 Construction project managers and related professionals      3     0.108         49.584     0.108         49.584
-                                                          Social workers      6     0.217         49.801     0.217         49.801
-                                                      Probation officers      0     0.000         49.801     0.000         49.801
-                                                                  Clergy      7     0.253         50.054     0.253         50.054
-                                                   Welfare professionals      2     0.072         50.126     0.072         50.126
-                                                              Librarians      5     0.181         50.307     0.181         50.307
-                                                 Archivists and curators      1     0.036         50.343     0.036         50.343
-                                  Quality control and planning engineers      1     0.036         50.379     0.036         50.379
-                          Quality assurance and regulatory professionals      7     0.253         50.632     0.253         50.632
-                                      Environmental health professionals      0     0.000         50.632     0.000         50.632
-                           Journalists, newspaper and periodical editors     10     0.361         50.994     0.361         50.994
-                                          Public relations professionals      6     0.217         51.211     0.217         51.211
-                    Advertising accounts managers and creative directors      6     0.217         51.428     0.217         51.428
-                                                  Laboratory technicians      4     0.145         51.572     0.145         51.572
-                                  Electrical and electronics technicians      3     0.108         51.681     0.108         51.681
-                                                 Engineering technicians      3     0.108         51.789     0.108         51.789
-                              Building and civil engineering technicians      2     0.072         51.861     0.072         51.861
-                                           Quality assurance technicians      3     0.108         51.970     0.108         51.970
-                            Planning, process and production technicians      1     0.036         52.006     0.036         52.006
-                         Science, engineering and production technicians      9     0.325         52.331     0.325         52.331
-                             Architectural and town planning technicians      2     0.072         52.403     0.072         52.403
-                                                         Draughtspersons      2     0.072         52.476     0.072         52.476
-                                               IT operations technicians      5     0.181         52.656     0.181         52.656
-                                             IT user support technicians     10     0.361         53.018     0.361         53.018
-                                                              Paramedics      1     0.036         53.054     0.036         53.054
-                                                    Dispensing opticians      0     0.000         53.054     0.000         53.054
-                                              Pharmaceutical technicians      1     0.036         53.090     0.036         53.090
-                                          Medical and dental technicians      0     0.000         53.090     0.000         53.090
-                                          Health associate professionals      8     0.289         53.379     0.289         53.379
-                                             Youth and community workers      5     0.181         53.560     0.181         53.560
-                                          Child and early years officers      4     0.145         53.704     0.145         53.704
-                                                        Housing officers      6     0.217         53.921     0.217         53.921
-                                                             Counsellors      2     0.072         53.993     0.072         53.993
-                             Welfare and housing associate professionals     15     0.542         54.536     0.542         54.536
-                                                    NCOs and other ranks      3     0.108         54.644     0.108         54.644
-                                    Police officers (sergeant and below)      4     0.145         54.789     0.145         54.789
-                         Fire service officers (watch manager and below)      2     0.072         54.861     0.072         54.861
-                       Prison service officers (below principal officer)      1     0.036         54.897     0.036         54.897
-                                       Police community support officers      1     0.036         54.933     0.036         54.933
-                              Protective service associate professionals      3     0.108         55.042     0.108         55.042
-                                                                 Artists      2     0.072         55.114     0.072         55.114
-                                        Authors, writers and translators     10     0.361         55.475     0.361         55.475
-                                     Actors, entertainers and presenters      3     0.108         55.584     0.108         55.584
-                                              Dancers and choreographers      0     0.000         55.584     0.000         55.584
-                                                               Musicians      2     0.072         55.656     0.072         55.656
-                                  Arts officers, producers and directors      6     0.217         55.873     0.217         55.873
-        Photographers, audio-visual and broadcasting equipment operators      6     0.217         56.090     0.217         56.090
-                                                       Graphic designers     10     0.361         56.451     0.361         56.451
-                                 Product, clothing and related designers      7     0.253         56.704     0.253         56.704
-                                                          Sports players      1     0.036         56.740     0.036         56.740
-                               Sports coaches, instructors and officials      7     0.253         56.993     0.253         56.993
-                                                     Fitness instructors      2     0.072         57.065     0.072         57.065
-                                                 Air traffic controllers      0     0.000         57.065     0.000         57.065
-                                    Aircraft pilots and flight engineers      6     0.217         57.282     0.217         57.282
-                                            Ship and hovercraft officers      0     0.000         57.282     0.000         57.282
-                                           Legal associate professionals     11     0.398         57.680     0.398         57.680
-                                       Estimators, valuers and assessors      4     0.145         57.824     0.145         57.824
-                                                                 Brokers      2     0.072         57.897     0.072         57.897
-                                                  Insurance underwriters      2     0.072         57.969     0.072         57.969
-                            Finance and investment analysts and advisers     20     0.723         58.692     0.723         58.692
-                                                        Taxation experts      2     0.072         58.764     0.072         58.764
-                                                 Importers and exporters      0     0.000         58.764     0.000         58.764
-                                    Financial and accounting technicians      4     0.145         58.909     0.145         58.909
-                                             Financial accounts managers      9     0.325         59.234     0.325         59.234
-                            Business and related associate professionals     24     0.867         60.101     0.867         60.101
-                                         Buyers and procurement officers      5     0.181         60.282     0.181         60.282
-                                               Business sales executives     15     0.542         60.824     0.542         60.824
-                                       Marketing associate professionals     18     0.651         61.475     0.651         61.475
-                                           Estate agents and auctioneers      2     0.072         61.547     0.072         61.547
-                        Sales accounts and business development managers     25     0.904         62.450     0.904         62.450
-                       Conference and exhibition managers and organisers      8     0.289         62.739     0.289         62.739
-                  Conservation and environmental associate professionals      0     0.000         62.739     0.000         62.739
-                                 Public services associate professionals      7     0.253         62.992     0.253         62.992
-                       Human resources and industrial relations officers      9     0.325         63.318     0.325         63.318
-                      Vocational and industrial trainers and instructors      9     0.325         63.643     0.325         63.643
-                    Careers advisers and vocational guidance specialists      1     0.036         63.679     0.036         63.679
-                                 Inspectors of standards and regulations      6     0.217         63.896     0.217         63.896
-                                              Health and safety officers      3     0.108         64.004     0.108         64.004
-                          National government administrative occupations     33     1.193         65.197     1.193         65.197
-                             Local government administrative occupations     27     0.976         66.173     0.976         66.173
-                              Officers of non-governmental organisations      8     0.289         66.462     0.289         66.462
-                                                      Credit controllers      4     0.145         66.606     0.145         66.606
-                         Book-keepers, payroll managers and wages clerks     29     1.048         67.654     1.048         67.654
-                                             Bank and post office clerks      8     0.289         67.944     0.289         67.944
-                                                        Finance officers      0     0.000         67.944     0.000         67.944
-                                    Financial administrative occupations     22     0.795         68.739     0.795         68.739
-                                           Records clerks and assistants     12     0.434         69.172     0.434         69.172
-                            Pensions and insurance clerks and assistants     10     0.361         69.534     0.361         69.534
-                                     Stock control clerks and assistants      6     0.217         69.751     0.217         69.751
-                        Transport and distribution clerks and assistants      5     0.181         69.931     0.181         69.931
-                                           Library clerks and assistants      2     0.072         70.004     0.072         70.004
-                              Human resources administrative occupations      3     0.108         70.112     0.108         70.112
-                                                    Sales administrators      5     0.181         70.293     0.181         70.293
-                                        Other administrative occupations     67     2.421         72.714     2.421         72.714
-                                                         Office managers     13     0.470         73.184     0.470         73.184
-                                                      Office supervisors      2     0.072         73.256     0.072         73.256
-                                                     Medical secretaries     14     0.506         73.762     0.506         73.762
-                                                       Legal secretaries      5     0.181         73.943     0.181         73.943
-                                                      School secretaries      4     0.145         74.087     0.145         74.087
-                                                     Company secretaries      1     0.036         74.124     0.036         74.124
-                               Personal assistants and other secretaries     12     0.434         74.557     0.434         74.557
-                                                           Receptionists     11     0.398         74.955     0.398         74.955
-                                Typists and related keyboard occupations      3     0.108         75.063     0.108         75.063
-                                                                 Farmers      4     0.145         75.208     0.145         75.208
-                                                    Horticultural trades      0     0.000         75.208     0.000         75.208
-                                       Gardeners and landscape gardeners      5     0.181         75.389     0.181         75.389
-                                             Groundsmen and greenkeepers      3     0.108         75.497     0.108         75.497
-                                         Agricultural and fishing trades      0     0.000         75.497     0.000         75.497
-                                                Smiths and forge workers      0     0.000         75.497     0.000         75.497
-                                   Moulders, core makers and die casters      0     0.000         75.497     0.000         75.497
-                                                     Sheet metal workers      0     0.000         75.497     0.000         75.497
-                                       Metal plate workers, and riveters      0     0.000         75.497     0.000         75.497
-                                                          Welding trades      1     0.036         75.533     0.036         75.533
-                                                            Pipe fitters      0     0.000         75.533     0.000         75.533
-                            Metal machining setters and setter-operators      2     0.072         75.605     0.072         75.605
-                               Tool makers, tool fitters and markers-out      0     0.000         75.605     0.000         75.605
-                        Metal working production and maintenance fitters      6     0.217         75.822     0.217         75.822
-                               Precision instrument makers and repairers      2     0.072         75.894     0.072         75.894
-                            Air-conditioning and refrigeration engineers      1     0.036         75.931     0.036         75.931
-                         Vehicle technicians, mechanics and electricians      7     0.253         76.184     0.253         76.184
-                                     Vehicle body builders and repairers      0     0.000         76.184     0.000         76.184
-                                               Vehicle paint technicians      0     0.000         76.184     0.000         76.184
-                                 Aircraft maintenance and related trades      1     0.036         76.220     0.036         76.220
-                                    Boat and ship builders and repairers      0     0.000         76.220     0.000         76.220
-                           Rail and rolling stock builders and repairers      0     0.000         76.220     0.000         76.220
-                                     Electricians and electrical fitters      5     0.181         76.400     0.181         76.400
-                                            Telecommunications engineers      2     0.072         76.473     0.072         76.473
-                                           TV, video and audio engineers      2     0.072         76.545     0.072         76.545
-                                                            IT engineers      3     0.108         76.653     0.108         76.653
-                                        Electrical and electronic trades      3     0.108         76.762     0.108         76.762
-             Skilled metal, electrical and electronic trades supervisors      1     0.036         76.798     0.036         76.798
-                                                          Steel erectors      0     0.000         76.798     0.000         76.798
-                                                  Bricklayers and masons      2     0.072         76.870     0.072         76.870
-                                        Roofers, roof tilers and slaters      0     0.000         76.870     0.000         76.870
-                          Plumbers and heating and ventilating engineers      2     0.072         76.943     0.072         76.943
-                                                  Carpenters and joiners      6     0.217         77.159     0.217         77.159
-                                Glaziers, window fabricators and fitters      1     0.036         77.196     0.036         77.196
-                                        Construction and building trades      2     0.072         77.268     0.072         77.268
-                                                              Plasterers      0     0.000         77.268     0.000         77.268
-                                                Floorers and wall tilers      0     0.000         77.268     0.000         77.268
-                                                 Painters and decorators      2     0.072         77.340     0.072         77.340
-                            Construction and building trades supervisors      2     0.072         77.412     0.072         77.412
-                                                    Weavers and knitters      0     0.000         77.412     0.000         77.412
-                                                            Upholsterers      0     0.000         77.412     0.000         77.412
-                                     Footwear and leather working trades      0     0.000         77.412     0.000         77.412
-                                                 Tailors and dressmakers      0     0.000         77.412     0.000         77.412
-                                   Textiles, garments and related trades      0     0.000         77.412     0.000         77.412
-                                                   Pre-press technicians      0     0.000         77.412     0.000         77.412
-                                                                Printers      0     0.000         77.412     0.000         77.412
-                                     Print finishing and binding workers      0     0.000         77.412     0.000         77.412
-                                                                Butchers      1     0.036         77.449     0.036         77.449
-                                          Bakers and flour confectioners      3     0.108         77.557     0.108         77.557
-                                        Fishmongers and poultry dressers      0     0.000         77.557     0.000         77.557
-                                                                   Chefs     22     0.795         78.352     0.795         78.352
-                                                                   Cooks      4     0.145         78.497     0.145         78.497
-                                               Catering and bar managers      5     0.181         78.677     0.181         78.677
-                     Glass and ceramics makers, decorators and finishers      0     0.000         78.677     0.000         78.677
-                            Furniture makers and other craft woodworkers      1     0.036         78.713     0.036         78.713
-                                                                Florists      0     0.000         78.713     0.000         78.713
-                                                    Other skilled trades      4     0.145         78.858     0.145         78.858
-                                           Nursery nurses and assistants     16     0.578         79.436     0.578         79.436
-                                    Childminders and related occupations     11     0.398         79.834     0.398         79.834
-                                                             Playworkers      3     0.108         79.942     0.108         79.942
-                                                     Teaching assistants     33     1.193         81.135     1.193         81.135
-                                          Educational support assistants     10     0.361         81.496     0.361         81.496
-                                                       Veterinary nurses      1     0.036         81.532     0.036         81.532
-                                                   Pest control officers      1     0.036         81.568     0.036         81.568
-                                        Animal care services occupations      4     0.145         81.713     0.145         81.713
-                                      Nursing auxiliaries and assistants     26     0.940         82.653     0.940         82.653
-                                  Ambulance staff (excluding paramedics)      1     0.036         82.689     0.036         82.689
-                                                           Dental nurses      1     0.036         82.725     0.036         82.725
-                                    Houseparents and residential wardens      3     0.108         82.833     0.108         82.833
-                                            Care workers and home carers     51     1.843         84.677     1.843         84.677
-                                                     Senior care workers      6     0.217         84.893     0.217         84.893
-                                                            Care escorts      1     0.036         84.930     0.036         84.930
-                        Undertakers, mortuary and crematorium assistants      0     0.000         84.930     0.000         84.930
-                                           Sports and leisure assistants      4     0.145         85.074     0.145         85.074
-                                                           Travel agents      3     0.108         85.183     0.108         85.183
-                                                   Air travel assistants      1     0.036         85.219     0.036         85.219
-                                                  Rail travel assistants      1     0.036         85.255     0.036         85.255
-                                  Leisure and travel service occupations      2     0.072         85.327     0.072         85.327
-                                                Hairdressers and barbers      6     0.217         85.544     0.217         85.544
-                                     Beauticians and related occupations      1     0.036         85.580     0.036         85.580
-                                    Housekeepers and related occupations      0     0.000         85.580     0.000         85.580
-                                                              Caretakers      4     0.145         85.725     0.145         85.725
-                      Cleaning and housekeeping managers and supervisors      3     0.108         85.833     0.108         85.833
-                                             Sales and retail assistants     74     2.674         88.507     2.674         88.507
-                                 Retail cashiers and check-out operators     11     0.398         88.905     0.398         88.905
-                                                  Telephone salespersons      1     0.036         88.941     0.036         88.941
-                                Pharmacy and other dispensing assistants      5     0.181         89.122     0.181         89.122
-                             Vehicle and parts salespersons and advisers      3     0.108         89.230     0.108         89.230
-                                Collector salespersons and credit agents      0     0.000         89.230     0.000         89.230
-                                    Debt, rent and other cash collectors      4     0.145         89.375     0.145         89.375
-                                      Roundspersons and van salespersons      1     0.036         89.411     0.036         89.411
-                                Market and street traders and assistants      0     0.000         89.411     0.000         89.411
-                                       Merchandisers and window dressers      5     0.181         89.592     0.181         89.592
-                                               Sales related occupations      3     0.108         89.700     0.108         89.700
-                                                       Sales supervisors     10     0.361         90.061     0.361         90.061
-                                     Call and contact centre occupations      4     0.145         90.206     0.145         90.206
-                                                            Telephonists      2     0.072         90.278     0.072         90.278
-                                                 Communication operators      1     0.036         90.314     0.036         90.314
-                                            Market research interviewers      2     0.072         90.387     0.072         90.387
-                                            Customer service occupations     41     1.482         91.868     1.482         91.868
-                               Customer service managers and supervisors      6     0.217         92.085     0.217         92.085
-                              Food, drink and tobacco process operatives      5     0.181         92.266     0.181         92.266
-                                   Glass and ceramics process operatives      0     0.000         92.266     0.000         92.266
-                                              Textile process operatives      0     0.000         92.266     0.000         92.266
-                                 Chemical and related process operatives      3     0.108         92.374     0.108         92.374
-                                               Rubber process operatives      1     0.036         92.411     0.036         92.411
-                                             Plastics process operatives      2     0.072         92.483     0.072         92.483
-                            Metal making and treating process operatives      0     0.000         92.483     0.000         92.483
-                                                          Electroplaters      0     0.000         92.483     0.000         92.483
-                                                      Process operatives      3     0.108         92.591     0.108         92.591
-                                       Paper and wood machine operatives      2     0.072         92.664     0.072         92.664
-                                                    Coal mine operatives      0     0.000         92.664     0.000         92.664
-                                   Quarry workers and related operatives      0     0.000         92.664     0.000         92.664
-                                                 Energy plant operatives      0     0.000         92.664     0.000         92.664
-                                        Metal working machine operatives      1     0.036         92.700     0.036         92.700
-                                     Water and sewerage plant operatives      1     0.036         92.736     0.036         92.736
-                                             Printing machine assistants      0     0.000         92.736     0.000         92.736
-                                            Plant and machine operatives      1     0.036         92.772     0.036         92.772
-                         Assemblers (electrical and electronic products)      1     0.036         92.808     0.036         92.808
-                                   Assemblers (vehicles and metal goods)      3     0.108         92.917     0.108         92.917
-                                          Routine inspectors and testers      0     0.000         92.917     0.000         92.917
-                                           Weighers, graders and sorters      0     0.000         92.917     0.000         92.917
-                                    Tyre, exhaust and windscreen fitters      0     0.000         92.917     0.000         92.917
-                                                       Sewing machinists      5     0.181         93.097     0.181         93.097
-                                       Assemblers and routine operatives      3     0.108         93.206     0.108         93.206
-                                        Scaffolders, stagers and riggers      1     0.036         93.242     0.036         93.242
-                                            Road construction operatives      1     0.036         93.278     0.036         93.278
-                            Rail construction and maintenance operatives      1     0.036         93.314     0.036         93.314
-                                                 Construction operatives      1     0.036         93.350     0.036         93.350
-                                             Large goods vehicle drivers     11     0.398         93.748     0.398         93.748
-                                                             Van drivers     13     0.470         94.218     0.470         94.218
-                                                   Bus and coach drivers      4     0.145         94.362     0.145         94.362
-                                     Taxi and cab drivers and chauffeurs      9     0.325         94.687     0.325         94.687
-                                                     Driving instructors      3     0.108         94.796     0.108         94.796
-                                                           Crane drivers      0     0.000         94.796     0.000         94.796
-                                                 Fork-lift truck drivers      1     0.036         94.832     0.036         94.832
-                                          Agricultural machinery drivers      0     0.000         94.832     0.000         94.832
-                                   Mobile machine drivers and operatives      0     0.000         94.832     0.000         94.832
-                                                  Train and tram drivers      1     0.036         94.868     0.036         94.868
-                               Marine and waterways transport operatives      0     0.000         94.868     0.000         94.868
-                                                Air transport operatives      0     0.000         94.868     0.000         94.868
-                                               Rail transport operatives      0     0.000         94.868     0.000         94.868
-                                  Other drivers and transport operatives      1     0.036         94.904     0.036         94.904
-                                                            Farm workers      1     0.036         94.940     0.036         94.940
-                                                        Forestry workers      0     0.000         94.940     0.000         94.940
-                    Fishing and other elementary agriculture occupations      0     0.000         94.940     0.000         94.940
-                                     Elementary construction occupations      0     0.000         94.940     0.000         94.940
-                                 Industrial cleaning process occupations      1     0.036         94.977     0.036         94.977
-                                  Packers, bottlers, canners and fillers      4     0.145         95.121     0.145         95.121
-                                    Elementary process plant occupations      4     0.145         95.266     0.145         95.266
-                   Postal workers, mail sorters, messengers and couriers     10     0.361         95.627     0.361         95.627
-                                   Elementary administration occupations      2     0.072         95.699     0.072         95.699
-                                                         Window cleaners      1     0.036         95.735     0.036         95.735
-                                                         Street cleaners      0     0.000         95.735     0.000         95.735
-                                                  Cleaners and domestics     19     0.687         96.422     0.687         96.422
-                                   Launderers, dry cleaners and pressers      2     0.072         96.494     0.072         96.494
-                                          Refuse and salvage occupations      0     0.000         96.494     0.000         96.494
-                                           Vehicle valeters and cleaners      0     0.000         96.494     0.000         96.494
-                                         Elementary cleaning occupations      0     0.000         96.494     0.000         96.494
-                                 Security guards and related occupations      8     0.289         96.784     0.289         96.784
-                               Parking and civil enforcement occupations      0     0.000         96.784     0.000         96.784
-                           School midday and crossing patrol occupations      5     0.181         96.964     0.181         96.964
-                                         Elementary security occupations      2     0.072         97.037     0.072         97.037
-                                                           Shelf fillers      1     0.036         97.073     0.036         97.073
-                                            Elementary sales occupations      0     0.000         97.073     0.000         97.073
-                                          Elementary storage occupations     21     0.759         97.832     0.759         97.832
-                                                        Hospital porters      2     0.072         97.904     0.072         97.904
-                                         Kitchen and catering assistants     30     1.084         98.988     1.084         98.988
-                                                  Waiters and waitresses     14     0.506         99.494     0.506         99.494
-                                                               Bar staff      8     0.289         99.783     0.289         99.783
-                                       Leisure and theme park attendants      2     0.072         99.855     0.072         99.855
-                                   Other elementary services occupations      4     0.145        100.000     0.145        100.000
-                                                                    <NA>      0                              0.000        100.000
-                                                                   Total   2767   100.000        100.000   100.000        100.000
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-22.png)<!-- -->
-
-```
-Frequencies  
 OCCUPATION_NSSEC  
 Label: NS-SEC Analytic Categories  
 Type: Factor  
@@ -5467,7 +5093,7 @@ Type: Factor
                                                                           Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-23.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-22.png)<!-- -->
 
 ```
 Frequencies  
@@ -5482,76 +5108,6 @@ Type: Factor
                                   Rent / other   1120     40.57         100.00     40.48          99.78
                                           <NA>      6                               0.22         100.00
                                          Total   2767    100.00         100.00    100.00         100.00
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-24.png)<!-- -->
-
-```
-Frequencies  
-DISABILITY  
-Label: Long-term ill health/disability status  
-Type: Factor  
-
-                                                                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------------------------------------------------------- ------ --------- -------------- --------- --------------
-         Long-term ill health/disability that limits day-to-day activities a lot    228      8.50           8.50      8.24           8.24
-      Long-term ill health/disability that limits day-to-day activities a little    479     17.87          26.37     17.31          25.55
-       Long-term ill health/disability that does not limit day-to-day activities    351     13.09          39.46     12.69          38.24
-                                              No long-term ill health/disability   1623     60.54         100.00     58.66          96.89
-                                                                            <NA>     86                               3.11         100.00
-                                                                           Total   2767    100.00         100.00    100.00         100.00
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-25.png)<!-- -->
-
-```
-Frequencies  
-DISAB1  
-Label: Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?  
-Type: Factor  
-
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                    Yes   1058     38.24          38.24     38.24          38.24
-                     No   1623     58.66          96.89     58.66          96.89
-      Prefer not to say     86      3.11         100.00      3.11         100.00
-                   <NA>      0                               0.00         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-26.png)<!-- -->
-
-```
-Frequencies  
-DISAB2  
-Label: Does your condition or illness reduce your ability to carry-out day-to-day activities?  
-Type: Factor  
-
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-             Yes, a lot    228     21.55          21.55      8.24           8.24
-          Yes, a little    479     45.27          66.82     17.31          25.55
-                     No    345     32.61          99.43     12.47          38.02
-      Prefer not to say      6      0.57         100.00      0.22          38.24
-                   <NA>   1709                              61.76         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-27.png)<!-- -->
-
-```
-Frequencies  
-DISABEVER  
-Label: Have you ever had a physical or mental health condition or illness lasting 12 months or more?  
-Type: Factor  
-
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                    Yes   1016     36.72          36.72     36.72          36.72
-                     No   1669     60.32          97.04     60.32          97.04
-      Prefer not to say     82      2.96         100.00      2.96         100.00
-                   <NA>      0                               0.00         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ## outcome variables
@@ -5610,15 +5166,15 @@ Type: Factor
 Frequencies  
 GENFBACK_prevent_agree  
 Label: Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    549     86.73          86.73     19.84          19.84
-      Prefer not to say     84     13.27         100.00      3.04          22.88
-                   <NA>   2134                              77.12         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+         No    633     22.88          22.88     22.88          22.88
+        Yes   2134     77.12         100.00     77.12         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-4.png)<!-- -->
@@ -5627,16 +5183,16 @@ Type: Factor
 Frequencies  
 GENFBACK_prevent_all  
 Label: Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    415     65.56          65.56     15.00          15.00
-      Prefer not to say     84     13.27          78.83      3.04          18.03
-                 Unsure    134     21.17         100.00      4.84          22.88
-                   <NA>   2134                              77.12         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+------------ ------ --------- -------------- --------- --------------
+          No    415     15.00          15.00     15.00          15.00
+      Unsure    218      7.88          22.88      7.88          22.88
+         Yes   2134     77.12         100.00     77.12         100.00
+        <NA>      0                               0.00         100.00
+       Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-5.png)<!-- -->
@@ -5645,15 +5201,15 @@ Type: Factor
 Frequencies  
 GENFBACK_no_prevent_agree  
 Label: Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    883     91.60          91.60     31.91          31.91
-      Prefer not to say     81      8.40         100.00      2.93          34.84
-                   <NA>   1803                              65.16         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+         No    964     34.84          34.84     34.84          34.84
+        Yes   1803     65.16         100.00     65.16         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-6.png)<!-- -->
@@ -5662,16 +5218,16 @@ Type: Factor
 Frequencies  
 GENFBACK_no_prevent_all  
 Label: Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    673     69.81          69.81     24.32          24.32
-      Prefer not to say     81      8.40          78.22      2.93          27.25
-                 Unsure    210     21.78         100.00      7.59          34.84
-                   <NA>   1803                              65.16         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+------------ ------ --------- -------------- --------- --------------
+          No    673     24.32          24.32     24.32          24.32
+      Unsure    291     10.52          34.84     10.52          34.84
+         Yes   1803     65.16         100.00     65.16         100.00
+        <NA>      0                               0.00         100.00
+       Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-7.png)<!-- -->
@@ -5680,15 +5236,15 @@ Type: Factor
 Frequencies  
 GENFBACK_ancestry_agree  
 Label: Genetic feedback for ancestry?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    578     89.47          89.47     20.89          20.89
-      Prefer not to say     68     10.53         100.00      2.46          23.35
-                   <NA>   2121                              76.65         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+         No    646     23.35          23.35     23.35          23.35
+        Yes   2121     76.65         100.00     76.65         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 ![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-8.png)<!-- -->
@@ -5697,16 +5253,16 @@ Type: Factor
 Frequencies  
 GENFBACK_ancestry_all  
 Label: Genetic feedback for ancestry?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends  
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-                     No    449     69.50          69.50     16.23          16.23
-      Prefer not to say     68     10.53          80.03      2.46          18.68
-                 Unsure    129     19.97         100.00      4.66          23.35
-                   <NA>   2121                              76.65         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+------------ ------ --------- -------------- --------- --------------
+          No    449     16.23          16.23     16.23          16.23
+      Unsure    197      7.12          23.35      7.12          23.35
+         Yes   2121     76.65         100.00     76.65         100.00
+        <NA>      0                               0.00         100.00
+       Total   2767    100.00         100.00    100.00         100.00
 ```
 ## predictor variables
 
@@ -6061,29 +5617,6 @@ Type: Factor
 
 ```
 Frequencies  
-RELIGION  
-Label: Religion  
-Type: Factor  
-
-                        Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
---------------------- ------ --------- -------------- --------- --------------
-      Missing reponse   1019     36.83          36.83     36.83          36.83
-         Christianity    666     24.07          60.90     24.07          60.90
-                Islam    181      6.54          67.44      6.54          67.44
-             Hinduism     64      2.31          69.75      2.31          69.75
-              Sikhism     34      1.23          70.98      1.23          70.98
-              Judaism     11      0.40          71.38      0.40          71.38
-             Buddhism     13      0.47          71.85      0.47          71.85
-       Other religion     15      0.54          72.39      0.54          72.39
-          No religion    764     27.61         100.00     27.61         100.00
-                 <NA>      0                               0.00         100.00
-                Total   2767    100.00         100.00    100.00         100.00
-```
-
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-19.png)<!-- -->
-
-```
-Frequencies  
 EDUCATION  
 Label: Education attainment  
 Type: Factor  
@@ -6098,7 +5631,7 @@ Type: Factor
                                          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-20.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-19.png)<!-- -->
 
 ```
 Frequencies  
@@ -6114,7 +5647,7 @@ Type: Factor
                                              Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-21.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-20.png)<!-- -->
 
 ```
 Frequencies  
@@ -6498,7 +6031,7 @@ Type: Factor
                                                                    Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-22.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-21.png)<!-- -->
 
 ```
 Frequencies  
@@ -6515,7 +6048,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-23.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-22.png)<!-- -->
 
 ```
 Frequencies  
@@ -6538,7 +6071,7 @@ Type: Numeric
 Warning: Removed 352 rows containing non-finite values (stat_count).
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-24.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-23.png)<!-- -->
 
 ```
 Frequencies  
@@ -6556,7 +6089,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-25.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-24.png)<!-- -->
 
 ```
 Frequencies  
@@ -6574,7 +6107,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-26.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-25.png)<!-- -->
 
 ```
 Frequencies  
@@ -6592,7 +6125,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-27.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-26.png)<!-- -->
 
 ```
 Frequencies  
@@ -6609,7 +6142,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-28.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-27.png)<!-- -->
 
 ```
 Frequencies  
@@ -6625,7 +6158,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-29.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-28.png)<!-- -->
 
 ```
 Frequencies  
@@ -6643,7 +6176,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-30.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-29.png)<!-- -->
 
 ```
 Frequencies  
@@ -6658,7 +6191,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-31.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-30.png)<!-- -->
 
 ```
 Frequencies  
@@ -6676,7 +6209,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-32.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-31.png)<!-- -->
 
 ```
 Frequencies  
@@ -6694,7 +6227,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-33.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-32.png)<!-- -->
 
 ```
 Frequencies  
@@ -6712,7 +6245,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-34.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-33.png)<!-- -->
 
 ```
 Frequencies  
@@ -6730,7 +6263,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-35.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-34.png)<!-- -->
 
 ```
 Frequencies  
@@ -6755,7 +6288,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-36.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-35.png)<!-- -->
 
 ```
 Frequencies  
@@ -6780,7 +6313,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-37.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-36.png)<!-- -->
 
 ```
 Frequencies  
@@ -6805,7 +6338,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-38.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-37.png)<!-- -->
 
 ```
 Frequencies  
@@ -6830,7 +6363,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-39.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-38.png)<!-- -->
 
 ```
 Frequencies  
@@ -6855,7 +6388,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-40.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-39.png)<!-- -->
 
 ```
 Frequencies  
@@ -6880,7 +6413,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-41.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-40.png)<!-- -->
 
 ```
 Frequencies  
@@ -6900,7 +6433,7 @@ Type: Factor
                                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-42.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-41.png)<!-- -->
 
 ```
 Frequencies  
@@ -6920,7 +6453,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-43.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-42.png)<!-- -->
 
 ```
 Frequencies  
@@ -6947,7 +6480,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-44.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-43.png)<!-- -->
 
 ```
 Frequencies  
@@ -6966,7 +6499,7 @@ Type: Factor
               Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-45.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-44.png)<!-- -->
 
 ```
 Frequencies  
@@ -6983,7 +6516,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-46.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-45.png)<!-- -->
 
 ```
 Frequencies  
@@ -7003,7 +6536,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-47.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-46.png)<!-- -->
 
 ```
 Frequencies  
@@ -7022,7 +6555,7 @@ Type: Factor
                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-48.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-47.png)<!-- -->
 
 ```
 Frequencies  
@@ -7043,7 +6576,7 @@ Type: Factor
              Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-49.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-48.png)<!-- -->
 
 ```
 Frequencies  
@@ -7064,7 +6597,7 @@ Type: Factor
                     Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-50.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-49.png)<!-- -->
 
 ```
 Frequencies  
@@ -7085,7 +6618,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-51.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-50.png)<!-- -->
 
 ```
 Frequencies  
@@ -7106,7 +6639,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-52.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-51.png)<!-- -->
 
 ```
 Frequencies  
@@ -7127,7 +6660,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-53.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-52.png)<!-- -->
 
 ```
 Frequencies  
@@ -7147,7 +6680,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-54.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-53.png)<!-- -->
 
 ```
 Frequencies  
@@ -7167,7 +6700,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-55.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-54.png)<!-- -->
 
 ```
 Frequencies  
@@ -7187,7 +6720,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-56.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-55.png)<!-- -->
 
 ```
 Frequencies  
@@ -7207,7 +6740,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-57.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-56.png)<!-- -->
 
 ```
 Frequencies  
@@ -7227,7 +6760,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-58.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-57.png)<!-- -->
 
 ```
 Frequencies  
@@ -7247,7 +6780,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-59.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-58.png)<!-- -->
 
 ```
 Frequencies  
@@ -7267,7 +6800,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-60.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-59.png)<!-- -->
 
 ```
 Frequencies  
@@ -7287,7 +6820,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-61.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-60.png)<!-- -->
 
 ```
 Frequencies  
@@ -7307,7 +6840,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-62.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-61.png)<!-- -->
 
 ```
 Frequencies  
@@ -7327,7 +6860,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-63.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-62.png)<!-- -->
 
 ```
 Frequencies  
@@ -7347,7 +6880,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-64.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-63.png)<!-- -->
 
 ```
 Frequencies  
@@ -7367,7 +6900,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-65.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-64.png)<!-- -->
 
 ```
 Frequencies  
@@ -7387,7 +6920,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-66.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-65.png)<!-- -->
 
 ```
 Frequencies  
@@ -7407,7 +6940,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-67.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-66.png)<!-- -->
 
 ```
 Frequencies  
@@ -7427,7 +6960,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-68.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-67.png)<!-- -->
 
 ```
 Frequencies  
@@ -7447,7 +6980,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-69.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-68.png)<!-- -->
 
 ```
 Frequencies  
@@ -7467,7 +7000,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-70.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-69.png)<!-- -->
 
 ```
 Frequencies  
@@ -7487,7 +7020,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-71.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-70.png)<!-- -->
 
 ```
 Frequencies  
@@ -7507,7 +7040,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-72.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-71.png)<!-- -->
 
 ```
 Frequencies  
@@ -7527,7 +7060,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-73.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-72.png)<!-- -->
 
 ```
 Frequencies  
@@ -7547,7 +7080,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-74.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-73.png)<!-- -->
 
 ```
 Frequencies  
@@ -7567,7 +7100,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-75.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-74.png)<!-- -->
 
 ```
 Frequencies  
@@ -7587,7 +7120,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-76.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-75.png)<!-- -->
 
 ```
 Frequencies  
@@ -7607,7 +7140,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-77.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-76.png)<!-- -->
 
 ```
 Frequencies  
@@ -7627,7 +7160,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-78.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-77.png)<!-- -->
 
 ```
 Frequencies  
@@ -7647,7 +7180,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-79.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-78.png)<!-- -->
 
 ```
 Frequencies  
@@ -7667,7 +7200,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-80.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-79.png)<!-- -->
 
 ```
 Frequencies  
@@ -7685,7 +7218,7 @@ Type: Factor
                                     Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-81.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-80.png)<!-- -->
 
 ```
 Frequencies  
@@ -7704,7 +7237,7 @@ Type: Factor
                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-82.png)<!-- -->
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-81.png)<!-- -->
 
 ```
 Frequencies  
@@ -7718,6 +7251,58 @@ Type: Factor
          No    614    22.198        100.000    22.190         99.964
        <NA>      1                              0.036        100.000
       Total   2767   100.000        100.000   100.000        100.000
+```
+
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-82.png)<!-- -->
+
+```
+Frequencies  
+DISABILITY  
+Label: Long-term ill health/disability status  
+Type: Factor  
+
+                                                                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+-------------------------------------------------------------------------------- ------ --------- -------------- --------- --------------
+         Long-term ill health/disability that limits day-to-day activities a lot    228      8.50           8.50      8.24           8.24
+      Long-term ill health/disability that limits day-to-day activities a little    479     17.87          26.37     17.31          25.55
+       Long-term ill health/disability that does not limit day-to-day activities    351     13.09          39.46     12.69          38.24
+                                              No long-term ill health/disability   1623     60.54         100.00     58.66          96.89
+                                                                            <NA>     86                               3.11         100.00
+                                                                           Total   2767    100.00         100.00    100.00         100.00
+```
+
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-83.png)<!-- -->
+
+```
+Frequencies  
+DISAB1  
+Label: Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?  
+Type: Factor  
+
+                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------------------- ------ --------- -------------- --------- --------------
+                    Yes   1058     38.24          38.24     38.24          38.24
+                     No   1623     58.66          96.89     58.66          96.89
+      Prefer not to say     86      3.11         100.00      3.11         100.00
+                   <NA>      0                               0.00         100.00
+                  Total   2767    100.00         100.00    100.00         100.00
+```
+
+![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-84.png)<!-- -->
+
+```
+Frequencies  
+DISABEVER  
+Label: Have you ever had a physical or mental health condition or illness lasting 12 months or more?  
+Type: Factor  
+
+                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------------------- ------ --------- -------------- --------- --------------
+                    Yes   1016     36.72          36.72     36.72          36.72
+                     No   1669     60.32          97.04     60.32          97.04
+      Prefer not to say     82      2.96         100.00      2.96         100.00
+                   <NA>      0                               0.00         100.00
+                  Total   2767    100.00         100.00    100.00         100.00
 ```
 
 # Analyses
