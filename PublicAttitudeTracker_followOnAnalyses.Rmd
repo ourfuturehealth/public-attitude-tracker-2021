@@ -322,6 +322,42 @@ table(factor_df$RELIGIOSITY)
 
 ```
 
+## Transform to numeric where appropriate
+
+The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
+
+
+```{r transform trust to numeric}
+
+factor_df <- factor_df %>%
+  mutate(across(starts_with("TRUST"), 
+         ~as.numeric(case_when(. == "0 - Do not trust at all" ~ 0,
+                               . == "10 - Trust completely" ~ 10,
+                               . == "1" ~ 1,
+                               . == "2" ~ 2,
+                               . == "3" ~ 3,
+                               . == "4" ~ 4,
+                               . == "5" ~ 5,
+                               . == "6" ~ 6,
+                               . == "7" ~ 7,
+                               . == "8" ~ 8,
+                               . == "9" ~ 9,
+                               TRUE ~ NA_real_ ))))
+
+```
+
+Check this worked as expected
+
+```{r show trust variables}
+
+factor_df %>% 
+  select(starts_with("TRUST")) %>%
+  skim() %>%
+  select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
+
+table(factor_df$TRUSTGEN)
+```
+
 ## create summed variables 
 
 This will include
