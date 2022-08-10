@@ -326,7 +326,18 @@ table(factor_df$RELIGIOSITY)
 
 The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
 
+first grab the labels to add back on after the transformation
 
+```{r grab trust labels}
+
+trust_vars <- factor_df %>%
+  select(starts_with("TRUST")) %>%
+  colnames() 
+
+trust_labels <- dput(sapply(factor_df[trust_vars],label))
+```
+
+then transform
 ```{r transform trust to numeric}
 
 factor_df <- factor_df %>%
@@ -346,7 +357,12 @@ factor_df <- factor_df %>%
 
 ```
 
-Check this worked as expected
+add the labels back
+```{r add trust labels back}
+label(factor_df) = as.list(trust_labels[match(names(factor_df), names(trust_labels))])
+```
+
+Check this all worked as expected
 
 ```{r show trust variables}
 
@@ -356,6 +372,7 @@ factor_df %>%
   select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
 
 table(factor_df$TRUSTGEN)
+dput(sapply(factor_df[trust_vars],label))
 ```
 
 ## create summed variables 
