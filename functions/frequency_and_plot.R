@@ -18,12 +18,12 @@ frequency_and_plot <- function(dataframe, variable){
   
   if (class(dataframe[[variable]])[1] == "numeric") {
     
-    print(ggplot(dataframe), 
-       aes_string(x=variable) +
+    print(ggplot(dataframe, 
+       aes_string(x=variable)) +
        geom_bar() +
       ggtitle(paste("Distribution of responses for",validn,"total valid respondents for",variable,sep=" ")) +
       labs(x=paste0("/n",varlabel)) +
-      scale_x_continuous(breaks = seq(min(dataframe[[variable]]),max(dataframe[[variable]]))) +
+      scale_x_continuous(breaks = seq(min(!is.na(dataframe[[variable]])),max(!is.na(dataframe[[variable]])))) +
       scale_y_continuous(breaks = seq(0,as.numeric(validn),100)) +
   theme_personal())
     

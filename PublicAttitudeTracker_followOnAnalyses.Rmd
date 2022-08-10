@@ -730,23 +730,26 @@ get histograms and frequency tables for all variables
 ```{r freq demographic variables}
 
 for (i in dem.vars){
+  frequency_and_plot(factor_df,all_of(i))
+}
+```
+
+## outcome variables
+```{r summaries of outcome variables}
+
+for (i in outcomes){
   frequency_and_plot(factor_df,i)
 }
 
 ```
+## predictor variables
+```{r summaries of predictor variables}
 
-## outcome variables
-```{r tabular descriptions of outcome variables, eval=F}
-
-summarytools::dfSummary(
-  factor_df[outcomes],
-  graph.col = F,
-  valid.col = F,
-  labels.col = T)
+for (i in all.pred.vars){
+  frequency_and_plot(factor_df,i)
+}
 
 ```
-## predictor variables
-
 
 # Analyses
 ## recode variables
