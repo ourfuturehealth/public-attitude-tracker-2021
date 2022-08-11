@@ -802,6 +802,8 @@ regression_df <- factor_df %>%
 
 ## set reference categories
 
+### predictors
+
 Make the largest group the reference category using custom function
 
 ```{r set largest ref category}
@@ -809,6 +811,27 @@ Make the largest group the reference category using custom function
 regression_df <- regression_df %>%
   mutate(across(where(is.factor), 
                 ~set.largest.ref(.)))
+```
+
+### outcomes
+
+s specific reference variables for my outcomes reflecting the outcome of greatest interest
+
+```{r}
+
+regression_df$ofhact_agree <-  relevel(regression_df$ofhact_agree,ref= "No")
+regression_df$ofhact_all <-  relevel(regression_df$ofhact_all,ref= "No")
+
+regression_df$GENFBACK_prevent_agree <-  relevel(regression_df$GENFBACK_prevent_agree,ref= "No")
+regression_df$GENFBACK_prevent_all <-  relevel(regression_df$GENFBACK_prevent_all,ref= "No")
+
+regression_df$GENFBACK_no_prevent_agree <-  relevel(regression_df$GENFBACK_no_prevent_agree,ref= "No")
+regression_df$GENFBACK_no_prevent_all <-  relevel(regression_df$GENFBACK_no_prevent_all,ref= "No")
+
+regression_df$GENFBACK_ancestry_agree <-  relevel(regression_df$GENFBACK_ancestry_agree,ref= "No")
+regression_df$GENFBACK_ancestry_all <-  relevel(regression_df$GENFBACK_ancestry_all,ref= "No")
+
+
 ```
 
 

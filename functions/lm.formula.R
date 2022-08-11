@@ -71,7 +71,6 @@ do.univariable.regression<- function(dataframe, outcome, independent.variable) {
       kbl(align='cccclcccccc',
           caption=paste("<b>Binomial logistic regression of",label(dataframe[[independent.variable]]),"predicting",label(dataframe[[outcome]]),"</b>",sep=" ")) %>%
       kable_styling(bootstrap_options = c("striped", "hover")) %>%
-
       print()
 
   }
@@ -121,14 +120,15 @@ do.univariable.regression<- function(dataframe, outcome, independent.variable) {
       kbl(align='cccclcccccc',
           caption=paste("<b>Binomial logistic regression of",label(dataframe[[independent.variable]]),"predicting",label(dataframe[[outcome]]),"</b>",sep=" ")) %>%
       kable_styling(bootstrap_options = c("striped", "hover")) %>%
-      
       print()
     
   }
-
-    
-  }
   
-        
+  if (class(dataframe[[outcome]])[1] == "factor" & length(levels(dataframe[[outcome]])) > 2){
+    
+    model <- multinom(glm.formula, data = dataframe)
+    print(glm.formula)
+    print(model)
+  }
 }
 
