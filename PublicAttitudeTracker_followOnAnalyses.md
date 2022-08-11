@@ -38,9 +38,9 @@ editor_options:
 ##         ./functions/lm.formula.R ./functions/load_package.R
 ## value   ?                        ?                         
 ## visible FALSE                    FALSE                     
-##         ./functions/set.largest.ref.R
-## value   ?                            
-## visible FALSE
+##         ./functions/multinom.p.extract.R ./functions/set.largest.ref.R
+## value   ?                                ?                            
+## visible FALSE                            FALSE
 ```
 
 ```
@@ -71,7 +71,7 @@ editor_options:
 
 ```
 ## 
-## To select columns from data: columns(mtcars, mpg, vs:carb)
+## To get total summary skip 'by' argument: take_all(mtcars, mean)
 ```
 
 ```
@@ -83,24 +83,6 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
-```
-
-```
-## The following object is masked from 'package:skimr':
-## 
-##     to_long
-```
-
-```
-## The following object is masked from 'package:purrr':
-## 
-##     transpose
-```
-
-```
-## 
-## Use 'expss_output_viewer()' to display tables in the RStudio Viewer.
-##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -118,18 +100,6 @@ editor_options:
 ## The following objects are masked from 'package:haven':
 ## 
 ##     is.labelled, read_spss
-```
-
-```
-## The following object is masked from 'package:skimr':
-## 
-##     contains
-```
-
-```
-## The following objects are masked from 'package:purrr':
-## 
-##     keep, modify, modify_if, when
 ```
 
 ```
@@ -153,6 +123,40 @@ editor_options:
 ## The following objects are masked from 'package:expss':
 ## 
 ##     fixed, regex
+```
+
+```
+## 
+## Attaching package: 'purrr'
+```
+
+```
+## The following objects are masked from 'package:expss':
+## 
+##     keep, modify, modify_if, when
+```
+
+```
+## The following object is masked from 'package:maditr':
+## 
+##     transpose
+```
+
+```
+## 
+## Attaching package: 'skimr'
+```
+
+```
+## The following object is masked from 'package:expss':
+## 
+##     contains
+```
+
+```
+## The following object is masked from 'package:maditr':
+## 
+##     to_long
 ```
 
 ```
@@ -215,12 +219,6 @@ editor_options:
 ## $kableExtra
 ## [1] 1 3 4
 ## 
-## $purrr
-## [1] 0 3 4
-## 
-## $skimr
-## [1] 2 1 3
-## 
 ## $readr
 ## [1] 2 0 2
 ## 
@@ -244,6 +242,15 @@ editor_options:
 ## 
 ## $nnet
 ## [1]  7  3 16
+## 
+## $broom
+## [1]  0  7 10
+## 
+## $purrr
+## [1] 0 3 4
+## 
+## $skimr
+## [1] 2 1 3
 ## 
 ## $dplyr
 ## [1] 1 0 7
@@ -3799,7 +3806,7 @@ Check this all worked as expected
 ```r
 factor_df %>% 
   select(starts_with("TRUST")) %>%
-  skim() %>%
+  skimr::skim() %>%
   select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
 ```
 
@@ -6793,10 +6800,14 @@ create table
 
 
 ```r
-for (i in outcomes){
-  for (x in dem.vars){
-    do.univariable.regression(regression_df,i,x)
-  }
+# for (i in outcomes){
+#   for (x in dem.vars){
+#     do.univariable.regression(regression_df,i,x)
+#   }
+# }
+
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"ofhact_agree",x)
 }
 ```
 
@@ -6896,6 +6907,52 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> -3.955208 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
+  </tr>
+</tbody>
+</table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of Sample frame (PV): IMD quintile within country predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> level.tested </th>
+   <th style="text-align:left;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> z value </th>
+   <th style="text-align:center;"> Pr(&gt;|z|) </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> (Intercept) </td>
+   <td style="text-align:left;"> 0.68 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> -2.636882 </td>
+   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> 1.03 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 3.128720 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
@@ -9173,523 +9230,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table># weights:  9 (4 variable)
-initial  value 3039.860203 
-final  value 2796.122390 
-converged
-[1] "ofhact_all ~ Black_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
+</table>
 
-Coefficients:
-       (Intercept) Black_filterYes
-Yes      0.4628990      -0.1665977
-Unsure  -0.6206394      -0.2265053
+```r
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_prevent_agree",x)
+}
+```
 
-Residual Deviance: 5592.245 
-AIC: 5600.245 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-final  value 2789.939016 
-converged
-[1] "ofhact_all ~ Asian_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) Asian_filterYes
-Yes      0.5004717      -0.3621653
-Unsure  -0.6775298       0.0447159
-
-Residual Deviance: 5579.878 
-AIC: 5587.878 
-# weights:  9 (4 variable)
-initial  value 2695.994556 
-final  value 2484.221338 
-converged
-[1] "ofhact_all ~ MDQuintile"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) MDQuintile
-Yes      0.3074916  0.0515009
-Unsure  -0.3331712 -0.1135869
-
-Residual Deviance: 4968.443 
-AIC: 4976.443 
-# weights:  24 (14 variable)
-initial  value 3039.860203 
-iter  10 value 2803.030924
-iter  20 value 2766.390552
-final  value 2766.390026 
-converged
-[1] "ofhact_all ~ AGE_BAND"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) AGE_BAND18-24 AGE_BAND25-34 AGE_BAND45-54 AGE_BAND55-64
-Yes      0.4706884    -0.5322386    0.05060388     0.1001708    -0.0353778
-Unsure  -0.3860082    -0.1943661   -0.05518276    -0.6166766    -0.4024740
-       AGE_BAND65-74 AGE_BAND75+
-Yes        0.1836804  -0.3931364
-Unsure    -0.6700467  -0.9079201
-
-Residual Deviance: 5532.78 
-AIC: 5560.78 
-# weights:  12 (6 variable)
-initial  value 3038.761590 
-iter  10 value 2788.517426
-final  value 2788.515317 
-converged
-[1] "ofhact_all ~ SEX"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) SEXIdentify in another way     SEXMale
-Yes      0.4395026                -0.03384404 -0.02282591
-Unsure  -0.5027161                 0.90840210 -0.41117071
-
-Residual Deviance: 5577.031 
-AIC: 5589.031 
-# weights:  42 (26 variable)
-initial  value 3035.465754 
-iter  10 value 2779.046948
-iter  20 value 2766.446629
-iter  30 value 2766.000550
-iter  40 value 2765.959403
-iter  40 value 2765.959385
-iter  40 value 2765.959385
-final  value 2765.959385 
-converged
-[1] "ofhact_all ~ ETHNICITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITYAny other Asian background
-Yes      0.5322164                          -0.5322172
-Unsure  -0.6405095                           0.2176482
-       ETHNICITYAny other Black background
-Yes                             -0.3780672
-Unsure                           0.1015106
-       ETHNICITYAny other single ethnic group
-Yes                                -0.5319285
-Unsure                            -11.4318009
-       ETHNICITYAny other White background ETHNICITYArab ETHNICITYBangladeshi
-Yes                              0.4342281   -0.53255661           -0.3718700
-Unsure                           0.1762000   -0.05242379           -0.4155479
-       ETHNICITYBlack African ETHNICITYBlack Caribbean ETHNICITYChinese
-Yes               -0.09267037               -0.5474827       -0.3826906
-Unsure            -0.25598168               -0.1818513        0.3845759
-       ETHNICITYIndian ETHNICITYMixed/Multiple ethnic groups ETHNICITYPakistani
-Yes         -0.1575256                             0.4232941         -0.8405222
-Unsure      -0.1197842                             0.6404970         -0.0732610
-
-Residual Deviance: 5531.919 
-AIC: 5583.919 
-# weights:  30 (18 variable)
-initial  value 3035.465754 
-iter  10 value 2781.878259
-iter  20 value 2772.897786
-final  value 2772.878892 
-converged
-[1] "ofhact_all ~ ETHNICITY_LFS"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITY_LFSAny other Asian background
-Yes      0.5711829                              -0.5711960
-Unsure  -0.6265233                               0.2036432
-       ETHNICITY_LFSBangladeshi
-Yes                  -0.4108441
-Unsure               -0.4295478
-       ETHNICITY_LFSBlack/African/Caribbean/Black British ETHNICITY_LFSChinese
-Yes                                            -0.2749185           -0.4216588
-Unsure                                         -0.2207745            0.3706041
-       ETHNICITY_LFSIndian ETHNICITY_LFSMixed/Multiple ethnic groups
-Yes             -0.1964850                                 0.3843137
-Unsure          -0.1337629                                 0.6265031
-       ETHNICITY_LFSOther ethnic group ETHNICITY_LFSPakistani
-Yes                         -0.5713509             -0.8794806
-Unsure                      -0.9829160             -0.0872596
-
-Residual Deviance: 5545.758 
-AIC: 5581.758 
-# weights:  36 (22 variable)
-initial  value 2928.900362 
-iter  10 value 2695.536903
-iter  20 value 2686.259501
-iter  30 value 2685.776514
-final  value 2685.775986 
-converged
-[1] "ofhact_all ~ NUMPEOPLE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NUMPEOPLE1 NUMPEOPLE10 NUMPEOPLE11  NUMPEOPLE3 NUMPEOPLE4
-Yes      0.5179459 -0.1243730   0.1751866    11.31018 -0.02209664 -0.0637878
-Unsure  -0.7003170  0.0822903 -10.9602491    12.52843  0.05981333  0.1672921
-        NUMPEOPLE5  NUMPEOPLE6   NUMPEOPLE7 NUMPEOPLE8  NUMPEOPLE9
-Yes    -0.12233487 -0.54612154 -0.007117315  -1.211086  -0.8056235
-Unsure  0.09172454 -0.04999383  0.007166401  -1.091439 -14.1818076
-
-Residual Deviance: 5371.552 
-AIC: 5415.552 
-# weights:  9 (4 variable)
-initial  value 2904.730891 
-iter  10 value 2684.037179
-iter  10 value 2684.037178
-final  value 2684.037178 
-converged
-[1] "ofhact_all ~ MARSTAT"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) MARSTATNeither
-Yes      0.4426405     -0.5414972
-Unsure  -0.6130826     -0.4973512
-
-Residual Deviance: 5368.074 
-AIC: 5376.074 
-# weights:  21 (12 variable)
-initial  value 3016.789345 
-iter  10 value 2777.915219
-final  value 2772.915025 
-converged
-[1] "ofhact_all ~ NumOwnChildrenU16HH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NumOwnChildrenU16HH1 NumOwnChildrenU16HH2
-Yes      0.4183207            0.1412749          -0.03534118
-Unsure  -0.7179134            0.1526414           0.27857893
-       NumOwnChildrenU16HH3 NumOwnChildrenU16HH4 NumOwnChildrenU16HH5
-Yes              0.04607583          -0.01326298           -0.4213855
-Unsure           0.02451755           0.43031717            0.7148146
-
-Residual Deviance: 5545.83 
-AIC: 5569.83 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 2786.559268
-iter  10 value 2786.559268
-final  value 2786.559268 
-converged
-[1] "ofhact_all ~ OwnChildU16OutsideHH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OwnChildU16OutsideHHU16 own child living elsewhere
-Yes      0.4169756                                          0.1599306
-Unsure  -0.6501026                                         -0.3554172
-
-Residual Deviance: 5573.119 
-AIC: 5581.119 
-# weights:  12 (6 variable)
-initial  value 3028.874080 
-iter  10 value 2784.266443
-final  value 2783.456127 
-converged
-[1] "ofhact_all ~ RELIGIOSITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIOSITYNot practising RELIGIOSITYPractising
-Yes      0.5162888                -0.1090811            -0.1987059
-Unsure  -0.5867948                -0.2346693            -0.1095494
-
-Residual Deviance: 5566.912 
-AIC: 5578.912 
-# weights:  27 (16 variable)
-initial  value 1920.374281 
-iter  10 value 1772.549815
-iter  20 value 1772.064883
-final  value 1772.064164 
-converged
-[1] "ofhact_all ~ RELIGION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIONBuddhism RELIGIONChristianity RELIGIONHinduism
-Yes      0.4251921       -0.6483862          -0.05813923       0.10545248
-Unsure  -0.6656304        0.4424468          -0.12806621      -0.02753134
-       RELIGIONIslam RELIGIONJudaism RELIGIONOther religion RELIGIONSikhism
-Yes       -0.4522199     -0.20206314             -0.7616893      -0.1627675
-Unsure    -0.1553469     -0.02749234             -0.1816553       0.7609765
-
-Residual Deviance: 3544.128 
-AIC: 3576.128 
-# weights:  15 (8 variable)
-initial  value 3013.493508 
-iter  10 value 2761.323074
-final  value 2756.611661 
-converged
-[1] "ofhact_all ~ QUALTYPE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)
-Yes      0.5793685
-Unsure  -0.5865248
-       QUALTYPEEducational qualifications but no vocational qualifications
-Yes                                                             -0.3134059
-Unsure                                                          -0.1246415
-       QUALTYPENeither educational nor vocational qualifications
-Yes                                                   -0.7110999
-Unsure                                                -0.3421552
-       QUALTYPEVocational qualifications but no educational qualifications
-Yes                                                             -0.4616519
-Unsure                                                          -1.2055977
-
-Residual Deviance: 5513.223 
-AIC: 5529.223 
-# weights:  12 (6 variable)
-initial  value 3026.676855 
-iter  10 value 2766.283493
-final  value 2766.178043 
-converged
-[1] "ofhact_all ~ EDUCATION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) EDUCATIONNo academic or vocational qualifications
-Yes      0.6712265                                        -0.8030003
-Unsure  -0.4640804                                        -0.4646642
-       EDUCATIONNon-degree level qualifications
-Yes                                  -0.3951978
-Unsure                               -0.3635407
-
-Residual Deviance: 5532.356 
-AIC: 5544.356 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 2769.064383
-final  value 2769.063905 
-converged
-[1] "ofhact_all ~ DEGREE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) DEGREEDegree educated
-Yes      0.2240072             0.4473628
-Unsure  -0.8422853             0.3779651
-
-Residual Deviance: 5538.128 
-AIC: 5546.128 
-# weights:  36 (22 variable)
-initial  value 3039.860203 
-iter  10 value 2790.543993
-iter  20 value 2769.986516
-iter  30 value 2769.299273
-final  value 2769.294840 
-converged
-[1] "ofhact_all ~ WorkingStatus_PrePandemic"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemicDoing something else
-Yes      0.5285015                                    -0.5284810
-Unsure  -0.5601498                                     0.4423727
-       WorkingStatus_PrePandemicFull-time student
-Yes                                   -0.49835200
-Unsure                                -0.05453409
-       WorkingStatus_PrePandemicLong-term sick or disabled
-Yes                                            -0.25820289
-Unsure                                         -0.09909438
-       WorkingStatus_PrePandemicLooking after family or home
-Yes                                              -0.38873584
-Unsure                                           -0.08420745
-       WorkingStatus_PrePandemicOn a government training scheme
-Yes                                                   -14.05610
-Unsure                                                -12.68098
-       WorkingStatus_PrePandemicOn maternity leave
-Yes                                      1.0809281
-Unsure                                  -0.1330012
-       WorkingStatus_PrePandemicRetired WorkingStatus_PrePandemicSelf employed
-Yes                         0.007534913                             -0.1731623
-Unsure                     -0.627414504                             -0.3900611
-       WorkingStatus_PrePandemicUnemployed
-Yes                             -0.5284988
-Unsure                           0.1424258
-       WorkingStatus_PrePandemicUnpaid worker in family business
-Yes                                                    10.844438
-Unsure                                                 -2.739765
-
-Residual Deviance: 5538.59 
-AIC: 5582.59 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2794.313105
-iter  10 value 2794.313102
-final  value 2794.313102 
-converged
-[1] "ofhact_all ~ WorkingStatus_PrePandemic_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemic_BinaryNot working
-Yes      0.5148985                                  -0.2355314
-Unsure  -0.6057003                                  -0.1624705
-
-Residual Deviance: 5588.626 
-AIC: 5596.626 
-# weights:  39 (24 variable)
-initial  value 3039.860203 
-iter  10 value 2794.539027
-iter  20 value 2774.189555
-iter  30 value 2773.556178
-final  value 2773.553800 
-converged
-[1] "ofhact_all ~ WorkingStatus"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatusDoing something else
-Yes      0.5346106                        -0.1779423
-Unsure  -0.5374392                         0.5374426
-       WorkingStatusFull-time student WorkingStatusLong-term sick or disabled
-Yes                        -0.5035220                            -0.188349513
-Unsure                     -0.1452409                             0.003343567
-       WorkingStatusLooking after family or home
-Yes                                   -0.4010982
-Unsure                                -0.1092008
-       WorkingStatusOn a government training scheme WorkingStatusOn furlough
-Yes                                       -1.227757                11.247653
-Unsure                                   -12.765789                -2.911613
-       WorkingStatusOn maternity leave WorkingStatusRetired
-Yes                          0.4462196          -0.03042809
-Unsure                      -0.5612431          -0.65119778
-       WorkingStatusSelf employed WorkingStatusUnemployed
-Yes                    -0.1291404              -0.5964659
-Unsure                 -0.2734899              -0.1164642
-       WorkingStatusUnpaid worker in family business
-Yes                                        11.247653
-Unsure                                     -2.911613
-
-Residual Deviance: 5547.108 
-AIC: 5595.108 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2793.451725
-iter  10 value 2793.451722
-final  value 2793.451722 
-converged
-[1] "ofhact_all ~ WorkingStatus_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_BinaryNot working
-Yes      0.5235784                      -0.2485646
-Unsure  -0.5727539                      -0.2448319
-
-Residual Deviance: 5586.903 
-AIC: 5594.903 
-# weights:  96 (62 variable)
-initial  value 3039.860203 
-iter  10 value 2776.311163
-iter  20 value 2756.708719
-iter  30 value 2753.793517
-iter  40 value 2752.885434
-iter  50 value 2752.867270
-iter  50 value 2752.867252
-iter  50 value 2752.867252
-final  value 2752.867252 
-converged
-[1] "ofhact_all ~ OCCUPATION_NSSEC"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OCCUPATION_NSSEC-9
-Yes      0.5679874         -0.3382429
-Unsure  -0.6159838         -0.3582437
-       OCCUPATION_NSSEC1.1: Large employers and higher managerial and administrative occupations
-Yes                                                                                    0.1739509
-Unsure                                                                                -0.7703123
-       OCCUPATION_NSSEC1.2: Higher professional occupations OCCUPATION_NSSEC10
-Yes                                               0.2217870          14.937841
-Unsure                                            0.2530796          -3.164228
-       OCCUPATION_NSSEC11.1 OCCUPATION_NSSEC12.1 OCCUPATION_NSSEC12.2
-Yes               -0.973458          -0.56799961            0.8183021
-Unsure           -16.271382          -0.07715238            1.0214420
-       OCCUPATION_NSSEC12.4 OCCUPATION_NSSEC12.6 OCCUPATION_NSSEC12.7
-Yes               13.800808            -17.32593            -17.32593
-Unsure            -3.522252            -13.21671            -13.21671
-       OCCUPATION_NSSEC13.1 OCCUPATION_NSSEC13.2 OCCUPATION_NSSEC13.4
-Yes              -0.5687752            -6.852974            0.5306125
-Unsure            0.6151951            18.113832          -11.8111901
-       OCCUPATION_NSSEC3: Intermediate occupations OCCUPATION_NSSEC3.1
-Yes                                     -0.1397936          -0.8192968
-Unsure                                   0.1528540         -14.3650379
-       OCCUPATION_NSSEC3.2
-Yes               0.818301
-Unsure          -11.353431
-       OCCUPATION_NSSEC4: Small employers and own account workers
-Yes                                                    0.02984935
-Unsure                                                -0.07716281
-       OCCUPATION_NSSEC4.1 OCCUPATION_NSSEC4.2 OCCUPATION_NSSEC4.3
-Yes            -0.05716364         -0.05717324         -15.2705616
-Unsure         -1.17578651          0.21052078           0.6161263
-       OCCUPATION_NSSEC5: Lower supervisory and technical occupations
-Yes                                                       -0.07736456
-Unsure                                                    -0.48263012
-       OCCUPATION_NSSEC6: Semi-routine occupations
-Yes                                     -0.1063526
-Unsure                                   0.1903162
-       OCCUPATION_NSSEC7: Routine occupations OCCUPATION_NSSEC7.1
-Yes                                -0.6286134          -0.3738324
-Unsure                             -0.3714023          -0.6367803
-       OCCUPATION_NSSEC7.2 OCCUPATION_NSSEC7.3
-Yes              0.4128415          -0.0979753
-Unsure           0.2105127          -0.3003050
-       OCCUPATION_NSSEC8: Never worked and long-term unemployed
-Yes                                                 -0.51797675
-Unsure                                               0.04346444
-       OCCUPATION_NSSEC8.1 OCCUPATION_NSSEC9.1
-Yes             -0.5680075          -0.1625252
-Unsure         -13.0262940         -14.6404800
-       OCCUPATION_NSSECFull time students
-Yes                            -0.4641909
-Unsure                          0.1706725
-
-Residual Deviance: 5505.735 
-AIC: 5629.735 
-# weights:  12 (6 variable)
-initial  value 3033.268529 
-iter  10 value 2783.385892
-final  value 2782.707742 
-converged
-[1] "ofhact_all ~ TENURE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) TENUREOwn it but with a mortgage to pay off
-Yes      0.3304857                                   0.1781539
-Unsure  -0.6299210                                   0.1203406
-       TENUREOwn it outright (no mortgage to pay off)
-Yes                                         0.1494679
-Unsure                                     -0.3271843
-
-Residual Deviance: 5565.415 
-AIC: 5577.415 
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of Is this a black respondent? predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say </b></caption>
@@ -9786,6 +9334,52 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> -1.22614 </td>
    <td style="text-align:center;"> 0.22 </td>
    <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of Sample frame (PV): IMD quintile within country predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> level.tested </th>
+   <th style="text-align:left;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> z value </th>
+   <th style="text-align:center;"> Pr(&gt;|z|) </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> (Intercept) </td>
+   <td style="text-align:left;"> 2.31 </td>
+   <td style="text-align:center;"> 2.82 </td>
+   <td style="text-align:center;"> 3.43 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 10.274886 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> 1.03 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 2.665348 </td>
+   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
@@ -12063,525 +11657,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table># weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1891.672972
-final  value 1891.672704 
-converged
-[1] "GENFBACK_prevent_all ~ Black_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
+</table>
 
-Coefficients:
-       (Intercept) Black_filterYes
-Yes      1.6974117     -0.27881127
-Unsure  -0.6616958      0.07442424
+```r
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_no_prevent_agree",x)
+}
+```
 
-Residual Deviance: 3783.345 
-AIC: 3791.345 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1894.143213
-final  value 1894.138863 
-converged
-[1] "GENFBACK_prevent_all ~ Asian_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) Asian_filterYes
-Yes      1.6469086      -0.0469273
-Unsure  -0.6992262       0.2455591
-
-Residual Deviance: 3788.278 
-AIC: 3796.278 
-# weights:  9 (4 variable)
-initial  value 2695.994556 
-iter  10 value 1627.329096
-final  value 1627.143548 
-converged
-[1] "GENFBACK_prevent_all ~ MDQuintile"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)  MDQuintile
-Yes      1.5192802  0.06654058
-Unsure  -0.4611812 -0.08441043
-
-Residual Deviance: 3254.287 
-AIC: 3262.287 
-# weights:  24 (14 variable)
-initial  value 3039.860203 
-iter  10 value 1896.552934
-iter  20 value 1881.338451
-final  value 1881.337222 
-converged
-[1] "GENFBACK_prevent_all ~ AGE_BAND"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) AGE_BAND18-24 AGE_BAND25-34 AGE_BAND45-54 AGE_BAND55-64
-Yes      1.9228747    -0.5078361    -0.1681313   -0.04259534   -0.34679546
-Unsure  -0.4728889    -0.2892669    -0.1949435   -0.18389860    0.05086229
-       AGE_BAND65-74 AGE_BAND75+
-Yes       -0.6840517  -0.7417617
-Unsure    -0.4354102  -0.3220474
-
-Residual Deviance: 3762.674 
-AIC: 3790.674 
-# weights:  12 (6 variable)
-initial  value 3038.761590 
-iter  10 value 1895.082121
-final  value 1895.077724 
-converged
-[1] "GENFBACK_prevent_all ~ SEX"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) SEXIdentify in another way     SEXMale
-Yes      1.6651441                  0.1231342 -0.06428311
-Unsure  -0.6126876                  0.6081760 -0.07513464
-
-Residual Deviance: 3790.155 
-AIC: 3802.155 
-# weights:  42 (26 variable)
-initial  value 3035.465754 
-iter  10 value 1893.339974
-iter  20 value 1869.129212
-iter  30 value 1868.811013
-final  value 1868.798657 
-converged
-[1] "GENFBACK_prevent_all ~ ETHNICITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITYAny other Asian background
-Yes      1.6513360                           0.2785762
-Unsure  -0.7856705                           0.3802096
-       ETHNICITYAny other Black background
-Yes                             -0.4473510
-Unsure                           0.9398253
-       ETHNICITYAny other single ethnic group
-Yes                                 -0.958104
-Unsure                             -12.948185
-       ETHNICITYAny other White background ETHNICITYArab ETHNICITYBangladeshi
-Yes                              0.8105682     11.078300           -0.5787043
-Unsure                           0.5849918     -2.212212            0.1666258
-       ETHNICITYBlack African ETHNICITYBlack Caribbean ETHNICITYChinese
-Yes               -0.26136429               -0.1166189       0.09785907
-Unsure            -0.06653024                0.5112364       0.60335362
-       ETHNICITYIndian ETHNICITYMixed/Multiple ethnic groups ETHNICITYPakistani
-Yes         0.02262395                             0.9877217         -0.2109562
-Unsure      0.06175899                            -0.3129138          0.6033484
-
-Residual Deviance: 3737.597 
-AIC: 3789.597 
-# weights:  30 (18 variable)
-initial  value 3035.465754 
-iter  10 value 1897.487067
-iter  20 value 1877.627386
-iter  30 value 1877.500710
-final  value 1877.499618 
-converged
-[1] "GENFBACK_prevent_all ~ ETHNICITY_LFS"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITY_LFSAny other Asian background
-Yes      1.7103648                               0.2196425
-Unsure  -0.7476742                               0.3423152
-       ETHNICITY_LFSBangladeshi
-Yes                  -0.6377179
-Unsure                0.1285740
-       ETHNICITY_LFSBlack/African/Caribbean/Black British ETHNICITY_LFSChinese
-Yes                                            -0.2917320           0.03882085
-Unsure                                          0.1599133           0.56533960
-       ETHNICITY_LFSIndian ETHNICITY_LFSMixed/Multiple ethnic groups
-Yes            -0.03640968                                 0.9287296
-Unsure          0.02369201                                -0.3510963
-       ETHNICITY_LFSOther ethnic group ETHNICITY_LFSPakistani
-Yes                           -0.20629             -0.2699540
-Unsure                       -10.89724              0.5653953
-
-Residual Deviance: 3754.999 
-AIC: 3790.999 
-# weights:  36 (22 variable)
-initial  value 2928.900362 
-iter  10 value 1820.361885
-iter  20 value 1804.139141
-iter  30 value 1803.776045
-final  value 1803.775691 
-converged
-[1] "GENFBACK_prevent_all ~ NUMPEOPLE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)  NUMPEOPLE1 NUMPEOPLE10 NUMPEOPLE11 NUMPEOPLE3 NUMPEOPLE4
-Yes      1.6403080 -0.12534384  -0.9472438   12.334683  0.2208353 0.01424347
-Unsure  -0.7389491 -0.05800849 -13.7649572   -2.885753  0.3160967 0.11990992
-         NUMPEOPLE5 NUMPEOPLE6 NUMPEOPLE7  NUMPEOPLE8  NUMPEOPLE9
-Yes    -0.005388687 0.04916364 0.08244709   0.5569155  -0.7240799
-Unsure  0.077547925 0.65192750 0.73893869 -10.8709336 -14.8947703
-
-Residual Deviance: 3607.551 
-AIC: 3651.551 
-# weights:  9 (4 variable)
-initial  value 2904.730891 
-iter  10 value 1803.255417
-iter  10 value 1803.255411
-final  value 1803.255411 
-converged
-[1] "GENFBACK_prevent_all ~ MARSTAT"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) MARSTATNeither
-Yes      1.6899264     -0.6642875
-Unsure  -0.6649757      0.1993264
-
-Residual Deviance: 3606.511 
-AIC: 3614.511 
-# weights:  21 (12 variable)
-initial  value 3016.789345 
-iter  10 value 1868.362579
-iter  20 value 1867.442959
-final  value 1867.439053 
-converged
-[1] "GENFBACK_prevent_all ~ NumOwnChildrenU16HH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NumOwnChildrenU16HH1 NumOwnChildrenU16HH2
-Yes      1.6007743            0.0865152            0.3271551
-Unsure  -0.7468899            0.1446523            0.6134171
-       NumOwnChildrenU16HH3 NumOwnChildrenU16HH4 NumOwnChildrenU16HH5
-Yes              0.06685424            0.5995671            -2.293509
-Unsure           0.05369246            1.8490677            -9.476966
-
-Residual Deviance: 3734.878 
-AIC: 3758.878 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 1887.928792
-final  value 1887.927618 
-converged
-[1] "GENFBACK_prevent_all ~ OwnChildU16OutsideHH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OwnChildU16OutsideHHU16 own child living elsewhere
-Yes      1.6486581                                         -0.2623620
-Unsure  -0.6286095                                         -0.3522178
-
-Residual Deviance: 3775.855 
-AIC: 3783.855 
-# weights:  12 (6 variable)
-initial  value 3028.874080 
-iter  10 value 1885.746631
-iter  20 value 1880.141930
-final  value 1880.141773 
-converged
-[1] "GENFBACK_prevent_all ~ RELIGIOSITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIOSITYNot practising RELIGIOSITYPractising
-Yes      1.7526138               -0.02568144            -0.3109204
-Unsure  -0.6709241                0.27836243            -0.1012115
-
-Residual Deviance: 3760.284 
-AIC: 3772.284 
-# weights:  27 (16 variable)
-initial  value 1920.374281 
-iter  10 value 1223.915046
-iter  20 value 1223.296099
-iter  30 value 1223.291600
-iter  30 value 1223.291594
-iter  30 value 1223.291594
-final  value 1223.291594 
-converged
-[1] "GENFBACK_prevent_all ~ RELIGION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIONBuddhism RELIGIONChristianity RELIGIONHinduism
-Yes      1.7131361        0.6842840          -0.18266445       0.31122014
-Unsure  -0.6390659        0.6383742           0.03447658       0.07946424
-       RELIGIONIslam RELIGIONJudaism RELIGIONOther religion RELIGIONSikhism
-Yes       -0.4192168       -1.530792              0.7718454      -0.2467931
-Unsure     0.2481963      -13.037838              1.3323742      -0.4595121
-
-Residual Deviance: 2446.583 
-AIC: 2478.583 
-# weights:  15 (8 variable)
-initial  value 3013.493508 
-iter  10 value 1867.450601
-final  value 1861.615535 
-converged
-[1] "GENFBACK_prevent_all ~ QUALTYPE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)
-Yes      1.7370361
-Unsure  -0.7485952
-       QUALTYPEEducational qualifications but no vocational qualifications
-Yes                                                            -0.09004068
-Unsure                                                          0.22319335
-       QUALTYPENeither educational nor vocational qualifications
-Yes                                                    -0.868663
-Unsure                                                  0.117349
-       QUALTYPEVocational qualifications but no educational qualifications
-Yes                                                             -0.5239548
-Unsure                                                           0.2966244
-
-Residual Deviance: 3723.231 
-AIC: 3739.231 
-# weights:  12 (6 variable)
-initial  value 3026.676855 
-iter  10 value 1871.952265
-final  value 1859.301125 
-converged
-[1] "GENFBACK_prevent_all ~ EDUCATION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) EDUCATIONNo academic or vocational qualifications
-Yes      1.8941208                                        -1.0259365
-Unsure  -0.8653291                                         0.2342487
-       EDUCATIONNon-degree level qualifications
-Yes                                  -0.3854564
-Unsure                                0.3514033
-
-Residual Deviance: 3718.602 
-AIC: 3730.602 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 1866.401068
-final  value 1865.776009 
-converged
-[1] "GENFBACK_prevent_all ~ DEGREE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) DEGREEDegree educated
-Yes      1.4157370             0.4783294
-Unsure  -0.5350203            -0.3307395
-
-Residual Deviance: 3731.552 
-AIC: 3739.552 
-# weights:  36 (22 variable)
-initial  value 3039.860203 
-iter  10 value 1896.937325
-iter  20 value 1880.865192
-iter  30 value 1880.426242
-final  value 1880.424388 
-converged
-[1] "GENFBACK_prevent_all ~ WorkingStatus_PrePandemic"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemicDoing something else
-Yes      1.7730654                                    -0.7922519
-Unsure  -0.6053318                                     0.1998538
-       WorkingStatus_PrePandemicFull-time student
-Yes                                    -0.1274452
-Unsure                                 -0.1990373
-       WorkingStatus_PrePandemicLong-term sick or disabled
-Yes                                             -0.1948760
-Unsure                                          -0.1678603
-       WorkingStatus_PrePandemicLooking after family or home
-Yes                                               -0.2755443
-Unsure                                             0.4111822
-       WorkingStatus_PrePandemicOn a government training scheme
-Yes                                                    10.32485
-Unsure                                                 12.70326
-       WorkingStatus_PrePandemicOn maternity leave
-Yes                                    -0.06832357
-Unsure                                -13.54077920
-       WorkingStatus_PrePandemicRetired WorkingStatus_PrePandemicSelf employed
-Yes                          -0.5038278                             0.05506083
-Unsure                       -0.3525069                             0.08207231
-       WorkingStatus_PrePandemicUnemployed
-Yes                             -0.3867723
-Unsure                           0.2999409
-       WorkingStatus_PrePandemicUnpaid worker in family business
-Yes                                                    10.110458
-Unsure                                                 -2.856261
-
-Residual Deviance: 3760.849 
-AIC: 3804.849 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1889.004189
-final  value 1888.991183 
-converged
-[1] "GENFBACK_prevent_all ~ WorkingStatus_PrePandemic_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemic_BinaryNot working
-Yes      1.7796812                                 -0.36719649
-Unsure  -0.6040194                                 -0.09473006
-
-Residual Deviance: 3777.982 
-AIC: 3785.982 
-# weights:  39 (24 variable)
-initial  value 3039.860203 
-iter  10 value 1921.301252
-iter  20 value 1880.391899
-iter  30 value 1879.798137
-final  value 1879.791713 
-converged
-[1] "GENFBACK_prevent_all ~ WorkingStatus"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatusDoing something else
-Yes      1.8018602                        -0.7032422
-Unsure  -0.5558209                         0.3326901
-       WorkingStatusFull-time student WorkingStatusLong-term sick or disabled
-Yes                        -0.1710315                             -0.16213528
-Unsure                     -0.3470418                             -0.06321095
-       WorkingStatusLooking after family or home
-Yes                                   -0.2977868
-Unsure                                 0.2303970
-       WorkingStatusOn a government training scheme WorkingStatusOn furlough
-Yes                                        12.07069                10.442684
-Unsure                                     13.73545                -2.953237
-       WorkingStatusOn maternity leave WorkingStatusRetired
-Yes                         -0.1924263           -0.5522119
-Unsure                     -14.1435587           -0.4396132
-       WorkingStatusSelf employed WorkingStatusUnemployed
-Yes                  -0.010107439              -0.4947066
-Unsure               -0.003792335               0.1283774
-       WorkingStatusUnpaid worker in family business
-Yes                                        10.442684
-Unsure                                     -2.953237
-
-Residual Deviance: 3759.583 
-AIC: 3807.583 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1888.257651
-final  value 1888.232371 
-converged
-[1] "GENFBACK_prevent_all ~ WorkingStatus_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_BinaryNot working
-Yes      1.8005312                      -0.4036551
-Unsure  -0.5651375                      -0.1826681
-
-Residual Deviance: 3776.465 
-AIC: 3784.465 
-# weights:  96 (62 variable)
-initial  value 3039.860203 
-iter  10 value 1888.791325
-iter  20 value 1844.331141
-iter  30 value 1841.838727
-iter  40 value 1841.049092
-iter  50 value 1841.025763
-final  value 1841.025732 
-converged
-[1] "GENFBACK_prevent_all ~ OCCUPATION_NSSEC"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OCCUPATION_NSSEC-9
-Yes      1.8038850        -0.69781087
-Unsure  -0.7691352        -0.03061656
-       OCCUPATION_NSSEC1.1: Large employers and higher managerial and administrative occupations
-Yes                                                                                   0.46481091
-Unsure                                                                                0.07600544
-       OCCUPATION_NSSEC1.2: Higher professional occupations OCCUPATION_NSSEC10
-Yes                                               0.2416654           14.87564
-Unsure                                           -0.6861485           16.75545
-       OCCUPATION_NSSEC11.1 OCCUPATION_NSSEC12.1 OCCUPATION_NSSEC12.2
-Yes               -0.417596             15.99233           -0.9565831
-Unsure           -15.554842             17.17905            0.7691038
-       OCCUPATION_NSSEC12.4 OCCUPATION_NSSEC12.6 OCCUPATION_NSSEC12.7
-Yes               12.277060            -25.40005            12.277060
-Unsure            -3.115739            -18.49258            -3.115739
-       OCCUPATION_NSSEC13.1 OCCUPATION_NSSEC13.2 OCCUPATION_NSSEC13.4
-Yes               14.616919            12.277060            -0.705282
-Unsure            -3.149309            -3.115739           -16.146914
-       OCCUPATION_NSSEC3: Intermediate occupations OCCUPATION_NSSEC3.1
-Yes                                   -0.008580443           -1.398400
-Unsure                                 0.529917938           -1.022625
-       OCCUPATION_NSSEC3.2
-Yes               15.99233
-Unsure            17.17905
-       OCCUPATION_NSSEC4: Small employers and own account workers
-Yes                                                     0.1669407
-Unsure                                                 -0.1181652
-       OCCUPATION_NSSEC4.1 OCCUPATION_NSSEC4.2 OCCUPATION_NSSEC4.3
-Yes             -0.2778190           12.355955           14.204331
-Unsure           0.9514594           -2.201375           -3.279783
-       OCCUPATION_NSSEC5: Lower supervisory and technical occupations
-Yes                                                        -0.1944345
-Unsure                                                     -0.2604658
-       OCCUPATION_NSSEC6: Semi-routine occupations
-Yes                                    -0.04926373
-Unsure                                  0.56149904
-       OCCUPATION_NSSEC7: Routine occupations OCCUPATION_NSSEC7.1
-Yes                               -0.85369842         -0.33752031
-Unsure                             0.04090103          0.07601848
-       OCCUPATION_NSSEC7.2 OCCUPATION_NSSEC7.3
-Yes             -0.2998089          -0.0991427
-Unsure           0.7691162           0.7691146
-       OCCUPATION_NSSEC8: Never worked and long-term unemployed
-Yes                                                  -0.3375462
-Unsure                                               -0.3294772
-       OCCUPATION_NSSEC8.1 OCCUPATION_NSSEC9.1
-Yes               13.23728           -0.417596
-Unsure            15.81026          -15.554842
-       OCCUPATION_NSSECFull time students
-Yes                          -0.004907521
-Unsure                        0.272690513
-
-Residual Deviance: 3682.051 
-AIC: 3806.051 
-# weights:  12 (6 variable)
-initial  value 3033.268529 
-iter  10 value 1885.654532
-iter  20 value 1881.837341
-final  value 1881.835154 
-converged
-[1] "GENFBACK_prevent_all ~ TENURE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) TENUREOwn it but with a mortgage to pay off
-Yes      1.5070439                                   0.4236410
-Unsure  -0.7424722                                   0.3465766
-       TENUREOwn it outright (no mortgage to pay off)
-Yes                                        0.02640813
-Unsure                                    -0.02666086
-
-Residual Deviance: 3763.67 
-AIC: 3775.67 
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of Is this a black respondent? predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
@@ -12677,6 +11760,52 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.3077856 </td>
    <td style="text-align:center;"> 0.758 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of Sample frame (PV): IMD quintile within country predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> level.tested </th>
+   <th style="text-align:left;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> z value </th>
+   <th style="text-align:center;"> Pr(&gt;|z|) </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> (Intercept) </td>
+   <td style="text-align:left;"> 1.50 </td>
+   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 2.13 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 6.542240 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> 0.96 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.698445 </td>
+   <td style="text-align:center;"> 0.485 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
@@ -14955,523 +14084,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table># weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2379.079177
-iter  10 value 2379.079176
-final  value 2379.079176 
-converged
-[1] "GENFBACK_no_prevent_all ~ Black_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
+</table>
 
-Coefficients:
-       (Intercept) Black_filterYes
-Yes      0.9804456      0.02517423
-Unsure  -0.8412835      0.01344052
+```r
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_ancestry_agree",x)
+}
+```
 
-Residual Deviance: 4758.158 
-AIC: 4766.158 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2377.535751
-final  value 2377.535349 
-converged
-[1] "GENFBACK_no_prevent_all ~ Asian_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) Asian_filterYes
-Yes      0.9607069       0.1275556
-Unsure  -0.9010196       0.3011910
-
-Residual Deviance: 4755.071 
-AIC: 4763.071 
-# weights:  9 (4 variable)
-initial  value 2695.994556 
-iter  10 value 2099.274348
-final  value 2099.273553 
-converged
-[1] "GENFBACK_no_prevent_all ~ MDQuintile"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)  MDQuintile
-Yes       1.019678 -0.01135258
-Unsure   -0.572281 -0.11155915
-
-Residual Deviance: 4198.547 
-AIC: 4206.547 
-# weights:  24 (14 variable)
-initial  value 3039.860203 
-iter  10 value 2389.879287
-iter  20 value 2367.632319
-final  value 2367.632194 
-converged
-[1] "GENFBACK_no_prevent_all ~ AGE_BAND"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) AGE_BAND18-24 AGE_BAND25-34 AGE_BAND45-54 AGE_BAND55-64
-Yes      1.1736847   -0.30990971   -0.10607792   -0.01771393    -0.3358747
-Unsure  -0.7427339    0.09507464   -0.08941034   -0.26626761    -0.1140499
-       AGE_BAND65-74 AGE_BAND75+
-Yes       -0.3654738  -0.6260577
-Unsure    -0.1086380  -0.4204178
-
-Residual Deviance: 4735.264 
-AIC: 4763.264 
-# weights:  12 (6 variable)
-initial  value 3038.761590 
-iter  10 value 2375.689704
-final  value 2375.688721 
-converged
-[1] "GENFBACK_no_prevent_all ~ SEX"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) SEXIdentify in another way    SEXMale
-Yes      0.9244660                  0.8665780  0.1343479
-Unsure  -0.7900243                  0.7889879 -0.1244805
-
-Residual Deviance: 4751.377 
-AIC: 4763.377 
-# weights:  42 (26 variable)
-initial  value 3035.465754 
-iter  10 value 2371.804584
-iter  20 value 2357.716288
-iter  30 value 2357.389631
-iter  40 value 2357.362504
-iter  40 value 2357.362490
-iter  40 value 2357.362490
-final  value 2357.362490 
-converged
-[1] "GENFBACK_no_prevent_all ~ ETHNICITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITYAny other Asian background
-Yes      0.8876175                           0.6705256
-Unsure  -0.9297112                           0.5242461
-       ETHNICITYAny other Black background
-Yes                             -0.4176112
-Unsure                           0.5730391
-       ETHNICITYAny other single ethnic group
-Yes                                -0.1945528
-Unsure                            -12.3998179
-       ETHNICITYAny other White background ETHNICITYArab ETHNICITYBangladeshi
-Yes                              0.6208936     12.209805           -0.1048582
-Unsure                           0.1087312     -2.121205            0.1030302
-       ETHNICITYBlack African ETHNICITYBlack Caribbean ETHNICITYChinese
-Yes                0.17548806               0.09321055      -0.21316169
-Unsure             0.03071513               0.09936469       0.03177187
-       ETHNICITYIndian ETHNICITYMixed/Multiple ethnic groups ETHNICITYPakistani
-Yes          0.2584611                            0.27553325          0.3445282
-Unsure       0.3166076                            0.01342451          0.6577772
-
-Residual Deviance: 4714.725 
-AIC: 4766.725 
-# weights:  30 (18 variable)
-initial  value 3035.465754 
-iter  10 value 2375.352681
-iter  20 value 2366.450604
-iter  30 value 2366.313622
-final  value 2366.312856 
-converged
-[1] "GENFBACK_no_prevent_all ~ ETHNICITY_LFS"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITY_LFSAny other Asian background
-Yes      0.9400092                               0.6181531
-Unsure  -0.9225586                               0.5170962
-       ETHNICITY_LFSBangladeshi
-Yes                 -0.15729092
-Unsure               0.09585137
-       ETHNICITY_LFSBlack/African/Caribbean/Black British ETHNICITY_LFSChinese
-Yes                                            0.06550955          -0.26554996
-Unsure                                         0.09481408           0.02460892
-       ETHNICITY_LFSIndian ETHNICITY_LFSMixed/Multiple ethnic groups
-Yes              0.2060622                               0.223166245
-Unsure           0.3094398                               0.006338648
-       ETHNICITY_LFSOther ethnic group ETHNICITY_LFSPakistani
-Yes                          0.5640568              0.2920989
-Unsure                     -11.1068333              0.6505961
-
-Residual Deviance: 4732.626 
-AIC: 4768.626 
-# weights:  36 (22 variable)
-initial  value 2928.900362 
-iter  10 value 2291.279449
-iter  20 value 2279.210530
-iter  30 value 2278.775652
-final  value 2278.775266 
-converged
-[1] "GENFBACK_no_prevent_all ~ NUMPEOPLE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)  NUMPEOPLE1 NUMPEOPLE10 NUMPEOPLE11 NUMPEOPLE3 NUMPEOPLE4
-Yes      0.8987479 -0.06731591    11.86779    12.35796  0.3663586 0.03555947
-Unsure  -0.8947836 -0.26498470    12.96816    -2.51245  0.3048153 0.10633159
-       NUMPEOPLE5    NUMPEOPLE6 NUMPEOPLE7 NUMPEOPLE8  NUMPEOPLE9
-Yes     0.4541093 -0.0007988712  0.4134407  0.3540162  -0.6110733
-Unsure  0.3017257  0.2886606609  0.5583215  0.2016676 -12.9981019
-
-Residual Deviance: 4557.551 
-AIC: 4601.551 
-# weights:  9 (4 variable)
-initial  value 2904.730891 
-final  value 2281.324169 
-converged
-[1] "GENFBACK_no_prevent_all ~ MARSTAT"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) MARSTATNeither
-Yes      0.9900271    -0.32409805
-Unsure  -0.8528789     0.04628692
-
-Residual Deviance: 4562.648 
-AIC: 4570.648 
-# weights:  21 (12 variable)
-initial  value 3016.789345 
-iter  10 value 2360.324758
-iter  20 value 2352.763573
-final  value 2352.756484 
-converged
-[1] "GENFBACK_no_prevent_all ~ NumOwnChildrenU16HH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NumOwnChildrenU16HH1 NumOwnChildrenU16HH2
-Yes      0.9466927            0.1725458           0.09842623
-Unsure  -0.9067944            0.2136807           0.27422240
-       NumOwnChildrenU16HH3 NumOwnChildrenU16HH4 NumOwnChildrenU16HH5
-Yes               0.3060411             1.247689           -0.2536899
-Unsure           -0.1227599             2.002024           -8.0180595
-
-Residual Deviance: 4705.513 
-AIC: 4729.513 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-final  value 2368.268813 
-converged
-[1] "GENFBACK_no_prevent_all ~ OwnChildU16OutsideHH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OwnChildU16OutsideHHU16 own child living elsewhere
-Yes      0.9876633                                        -0.07748109
-Unsure  -0.8415699                                        -0.01586634
-
-Residual Deviance: 4736.538 
-AIC: 4744.538 
-# weights:  12 (6 variable)
-initial  value 3028.874080 
-iter  10 value 2367.078202
-final  value 2366.869150 
-converged
-[1] "GENFBACK_no_prevent_all ~ RELIGIOSITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIOSITYNot practising RELIGIOSITYPractising
-Yes      0.9533848                0.08491969            0.05779230
-Unsure  -0.8723728                0.10807238            0.03434092
-
-Residual Deviance: 4733.738 
-AIC: 4745.738 
-# weights:  27 (16 variable)
-initial  value 1920.374281 
-iter  10 value 1496.549609
-iter  20 value 1495.582727
-final  value 1495.576642 
-converged
-[1] "GENFBACK_no_prevent_all ~ RELIGION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIONBuddhism RELIGIONChristianity RELIGIONHinduism
-Yes      0.9754679        0.6339972           0.09402707        0.8368956
-Unsure  -0.8366566        0.1434043           0.13686709        0.7031119
-       RELIGIONIslam RELIGIONJudaism RELIGIONOther religion RELIGIONSikhism
-Yes       -0.1399041      -0.7931428             -0.1281639       0.2141115
-Unsure    -0.1107303     -12.5685979              1.3474812       0.2770295
-
-Residual Deviance: 2991.153 
-AIC: 3023.153 
-# weights:  15 (8 variable)
-initial  value 3013.493508 
-iter  10 value 2357.866581
-final  value 2347.890904 
-converged
-[1] "GENFBACK_no_prevent_all ~ QUALTYPE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)
-Yes      1.1028969
-Unsure  -0.8430392
-       QUALTYPEEducational qualifications but no vocational qualifications
-Yes                                                            -0.24866229
-Unsure                                                          0.01502305
-       QUALTYPENeither educational nor vocational qualifications
-Yes                                                   -0.6349042
-Unsure                                                -0.1485748
-       QUALTYPEVocational qualifications but no educational qualifications
-Yes                                                             -0.1125451
-Unsure                                                           0.2236494
-
-Residual Deviance: 4695.782 
-AIC: 4711.782 
-# weights:  12 (6 variable)
-initial  value 3026.676855 
-iter  10 value 2356.647483
-final  value 2356.121891 
-converged
-[1] "GENFBACK_no_prevent_all ~ EDUCATION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) EDUCATIONNo academic or vocational qualifications
-Yes       1.139878                                       -0.67191045
-Unsure   -0.943916                                       -0.04759617
-       EDUCATIONNon-degree level qualifications
-Yes                                  -0.2407667
-Unsure                                0.2088785
-
-Residual Deviance: 4712.244 
-AIC: 4724.244 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 2359.077608
-final  value 2359.077559 
-converged
-[1] "GENFBACK_no_prevent_all ~ DEGREE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) DEGREEDegree educated
-Yes      0.8397684             0.3002260
-Unsure  -0.7732563            -0.1701639
-
-Residual Deviance: 4718.155 
-AIC: 4726.155 
-# weights:  36 (22 variable)
-initial  value 3039.860203 
-iter  10 value 2387.105015
-iter  20 value 2364.081005
-iter  30 value 2363.616248
-final  value 2363.611654 
-converged
-[1] "GENFBACK_no_prevent_all ~ WorkingStatus_PrePandemic"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemicDoing something else
-Yes      1.0484322                                    -1.0484190
-Unsure  -0.8916714                                     0.3808679
-       WorkingStatus_PrePandemicFull-time student
-Yes                                    -0.1094462
-Unsure                                  0.3361427
-       WorkingStatus_PrePandemicLong-term sick or disabled
-Yes                                            0.178792896
-Unsure                                         0.004357693
-       WorkingStatus_PrePandemicLooking after family or home
-Yes                                               -0.2011218
-Unsure                                             0.4290431
-       WorkingStatus_PrePandemicOn a government training scheme
-Yes                                                    10.44458
-Unsure                                                 12.38469
-       WorkingStatus_PrePandemicOn maternity leave
-Yes                                      0.5609894
-Unsure                                   0.1984877
-       WorkingStatus_PrePandemicRetired WorkingStatus_PrePandemicSelf employed
-Yes                          -0.3473819                             0.07814470
-Unsure                       -0.1379468                            -0.01403007
-       WorkingStatus_PrePandemicUnemployed
-Yes                              0.1779943
-Unsure                           0.2855369
-       WorkingStatus_PrePandemicUnpaid worker in family business
-Yes                                                    10.728131
-Unsure                                                 -2.373496
-
-Residual Deviance: 4727.223 
-AIC: 4771.223 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2374.100065
-final  value 2374.098632 
-converged
-[1] "GENFBACK_no_prevent_all ~ WorkingStatus_PrePandemic_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemic_BinaryNot working
-Yes      1.0618549                                  -0.2094279
-Unsure  -0.8929198                                   0.1323629
-
-Residual Deviance: 4748.197 
-AIC: 4756.197 
-# weights:  39 (24 variable)
-initial  value 3039.860203 
-iter  10 value 2395.154339
-iter  20 value 2364.902089
-iter  30 value 2364.270438
-final  value 2364.267059 
-converged
-[1] "GENFBACK_no_prevent_all ~ WorkingStatus"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatusDoing something else
-Yes      1.0596526                        -0.5206309
-Unsure  -0.8578678                         0.5214536
-       WorkingStatusFull-time student WorkingStatusLong-term sick or disabled
-Yes                        -0.1265427                              0.17710882
-Unsure                      0.2460843                             -0.08663595
-       WorkingStatusLooking after family or home
-Yes                                   -0.2711961
-Unsure                                 0.2292595
-       WorkingStatusOn a government training scheme WorkingStatusOn furlough
-Yes                                        11.60515                11.110782
-Unsure                                     14.21567                -2.515079
-       WorkingStatusOn maternity leave WorkingStatusRetired
-Yes                          0.4443690           -0.3888099
-Unsure                       0.1647254           -0.2481241
-       WorkingStatusSelf employed WorkingStatusUnemployed
-Yes                     0.1034892              0.07534317
-Unsure                  0.1867093              0.04694745
-       WorkingStatusUnpaid worker in family business
-Yes                                        11.110782
-Unsure                                     -2.515079
-
-Residual Deviance: 4728.534 
-AIC: 4776.534 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 2375.035751
-final  value 2375.028197 
-converged
-[1] "GENFBACK_no_prevent_all ~ WorkingStatus_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_BinaryNot working
-Yes      1.0764837                     -0.23747183
-Unsure  -0.8339199                     -0.01097426
-
-Residual Deviance: 4750.056 
-AIC: 4758.056 
-# weights:  96 (62 variable)
-initial  value 3039.860203 
-iter  10 value 2374.065342
-iter  20 value 2343.753537
-iter  30 value 2340.704703
-iter  40 value 2339.923589
-iter  50 value 2339.898042
-iter  50 value 2339.898021
-iter  50 value 2339.898021
-final  value 2339.898021 
-converged
-[1] "GENFBACK_no_prevent_all ~ OCCUPATION_NSSEC"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OCCUPATION_NSSEC-9
-Yes      0.9452001         -0.2390985
-Unsure  -1.0131147          0.1801855
-       OCCUPATION_NSSEC1.1: Large employers and higher managerial and administrative occupations
-Yes                                                                                    0.5887309
-Unsure                                                                                 0.2246158
-       OCCUPATION_NSSEC1.2: Higher professional occupations OCCUPATION_NSSEC10
-Yes                                               0.2949336         -0.2521572
-Unsure                                           -0.3219332        -11.2289592
-       OCCUPATION_NSSEC11.1 OCCUPATION_NSSEC12.1 OCCUPATION_NSSEC12.2
-Yes               -1.350706             14.41163            0.4410246
-Unsure           -14.608015             14.98392            1.4185521
-       OCCUPATION_NSSEC12.4 OCCUPATION_NSSEC12.6 OCCUPATION_NSSEC12.7
-Yes               12.212544            -17.94957            12.212544
-Unsure            -2.505481            -11.94006            -2.505481
-       OCCUPATION_NSSEC13.1 OCCUPATION_NSSEC13.2 OCCUPATION_NSSEC13.4
-Yes              -0.2521572            -17.94957            0.1533504
-Unsure          -11.2289592            -11.94006          -10.8130690
-       OCCUPATION_NSSEC3: Intermediate occupations OCCUPATION_NSSEC3.1
-Yes                                      0.1203488         -0.35749075
-Unsure                                   0.4565393          0.09682572
-       OCCUPATION_NSSEC3.2
-Yes               14.12823
-Unsure            15.68034
-       OCCUPATION_NSSEC4: Small employers and own account workers
-Yes                                                     0.2842333
-Unsure                                                 -0.2236740
-       OCCUPATION_NSSEC4.1 OCCUPATION_NSSEC4.2 OCCUPATION_NSSEC4.3
-Yes              0.2869601            1.131852           13.577600
-Unsure           0.1659676            1.009846           -2.546355
-       OCCUPATION_NSSEC5: Lower supervisory and technical occupations
-Yes                                                        -0.1602379
-Unsure                                                     -0.4532277
-       OCCUPATION_NSSEC6: Semi-routine occupations
-Yes                                     0.05333154
-Unsure                                  0.54311962
-       OCCUPATION_NSSEC7: Routine occupations OCCUPATION_NSSEC7.1
-Yes                                -0.3076385           0.2866603
-Unsure                             -0.1999295           0.4529918
-       OCCUPATION_NSSEC7.2 OCCUPATION_NSSEC7.3
-Yes             0.15350396           0.8465875
-Unsure         -0.08559105           0.3200948
-       OCCUPATION_NSSEC8: Never worked and long-term unemployed
-Yes                                                  0.30071564
-Unsure                                               0.04804295
-       OCCUPATION_NSSEC8.1 OCCUPATION_NSSEC9.1
-Yes             -0.9453039           0.1513156
-Unsure         -11.8038802           1.0108524
-       OCCUPATION_NSSECFull time students
-Yes                           -0.06201375
-Unsure                         0.61919537
-
-Residual Deviance: 4679.796 
-AIC: 4803.796 
-# weights:  12 (6 variable)
-initial  value 3033.268529 
-iter  10 value 2370.355303
-final  value 2369.602212 
-converged
-[1] "GENFBACK_no_prevent_all ~ TENURE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) TENUREOwn it but with a mortgage to pay off
-Yes      0.9900628                                    0.110142
-Unsure  -0.8524018                                    0.102662
-       TENUREOwn it outright (no mortgage to pay off)
-Yes                                       -0.14051712
-Unsure                                    -0.08095297
-
-Residual Deviance: 4739.204 
-AIC: 4751.204 
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of Is this a black respondent? predicting Genetic feedback for ancestry?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
@@ -15568,6 +14188,52 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> -4.036887 </td>
    <td style="text-align:center;"> 0 </td>
    <td style="text-align:center;"> xxxx </td>
+  </tr>
+</tbody>
+</table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of Sample frame (PV): IMD quintile within country predicting Genetic feedback for ancestry?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> level.tested </th>
+   <th style="text-align:left;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> z value </th>
+   <th style="text-align:center;"> Pr(&gt;|z|) </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> (Intercept) </td>
+   <td style="text-align:left;"> 2.36 </td>
+   <td style="text-align:center;"> 2.87 </td>
+   <td style="text-align:center;"> 3.50 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 10.494277 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> 1.01 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 2.293272 </td>
+   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
@@ -17845,523 +16511,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table># weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1897.310904
-final  value 1897.308235 
-converged
-[1] "GENFBACK_ancestry_all ~ Black_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) Black_filterYes
-Yes      1.6176393     -0.30017418
-Unsure  -0.8183107     -0.02288976
-
-Residual Deviance: 3794.616 
-AIC: 3802.616 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1892.383189
-final  value 1892.383041 
-converged
-[1] "GENFBACK_ancestry_all ~ Asian_filter"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) Asian_filterYes
-Yes      1.6288477      -0.3551900
-Unsure  -0.8843931       0.2269142
-
-Residual Deviance: 3784.766 
-AIC: 3792.766 
-# weights:  9 (4 variable)
-initial  value 2695.994556 
-iter  10 value 1627.201681
-final  value 1626.956682 
-converged
-[1] "GENFBACK_ancestry_all ~ MDQuintile"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)  MDQuintile
-Yes      1.4285402  0.07769023
-Unsure  -0.7929282 -0.01002446
-
-Residual Deviance: 3253.913 
-AIC: 3261.913 
-# weights:  24 (14 variable)
-initial  value 3039.860203 
-iter  10 value 1910.146365
-iter  20 value 1898.021499
-final  value 1898.013266 
-converged
-[1] "GENFBACK_ancestry_all ~ AGE_BAND"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) AGE_BAND18-24 AGE_BAND25-34 AGE_BAND45-54 AGE_BAND55-64
-Yes      1.6205258   -0.06430960   -0.02695277   -0.06824505   -0.15754704
-Unsure  -0.8362116    0.06612715    0.08527361   -0.26236120   -0.03055614
-       AGE_BAND65-74 AGE_BAND75+
-Yes      -0.03260526  -0.3083341
-Unsure    0.16409031   0.1430797
-
-Residual Deviance: 3796.027 
-AIC: 3824.027 
-# weights:  12 (6 variable)
-initial  value 3038.761590 
-iter  10 value 1900.464686
-final  value 1900.325108 
-converged
-[1] "GENFBACK_ancestry_all ~ SEX"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) SEXIdentify in another way     SEXMale
-Yes      1.5780422                  0.2147527 -0.05969015
-Unsure  -0.7867373                  0.7834126 -0.09061562
-
-Residual Deviance: 3800.65 
-AIC: 3812.65 
-# weights:  42 (26 variable)
-initial  value 3035.465754 
-iter  10 value 1894.421654
-iter  20 value 1872.401983
-iter  30 value 1872.112718
-iter  40 value 1872.074849
-final  value 1872.074816 
-converged
-[1] "GENFBACK_ancestry_all ~ ETHNICITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITYAny other Asian background
-Yes       1.713535                          -0.3452630
-Unsure   -0.885232                           0.3256081
-       ETHNICITYAny other Black background
-Yes                             -0.5095711
-Unsure                           1.0393968
-       ETHNICITYAny other single ethnic group
-Yes                                 -1.020492
-Unsure                             -12.881704
-       ETHNICITYAny other White background ETHNICITYArab ETHNICITYBangladeshi
-Yes                              0.2895301    -0.3272428           -0.8380664
-Unsure                          -0.1562440   -10.7267684            0.1230851
-       ETHNICITYBlack African ETHNICITYBlack Caribbean ETHNICITYChinese
-Yes                -0.4700839               -0.1841425       -0.3117399
-Unsure             -0.2004772                0.2661841        0.4152262
-       ETHNICITYIndian ETHNICITYMixed/Multiple ethnic groups ETHNICITYPakistani
-Yes         -0.3871532                             0.6137664         -0.4870897
-Unsure       0.1197664                            -0.5010624          0.2790992
-
-Residual Deviance: 3744.15 
-AIC: 3796.15 
-# weights:  30 (18 variable)
-initial  value 3035.465754 
-iter  10 value 1888.357732
-iter  20 value 1877.187074
-iter  30 value 1877.058008
-final  value 1877.057402 
-converged
-[1] "GENFBACK_ancestry_all ~ ETHNICITY_LFS"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) ETHNICITY_LFSAny other Asian background
-Yes      1.7388109                              -0.3705222
-Unsure  -0.8963085                               0.3366863
-       ETHNICITY_LFSBangladeshi
-Yes                  -0.8633415
-Unsure                0.1341784
-       ETHNICITY_LFSBlack/African/Caribbean/Black British ETHNICITY_LFSChinese
-Yes                                           -0.42134460           -0.3370112
-Unsure                                         0.05510916            0.4263108
-       ETHNICITY_LFSIndian ETHNICITY_LFSMixed/Multiple ethnic groups
-Yes             -0.4124203                                 0.5884499
-Unsure           0.1308520                                -0.4899733
-       ETHNICITY_LFSOther ethnic group ETHNICITY_LFSPakistani
-Yes                         -0.7579775             -0.5123551
-Unsure                     -11.1030628              0.2901767
-
-Residual Deviance: 3754.115 
-AIC: 3790.115 
-# weights:  36 (22 variable)
-initial  value 2928.900362 
-iter  10 value 1830.329728
-iter  20 value 1808.476887
-iter  30 value 1807.991910
-final  value 1807.990846 
-converged
-[1] "GENFBACK_ancestry_all ~ NUMPEOPLE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NUMPEOPLE1 NUMPEOPLE10 NUMPEOPLE11 NUMPEOPLE3  NUMPEOPLE4
-Yes      1.7233319 -0.1583476    11.82429   11.547985 -0.1552801 -0.28773833
-Unsure  -0.7932384 -0.1450364    13.64781   -2.606541  0.1780452 -0.08649757
-       NUMPEOPLE5  NUMPEOPLE6 NUMPEOPLE7  NUMPEOPLE8  NUMPEOPLE9
-Yes    -0.2570106 -0.06877712 -0.7016789   0.4738905  -0.8070594
-Unsure -0.1512327  0.17419258 -0.0176903 -10.7745685 -14.0886816
-
-Residual Deviance: 3615.982 
-AIC: 3659.982 
-# weights:  9 (4 variable)
-initial  value 2904.730891 
-iter  10 value 1796.352271
-iter  10 value 1796.352270
-final  value 1796.352270 
-converged
-[1] "GENFBACK_ancestry_all ~ MARSTAT"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) MARSTATNeither
-Yes      1.6263512    -0.65092148
-Unsure  -0.8174944     0.07970123
-
-Residual Deviance: 3592.705 
-AIC: 3600.705 
-# weights:  21 (12 variable)
-initial  value 3016.789345 
-iter  10 value 1876.960809
-iter  20 value 1874.660274
-final  value 1874.657197 
-converged
-[1] "GENFBACK_ancestry_all ~ NumOwnChildrenU16HH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) NumOwnChildrenU16HH1 NumOwnChildrenU16HH2
-Yes      1.6143604           -0.2651093           -0.1221689
-Unsure  -0.8535073            0.0650769            0.1814233
-       NumOwnChildrenU16HH3 NumOwnChildrenU16HH4 NumOwnChildrenU16HH5
-Yes              -0.1871749           -0.9210987           -0.9210547
-Unsure            0.1605269           -0.5326029           -9.1022535
-
-Residual Deviance: 3749.314 
-AIC: 3773.314 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 1890.391523
-final  value 1890.391450 
-converged
-[1] "GENFBACK_ancestry_all ~ OwnChildU16OutsideHH"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OwnChildU16OutsideHHU16 own child living elsewhere
-Yes      1.5634640                                         -0.2592513
-Unsure  -0.8378934                                          0.1060131
-
-Residual Deviance: 3780.783 
-AIC: 3788.783 
-# weights:  12 (6 variable)
-initial  value 3028.874080 
-iter  10 value 1880.958396
-final  value 1880.030120 
-converged
-[1] "GENFBACK_ancestry_all ~ RELIGIOSITY"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIOSITYNot practising RELIGIOSITYPractising
-Yes      1.7063996                0.01643170           -0.44029264
-Unsure  -0.7831987               -0.07261922           -0.08497331
-
-Residual Deviance: 3760.06 
-AIC: 3772.06 
-# weights:  27 (16 variable)
-initial  value 1920.374281 
-iter  10 value 1258.356457
-iter  20 value 1257.544726
-iter  30 value 1257.536213
-iter  30 value 1257.536205
-iter  30 value 1257.536205
-final  value 1257.536205 
-converged
-[1] "GENFBACK_ancestry_all ~ RELIGION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) RELIGIONBuddhism RELIGIONChristianity RELIGIONHinduism
-Yes      1.6453156        0.7520923          -0.24249654        0.1872530
-Unsure  -0.7746262        0.7740228           0.04758977        0.4869297
-       RELIGIONIslam RELIGIONJudaism RELIGIONOther religion RELIGIONSikhism
-Yes       -0.7117799       -1.085693              0.8389737      -0.3015596
-Unsure    -0.1636490      -12.402852              1.4670264       0.5923374
-
-Residual Deviance: 2515.072 
-AIC: 2547.072 
-# weights:  15 (8 variable)
-initial  value 3013.493508 
-iter  10 value 1870.754473
-final  value 1867.840729 
-converged
-[1] "GENFBACK_ancestry_all ~ QUALTYPE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept)
-Yes      1.6355197
-Unsure  -0.9220139
-       QUALTYPEEducational qualifications but no vocational qualifications
-Yes                                                            -0.04766675
-Unsure                                                          0.33092759
-       QUALTYPENeither educational nor vocational qualifications
-Yes                                                   -0.8331250
-Unsure                                                -0.2569006
-       QUALTYPEVocational qualifications but no educational qualifications
-Yes                                                           -0.001397634
-Unsure                                                         0.633902828
-
-Residual Deviance: 3735.681 
-AIC: 3751.681 
-# weights:  12 (6 variable)
-initial  value 3026.676855 
-iter  10 value 1878.255375
-final  value 1874.683446 
-converged
-[1] "GENFBACK_ancestry_all ~ EDUCATION"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) EDUCATIONNo academic or vocational qualifications
-Yes       1.735317                                        -0.9329576
-Unsure   -1.002177                                        -0.1755484
-       EDUCATIONNon-degree level qualifications
-Yes                                  -0.2389786
-Unsure                                0.3737473
-
-Residual Deviance: 3749.367 
-AIC: 3761.367 
-# weights:  9 (4 variable)
-initial  value 3026.676855 
-iter  10 value 1881.378110
-final  value 1881.373123 
-converged
-[1] "GENFBACK_ancestry_all ~ DEGREE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) DEGREEDegree educated
-Yes      1.3910906             0.3441360
-Unsure  -0.7164944            -0.2858411
-
-Residual Deviance: 3762.746 
-AIC: 3770.746 
-# weights:  36 (22 variable)
-initial  value 3039.860203 
-iter  10 value 1900.635762
-iter  20 value 1883.612113
-iter  30 value 1883.155614
-final  value 1883.153850 
-converged
-[1] "GENFBACK_ancestry_all ~ WorkingStatus_PrePandemic"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemicDoing something else
-Yes      1.6286573                                    -0.9355298
-Unsure  -0.9247758                                     0.5883392
-       WorkingStatus_PrePandemicFull-time student
-Yes                                     0.1432754
-Unsure                                  0.2887996
-       WorkingStatus_PrePandemicLong-term sick or disabled
-Yes                                             -0.3843217
-Unsure                                          -0.1166584
-       WorkingStatus_PrePandemicLooking after family or home
-Yes                                               -0.5446319
-Unsure                                             0.5618870
-       WorkingStatus_PrePandemicOn a government training scheme
-Yes                                                    10.71563
-Unsure                                                 13.26910
-       WorkingStatus_PrePandemicOn maternity leave
-Yes                                     -0.4246746
-Unsure                                 -13.4472367
-       WorkingStatus_PrePandemicRetired WorkingStatus_PrePandemicSelf employed
-Yes                          -0.2135583                             0.08814982
-Unsure                        0.0149708                             0.16264203
-       WorkingStatus_PrePandemicUnemployed
-Yes                             -0.3424506
-Unsure                           0.3651805
-       WorkingStatus_PrePandemicUnpaid worker in family business
-Yes                                                    10.136253
-Unsure                                                 -2.348429
-
-Residual Deviance: 3766.308 
-AIC: 3810.308 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1895.252579
-final  value 1895.232268 
-converged
-[1] "GENFBACK_ancestry_all ~ WorkingStatus_PrePandemic_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_PrePandemic_BinaryNot working
-Yes      1.6357552                                  -0.2232705
-Unsure  -0.9162907                                   0.2175413
-
-Residual Deviance: 3790.465 
-AIC: 3798.465 
-# weights:  39 (24 variable)
-initial  value 3039.860203 
-iter  10 value 1913.042055
-iter  20 value 1886.298966
-iter  30 value 1885.692112
-final  value 1885.688558 
-converged
-[1] "GENFBACK_ancestry_all ~ WorkingStatus"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatusDoing something else
-Yes      1.6605578                        -0.6309488
-Unsure  -0.8622254                         0.8622246
-       WorkingStatusFull-time student WorkingStatusLong-term sick or disabled
-Yes                      -0.007642758                              -0.4078092
-Unsure                    0.111923337                              -0.2363985
-       WorkingStatusLooking after family or home
-Yes                                   -0.5481635
-Unsure                                 0.3922236
-       WorkingStatusOn a government training scheme WorkingStatusOn furlough
-Yes                                        12.54411                10.416414
-Unsure                                     14.37387                -2.474472
-       WorkingStatusOn maternity leave WorkingStatusRetired
-Yes                          -0.561939          -0.24088452
-Unsure                      -14.000186          -0.09824202
-       WorkingStatusSelf employed WorkingStatusUnemployed
-Yes                    0.01743891             -0.47600788
-Unsure                 0.13628807              0.08903229
-       WorkingStatusUnpaid worker in family business
-Yes                                        10.416414
-Unsure                                     -2.474472
-
-Residual Deviance: 3771.377 
-AIC: 3819.377 
-# weights:  9 (4 variable)
-initial  value 3039.860203 
-iter  10 value 1895.726555
-final  value 1895.681228 
-converged
-[1] "GENFBACK_ancestry_all ~ WorkingStatus_Binary"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) WorkingStatus_BinaryNot working
-Yes      1.6591476                     -0.27285322
-Unsure  -0.8563471                      0.07523093
-
-Residual Deviance: 3791.362 
-AIC: 3799.362 
-# weights:  96 (62 variable)
-initial  value 3039.860203 
-iter  10 value 1870.265293
-iter  20 value 1837.945376
-iter  30 value 1834.471786
-iter  40 value 1834.035283
-final  value 1834.023978 
-converged
-[1] "GENFBACK_ancestry_all ~ OCCUPATION_NSSEC"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) OCCUPATION_NSSEC-9
-Yes      1.8340558         -0.7015508
-Unsure  -0.9932481          0.2409502
-       OCCUPATION_NSSEC1.1: Large employers and higher managerial and administrative occupations
-Yes                                                                                    0.2630953
-Unsure                                                                                 0.1460206
-       OCCUPATION_NSSEC1.2: Higher professional occupations OCCUPATION_NSSEC10
-Yes                                               0.0486844          -1.140953
-Unsure                                           -1.1757211         -14.023509
-       OCCUPATION_NSSEC11.1 OCCUPATION_NSSEC12.1 OCCUPATION_NSSEC12.2
-Yes                14.21089             14.21089           -2.0570947
-Unsure             15.65179             15.65179            0.7701508
-       OCCUPATION_NSSEC12.4 OCCUPATION_NSSEC12.6 OCCUPATION_NSSEC12.7
-Yes               10.677454            -22.27263            10.677454
-Unsure            -2.329722            -15.24499            -2.329722
-       OCCUPATION_NSSEC13.1 OCCUPATION_NSSEC13.2 OCCUPATION_NSSEC13.4
-Yes               13.016973            -22.27263           -0.7354475
-Unsure            -2.470751            -15.24499          -13.4708816
-       OCCUPATION_NSSEC3: Intermediate occupations OCCUPATION_NSSEC3.1
-Yes                                     -0.1148490          -1.7005207
-Unsure                                   0.7188115          -0.9526298
-       OCCUPATION_NSSEC3.2
-Yes              12.996613
-Unsure           -2.290022
-       OCCUPATION_NSSEC4: Small employers and own account workers
-Yes                                                    -0.1629108
-Unsure                                                 -0.1518518
-       OCCUPATION_NSSEC4.1 OCCUPATION_NSSEC4.2 OCCUPATION_NSSEC4.3
-Yes             -0.2245895            15.15123           12.498218
-Unsure           0.7701784            15.78118           -2.511098
-       OCCUPATION_NSSEC5: Lower supervisory and technical occupations
-Yes                                                       -0.02848632
-Unsure                                                    -0.10530746
-       OCCUPATION_NSSEC6: Semi-routine occupations
-Yes                                     -0.1798942
-Unsure                                   0.6567868
-       OCCUPATION_NSSEC7: Routine occupations OCCUPATION_NSSEC7.1
-Yes                                -0.9559745          -1.1408515
-Unsure                             -0.2752405          -0.7112601
-       OCCUPATION_NSSEC7.2 OCCUPATION_NSSEC7.3
-Yes             -0.7353761          -0.5347447
-Unsure          -0.1053149          -0.1053282
-       OCCUPATION_NSSEC8: Never worked and long-term unemployed
-Yes                                                  -0.7354231
-Unsure                                               -0.3929980
-       OCCUPATION_NSSEC8.1 OCCUPATION_NSSEC9.1
-Yes              -1.833405           -1.428669
-Unsure          -14.882787          -15.653074
-       OCCUPATION_NSSECFull time students
-Yes                           -0.03505657
-Unsure                         0.49683918
-
-Residual Deviance: 3668.048 
-AIC: 3792.048 
-# weights:  12 (6 variable)
-initial  value 3033.268529 
-iter  10 value 1892.139809
-final  value 1891.795603 
-converged
-[1] "GENFBACK_ancestry_all ~ TENURE"
-Call:
-multinom(formula = glm.formula, data = dataframe)
-
-Coefficients:
-       (Intercept) TENUREOwn it but with a mortgage to pay off
-Yes      1.4535121                                   0.2482555
-Unsure  -0.9016353                                   0.1606864
-       TENUREOwn it outright (no mortgage to pay off)
-Yes                                        0.09352391
-Unsure                                     0.10448885
-
-Residual Deviance: 3783.591 
-AIC: 3795.591 
+</table>
 
 ## multivariable regressions
 

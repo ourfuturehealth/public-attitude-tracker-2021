@@ -49,11 +49,12 @@ knitr::opts_chunk$set(echo = TRUE,
 # List of required package names
 
 packages <- c("ggplot2","gtsummary","kableExtra", 
-              "purrr", "skimr","readr",
+              "readr",
               "readxl","psych",
               "haven", "expss",
               "summarytools","stringr",
-              "nnet",
+              "nnet","broom",
+              "purrr", "skimr",
               "dplyr", "tidyr")
 
 # apply function to install and load functions as needed. Prints version to screen.
@@ -376,7 +377,7 @@ Check this all worked as expected
 
 factor_df %>% 
   select(starts_with("TRUST")) %>%
-  skim() %>%
+  skimr::skim() %>%
   select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
 
 table(factor_df$TRUSTGEN)
@@ -724,12 +725,9 @@ gated.pred.vars <- c("RELIGION","GENTEST_1",
 ```
 
 ##### DOING/To DO
-finish cutting gated vars out of the variable lists
 create an aggreagte score for seeking information about different things 
 collapse occupation NSEC so that sub categories are all under the same bigger category 
-set reference categories for all factors
-add to glm function (e.g. convert coefficients to odds for bionmial and multinomial)
-Figure out how to display nice tables (using tab_model?) from lm output
+fix multinomial regression
 
 # Data summaries {.tabset}
 
@@ -871,12 +869,26 @@ create table
 
 ```{r create univar formulas, results="asis"}
 
+# for (i in outcomes){
+#   for (x in dem.vars){
+#     do.univariable.regression(regression_df,i,x)
+#   }
+# }
 
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"ofhact_agree",x)
+}
 
-for (i in outcomes){
-  for (x in dem.vars){
-    do.univariable.regression(regression_df,i,x)
-  }
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_prevent_agree",x)
+}
+
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_no_prevent_agree",x)
+}
+
+for (x in dem.vars){
+  do.univariable.regression(regression_df,"GENFBACK_ancestry_agree",x)
 }
 
 ```

@@ -6,7 +6,6 @@
 
 do.univariable.regression<- function(dataframe, outcome, independent.variable) {
   
-
   # create the formula
   glm.formula <- paste(set.largest.ref(outcome), paste(set.largest.ref(independent.variable), collapse=" + "), sep=" ~ ")
 
@@ -112,8 +111,8 @@ do.univariable.regression<- function(dataframe, outcome, independent.variable) {
   
   if (class(dataframe[[outcome]])[1] == "factor" & length(levels(dataframe[[outcome]])) > 2 & class(dataframe[[independent.variable]])[1] == "factor"){
     
-    model <- multinom(glm.formula, data = dataframe)
-    
+    model <- multinom(formula=glm.formula, data=dataframe)
+
     # create table
     df <- tidy(model)
     df$outcome <- outcome
@@ -121,8 +120,6 @@ do.univariable.regression<- function(dataframe, outcome, independent.variable) {
     df$predictor <- independent.variable
     df$predictor.reference <- levels(dataframe[[independent.variable]])[1]
 
-    
-    
     # add row labels for outcomes and predictors
     df <- df %>%
       rename(outcome.level.tested = y.level,
@@ -165,8 +162,7 @@ do.univariable.regression<- function(dataframe, outcome, independent.variable) {
   
   if (class(dataframe[[outcome]])[1] == "factor" & length(levels(dataframe[[outcome]])) > 2 & class(dataframe[[independent.variable]])[1] != "factor"){
     
-    model <- multinom(glm.formula, data = dataframe)
-    
+    model <- multinom(paste(outcome, "~", independent.variable,sep=" "), data = dataframe)
     
     # create table
     
