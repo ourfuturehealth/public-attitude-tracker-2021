@@ -53,6 +53,7 @@ packages <- c("ggplot2","gtsummary","kableExtra",
               "readxl","psych",
               "haven", "expss",
               "summarytools","stringr",
+              "nnet",
               "dplyr", "tidyr")
 
 # apply function to install and load functions as needed. Prints version to screen.
@@ -338,9 +339,10 @@ first grab the labels to add back on after the transformation
 ```{r grab trust labels}
 
 trust_vars <- factor_df %>%
+    select(starts_with("TRUST")) %>%
   colnames() 
 
-trust_labels <- dput(sapply(factor_df,label))
+trust_labels <- dput(sapply(factor_df[trust_vars],label))
 ```
 
 then transform
@@ -365,7 +367,7 @@ factor_df <- factor_df %>%
 
 add the labels back
 ```{r add trust labels back}
-label(factor_df) = as.list(trust_labels[match(names(factor_df), names(trust_labels))])
+label(factor_df[trust_vars]) = as.list(trust_labels[match(names(factor_df[trust_vars]), names(trust_labels))])
 ```
 
 Check this all worked as expected
@@ -584,7 +586,7 @@ all.vars <- c(
 "DEVICE_GAME", "DEVICE_STREAM", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
-"WorkingStatus", "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
+"WorkingStatus", "WorkingStatus_Binary",
 "OCCUPATION_NSSEC", "TENURE", "LIFEEVENT", "PROSO_EVER_TOTAL", 
 "PROSO4W_TOTAL","DISABILITY", 
 "DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
@@ -648,7 +650,7 @@ pred.participate.vars <- c(
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
-"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
+"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_NSSEC",
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", 
 "GENFAM", "GENTEST",
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL",
@@ -677,7 +679,7 @@ pred.gen.vars <-c(
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
-"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
+"EDUCATION",  "WorkingStatus_Binary","OCCUPATION_NSSEC",
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",  "GENFAM", "GENTEST", 
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
@@ -698,8 +700,8 @@ all.pred.vars <- c(
 "SEX", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  
-"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_SOC2010", 
+"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  "OCCUPATION_NSSEC",
+"EDUCATION",  "WorkingStatus_Binary",  
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "GENFAM", "GENTEST",  
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
@@ -724,8 +726,10 @@ gated.pred.vars <- c("RELIGION","GENTEST_1",
 ##### DOING/To DO
 finish cutting gated vars out of the variable lists
 create an aggreagte score for seeking information about different things 
-
 collapse occupation NSEC so that sub categories are all under the same bigger category 
+set reference categories for all factors
+add to glm function (e.g. convert coefficients to odds for bionmial and multinomial)
+Figure out how to display nice tables (using tab_model?) from lm output
 
 # Data summaries {.tabset}
 
@@ -795,7 +799,20 @@ regression_df <- factor_df %>%
                                      TRUE ~ as.character(.)))))
 ```
 
-add labels back to data set
+
+## set reference categories
+
+Make the largest group the reference category using custom function
+
+```{r set largest ref category}
+
+regression_df <- regression_df %>%
+  mutate(across(where(is.factor), 
+                ~set.largest.ref(.)))
+```
+
+
+## add labels back to data set
 
 ```{r add labels to factor df}
 
@@ -808,8 +825,40 @@ label(regression_df) = as.list(label_list[match(names(regression_df), names(labe
 ## univariable regressions 
 Replicate Alice's regressions. identify which demographic features are important to use as covariates in multivariable regressions. 
 
-(note, will use multinomial regression for the three outcome variables where we predict unsure alongside yes and no)
+* numeric outcomes: linear regression   
 
+* binary outcomes:binomial logistic regression with estimates converted to OR and OR adjusted standard errors using coefficient variance (see https://www.andrewheiss.com/blog/2016/04/25/convert-logistic-regression-standard-errors-to-odds-ratios-with-r/)      
+
+* 3 or more levels in outcome: multinomial regression    
+
+
+### create formulas
+Use function and loop to create a formula for every outcome/predictor pairing
+
+#### demographic predictors
+
+Run univariable regressions and output each set as a new row in a final summary table
+
+create table 
+```{r make summary table demographics}
+
+
+```
+
+
+```{r create univar formulas, results="asis"}
+
+
+
+for (i in outcomes){
+  for (x in dem.vars){
+    do.univariable.regression(regression_df,i,x)
+  }
+}
+
+```
 
 ## multivariable regressions
+
+### forest plots
 
