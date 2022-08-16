@@ -860,35 +860,48 @@ Use function and loop to create a formula for every outcome/predictor pairing
 
 Run univariable regressions and output each set as a new row in a final summary table
 
-create table 
-```{r make summary table demographics}
+##### Binomial logistic
 
+rpedicting binarised outcomes (yes, no)
+```{r create univar formulas, results="asis"}
+
+for (x in dem.vars){
+  do.univariable.binomial.regression(regression_df,"ofhact_agree",x)
+}
+
+for (x in dem.vars){
+  do.univariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",x)
+}
+
+for (x in dem.vars){
+  do.univariable.binomial.regression(regression_df,"GENFBACK_no_prevent_agree",x)
+}
+
+for (x in dem.vars){
+  do.univariable.binomial.regression(regression_df,"GENFBACK_ancestry_agree",x)
+}
 
 ```
 
+##### Multinomial logistic
 
+predicting categorical outcomes (Yes, No, Unusre)
 ```{r create univar formulas, results="asis"}
 
-# for (i in outcomes){
-#   for (x in dem.vars){
-#     do.univariable.regression(regression_df,i,x)
-#   }
-# }
-
 for (x in dem.vars){
-  do.univariable.regression(regression_df,"ofhact_agree",x)
+  do.univariable.multinomial.regression(regression_df,"ofhact_all",x)
 }
 
 for (x in dem.vars){
-  do.univariable.regression(regression_df,"GENFBACK_prevent_agree",x)
+  do.univariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",x)
 }
 
 for (x in dem.vars){
-  do.univariable.regression(regression_df,"GENFBACK_no_prevent_agree",x)
+  do.univariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",x)
 }
 
 for (x in dem.vars){
-  do.univariable.regression(regression_df,"GENFBACK_ancestry_agree",x)
+  do.univariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",x)
 }
 
 ```
