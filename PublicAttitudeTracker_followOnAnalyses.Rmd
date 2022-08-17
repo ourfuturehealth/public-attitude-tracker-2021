@@ -1054,22 +1054,66 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 ```{r set up outcome predictor demographic}
 
 ## binary
-demo.pred.takepart.binary <- c()
+demo.pred.takepart.binary <- c("Asian_filter", "MDQuintile", "AGE_BAND", 
+                               "ETHNICITY",  "MARSTAT", "QUALTYPE", 
+                               "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
+                               "WorkingStatus", "WorkingStatus_Binary", 
+                               "TENURE")
 
-demo.pred.prevent.binary <- c()
+demo.pred.prevent.binary <- c("Black_filter", "MDQuintile", "AGE_BAND", 
+                              "ETHNICITY_LFS",  "MARSTAT", 
+                              "RELIGIOSITY", "RELIGION", "QUALTYPE", 
+                              "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", 
+                              "WorkingStatus_PrePandemic_Binary", 
+                              "WorkingStatus", "WorkingStatus_Binary", 
+                              "TENURE")
 
-demo.pred.noprevent.binary <- c()
+demo.pred.noprevent.binary <- c("AGE_BAND", "SEX", 
+                                "ETHNICITY","MARSTAT", "QUALTYPE", 
+                                "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", 
+                                "WorkingStatus_PrePandemic_Binary", 
+                                "WorkingStatus", "WorkingStatus_Binary")
 
-demo.pred.ancestry.binary <- c()
+demo.pred.ancestry.binary <- c("Black_filter", "Asian_filter", "MDQuintile", "SEX", 
+                               "ETHNICITY_LFS", "MARSTAT", 
+                               "RELIGIOSITY",  "QUALTYPE", 
+                               "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", 
+                               "WorkingStatus_PrePandemic_Binary", 
+                               "WorkingStatus", "WorkingStatus_Binary")
+
+demo.pred.ancestry.binary.religion.sensitivity <- c("Black_filter", "Asian_filter", "MDQuintile", "SEX", 
+                               "ETHNICITY_LFS", "MARSTAT", 
+                               "RELIGIOSITY", "RELIGION", "QUALTYPE", 
+                               "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", 
+                               "WorkingStatus_PrePandemic_Binary", 
+                               "WorkingStatus", "WorkingStatus_Binary")
 
 ## categorical
-demo.pred.takepart.multi <- c()
+demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "SEX", 
+                               "ETHNICITY",  "MARSTAT",  "QUALTYPE", 
+                               "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic",
+                               "WorkingStatus_PrePandemic_Binary", "WorkingStatus", 
+                               "WorkingStatus_Binary","TENURE")
 
-demo.pred.prevent.multi <- c()
+demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", "MARSTAT", 
+                             "RELIGIOSITY",  "QUALTYPE", "EDUCATION", "DEGREE", 
+                             "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
+                             "WorkingStatus", "WorkingStatus_Binary", "TENURE")
 
-demo.pred.noprevent.multi <- c()
+demo.pred.noprevent.multi <- c( "AGE_BAND", "ETHNICITY", "QUALTYPE", 
+                                "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", 
+                                "WorkingStatus_PrePandemic_Binary", "WorkingStatus", 
+                                "WorkingStatus_Binary")
 
-demo.pred.ancestry.multi <- c()
+demo.pred.ancestry.multi <- c("Black_filter", "Asian_filter",
+                              "ETHNICITY_LFS", "MARSTAT", "RELIGIOSITY",  "QUALTYPE", 
+                              "EDUCATION", "DEGREE",  "WorkingStatus_PrePandemic_Binary", 
+                              "WorkingStatus_Binary")
+
+demo.pred.ancestry.multi.religion.sensitivity <- c("Black_filter", "Asian_filter",
+                              "ETHNICITY_LFS", "MARSTAT", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
+                              "EDUCATION", "DEGREE",  "WorkingStatus_PrePandemic_Binary", 
+                              "WorkingStatus_Binary")
 ```
 
 
