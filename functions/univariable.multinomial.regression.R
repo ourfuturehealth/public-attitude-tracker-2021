@@ -10,7 +10,7 @@ do.univariable.multinomial.regression<- function(dataframe, outcome, independent
   
   if (class(dataframe[[independent.variable]])[1] == "factor"){
     
-    model <<- multinom(formula=glm.formula, data=dataframe)
+    model <<- multinom(formula=glm.formula, data=dataframe,trace=FALSE)
     # create table
 
     df <- tidy(nnet::multinom(model))
@@ -62,7 +62,7 @@ do.univariable.multinomial.regression<- function(dataframe, outcome, independent
   
   if (class(dataframe[[independent.variable]])[1] != "factor"){
     
-    model <<- multinom(formula=glm.formula, data=dataframe)
+    model <<- multinom(formula=glm.formula, data=dataframe,trace=FALSE)
     
     # create table
     

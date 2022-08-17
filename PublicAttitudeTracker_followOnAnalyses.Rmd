@@ -10,7 +10,7 @@ output:
     code_folding: hide
     df_print: paged
     toc: yes
-    toc_depth: 2
+    toc_depth: 3
     toc_float:
       collapsed: false
     number_sections: false
@@ -759,7 +759,7 @@ for (i in all.pred.vars){
 
 ```
 
-# Analyses
+# Analysis prep
 ## recode missing data
 
 recode don't know, prefer not to say and and missing response as NA (missing data) in the analytic data set. 
@@ -843,7 +843,7 @@ label(regression_df) = as.list(label_list[match(names(regression_df), names(labe
 ```
 
 
-## univariable regressions 
+# univariable regressions 
 Replicate Alice's regressions. identify which demographic features are important to use as covariates in multivariable regressions. 
 
 * numeric outcomes: linear regression   
@@ -856,14 +856,14 @@ Replicate Alice's regressions. identify which demographic features are important
 ### create formulas
 Use function and loop to create a formula for every outcome/predictor pairing
 
-#### demographic predictors
+## demographic predictors
 
 Run univariable regressions and output each set as a new row in a final summary table
 
-##### Binomial logistic
+### Binomial logistic
 
-rpedicting binarised outcomes (yes, no)
-```{r create univar formulas, results="asis"}
+predicting binarised outcomes (yes, no)
+```{r create univar binary logistic, results="asis"}
 
 for (x in dem.vars){
   do.univariable.binomial.regression(regression_df,"ofhact_agree",x)
@@ -883,30 +883,203 @@ for (x in dem.vars){
 
 ```
 
-##### Multinomial logistic
+### Multinomial logistic
 
 predicting categorical outcomes (Yes, No, Unusre)
-```{r create univar formulas, results="asis"}
+```{r create univar multinomials, results="asis"}
 
 for (x in dem.vars){
+  print("#####")
   do.univariable.multinomial.regression(regression_df,"ofhact_all",x)
 }
 
 for (x in dem.vars){
+    print("#####")
   do.univariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",x)
 }
 
 for (x in dem.vars){
+    print("#####")
   do.univariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",x)
 }
 
 for (x in dem.vars){
+    print("#####")
   do.univariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",x)
 }
 
 ```
 
-## multivariable regressions
+# multivariable regressions
+
+There will be three models for each outcome.
+
+1) all demographic predictors that are significant in univariable models to see which are the strongest independent predictors
+2) each individual non demographic predictor including significant demographic predictors as covariates
+3) all significant predictors and demographic predictors in a single model
+
+
+## Model 1: all demographic predictors to identify strongest indpendent predictors
+
+Significant demographic predictors for each outcome are as follows (signfiicance adjusted fro number of levels. i.e. a predictor where 8 levels are tested threshold would be 0.05/8=0.006)
+
+### Yes v No binary outcomes
+#### Taking part in our future health binary
+
+* Asian_filter (Asian respondents less likely to take part relative to all other ethnicities)   
+* MDQuintile (The higher the quintile the more likely to take part. Higher indicates less deprived)   
+* AGE_BAND (younger groups;18-25; less likey to take part compared to largest respondent group - 35-44. Older; 45-54 and 65-74; more likely to take part)   
+* ETHNICITY (White British more likely to take part than any other group) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to take part relative to married/civil partnered people)   
+* QUALTYPE (Those without educational and vocational qualifications less likely to take part)   
+* EDUCATION (Those with less than degree level less likely to take part than those with degree level)   
+* DEGREE (Those without a degree and less likely to take part than those with a degree)   
+* WorkingStatus_PrePandemic (those who were full time students or unemployed pre pandemic less likely to take part)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave)   
+* WorkingStatus (those who are full time students or unemployed less likely to take part)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)   
+* TENURE (People who own their property outright are more likely to take part than those who rent)
+
+#### Receive genetic feedback about things preventable or treatable binary
+
+* Black_filter (Black respondents less likely to want feedback relative to all other ethnicity)   
+* MDQuintile (The higher the quintile the more likely to want feedbackt. Higher indicates less deprived)   
+* AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
+* ETHNICITY_LFS (Black respondents less likely to want feedback compared to white respondents) Do not appear to be differences driven by communities and will use LFS collapsed ethnicity here.   
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
+* RELIGIOSITY (people who are practicing their religion are less likely to want feedback relative to those who re not religious)    
+* RELIGION (people of the Muslim faith are less likely than those with no religion to want feedback) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
+* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
+* WorkingStatus (those who are retired less likely to want feedback)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
+* TENURE (People who own their property with a mortgage more likely to want feedback than those who rent)
+
+#### Receive genetic feedback about things that are not preventable or treatable binary
+
+* AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
+* SEX (men more likely to want feedback relative to women)
+* ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
+* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
+* WorkingStatus (those who are retired less likely to want feedback)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
+
+#### Receive genetic feedback ancestry binary
+
+* Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)   
+* Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
+* MDQuintile (higher quintile more likely to want ancestry; higher is less deprived)    
+* SEX (men more likely to want ancestry relative to women)
+* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities)       
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)  
+* RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
+* RELIGION (people of the Muslim faith are less likely than those with no religion to want ancestry) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
+* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry)   
+* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level)   
+* DEGREE (Those without a degree and less likely to want ancestry than those with a degree)   
+* WorkingStatus_PrePandemic (those who were looking after family or home or doing something else less likely to want ancestry)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave)   
+* WorkingStatus (those who are looking after family or home less likely to want ancestry)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want ancestry)   
+
+
+#### Yes v No v Unasure multi-level outcomes
+#### Taking part in our future health: Yes, No, Unsure
+
+* MDQuintile (The higher the quintile the less likely to be unsure about taking part relative to not. Higher indicates less deprived)   
+* AGE_BAND (oldder groupd less likey to be unsure about taking part compared to not taking part relative to 35-44yr olds)   
+* SEX (Men likely to be unsure relative to women)
+* ETHNICITY (White British more likely to take part than black caribbean or pakistani) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to be unsure or to take part relative to married/civil partnered people)   
+* QUALTYPE (Those without educational and vocational qualifications less likely to take part)   
+* EDUCATION (Those with less than degree level less likely to take part or be unsure than those with degree level)   
+* DEGREE (Those without a degree and less likely to take part or be unsure (compared to no) than those with a degree)   
+* WorkingStatus_PrePandemic (those who were full time students less likely to take part, those who are retired are less likely to be unsure )   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave)   
+* WorkingStatus (those who were full time students less likely to take part, those who are retired are less likely to be unsure )     
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)   
+* TENURE (People who own their property outright are more likely to be sunure about taking part than those who rent)
+
+#### Receive genetic feedback about things preventable or treatable: Yes, No, Unsure
+
+* Black_filter (Black respondents less likely to want feedback relative to all other ethnicity)   
+* AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
+* RELIGIOSITY (people who are practicing their religion are less likely to want feedback relative to those who re not religious)    
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
+* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
+* WorkingStatus (those who are retired less likely to want feedback)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
+* TENURE (People who own their property with a mortgage more likely to want feedback than those who rent)
+
+#### Receive genetic feedback about things that are not preventable or treatable: Yes, No, Unsure
+
+* AGE_BAND (75 +; less to want feedback compared to largest respondent group - 35-44)   
+* ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
+* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
+* WorkingStatus (those who are retired less likely to want feedback)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
+
+#### Receive genetic feedback ancestry binary: Yes, No, Unsure
+
+* Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)   
+* Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
+* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities)       
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)  
+* RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
+* RELIGION (people of the Muslim faith are less likely than those with no religion to want ancestry) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
+* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry)   
+* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level)   
+* DEGREE (Those without a degree and less likely to want ancestry than those with a degree)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave)   
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want ancestry)   
+
+#####  set variable lists for significant predictors for each outcome
+
+```{r set up outcome predictor demographic}
+
+## binary
+demo.pred.takepart.binary <- c()
+
+demo.pred.prevent.binary <- c()
+
+demo.pred.noprevent.binary <- c()
+
+demo.pred.ancestry.binary <- c()
+
+## categorical
+demo.pred.takepart.multi <- c()
+
+demo.pred.prevent.multi <- c()
+
+demo.pred.noprevent.multi <- c()
+
+demo.pred.ancestry.multi <- c()
+```
+
+
+## finished the4 above. next run model 1
+
+
+
+
+
+
 
 ### forest plots
 

@@ -47,6 +47,7 @@ do.univariable.binomial.regression<- function(dataframe, outcome, independent.va
 
     ## rearrange data frame
     df <- df %>%
+      filter(!predictor == "(Intercept)") %>%
       select(outcome,outcome.reference,predictor, predictor.reference,level.tested,LowerBoundOR,OR, UpperBoundOR,OR.StdError,"z value","Pr(>|z|)","Sig") 
 
     ## print to screen as html kable
@@ -96,6 +97,7 @@ do.univariable.binomial.regression<- function(dataframe, outcome, independent.va
     
     ## rearrange data frame
     df <- df %>%
+      filter(!predictor == "(Intercept)") %>%
       select(outcome,outcome.reference,predictor, level.tested,LowerBoundOR,OR, UpperBoundOR,OR.StdError,"z value","Pr(>|z|)","Sig") 
     
     ## print to screen as html kable
