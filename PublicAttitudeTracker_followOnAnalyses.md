@@ -1,7 +1,7 @@
 ---
 title: "Data cleaning and preparation for Kantar Public Attitude Tracker 2022 data"
 author: "K L Purves"
-date: '17 August, 2022'
+date: '18 August, 2022'
 output:
   html_document:
     
@@ -35,12 +35,18 @@ editor_options:
 ##         ./functions/frequency_and_plot.R ./functions/is.labelled.R
 ## value   ?                                ?                        
 ## visible FALSE                            FALSE                    
-##         ./functions/lm.formula.R ./functions/load_package.R
-## value   ?                        ?                         
-## visible FALSE                    FALSE                     
-##         ./functions/multinom.p.extract.R ./functions/set.largest.ref.R
-## value   ?                                ?                            
-## visible FALSE                            FALSE                        
+##         ./functions/load_package.R ./functions/multinom.p.extract.R
+## value   ?                          ?                               
+## visible FALSE                      FALSE                           
+##         ./functions/multivariable.binary.regression.R
+## value   ?                                            
+## visible FALSE                                        
+##         ./functions/set.largest.ref.R
+## value   ?                            
+## visible FALSE                        
+##         ./functions/univariable.binary.regression.R
+## value   ?                                          
+## visible FALSE                                      
 ##         ./functions/univariable.multinomial.regression.R
 ## value   ?                                               
 ## visible FALSE
@@ -74,7 +80,7 @@ editor_options:
 
 ```
 ## 
-## To select rows from data: rows(mtcars, am==0)
+## To aggregate all non-grouping columns: take_all(mtcars, mean, by = am)
 ```
 
 ```
@@ -86,12 +92,6 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
-```
-
-```
-## 
-## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
-##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -32210,30 +32210,34 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 
 There will be three models for each outcome.
 
-1) all demographic predictors that are significant in univariable models to see which are the strongest independent predictors
+1) all demographic predictors that are significant in univariable models (where two or more predictors are similar, will use the one that was the strongest univariable predictor)
 2) each individual non demographic predictor including significant demographic predictors as covariates
 3) all significant predictors and demographic predictors in a single model
 
 
-## Model 1: all demographic predictors to identify strongest indpendent predictors
+## Model 1: all demographic predictors to identify strongest independent predictors
 
-Significant demographic predictors for each outcome are as follows (signfiicance adjusted fro number of levels. i.e. a predictor where 8 levels are tested threshold would be 0.05/8=0.006)
+Significant demographic predictors for each outcome are as follows (significance adjusted fro number of levels. i.e. a predictor where 8 levels are tested threshold would be 0.05/8=0.006)
 
-### Yes v No binary outcomes
+Select the strongest univariable predictor where one or more similar variables/variables indexing the smae thing overlap
+
+
+### identify selected Yes v No binary outcomes
 #### Taking part in our future health binary
+'*' indicates variables dropped where other better predictors of an outcome exist
 
-* Asian_filter (Asian respondents less likely to take part relative to all other ethnicities)   
+* Asian_filter (Asian respondents less likely to take part relative to all other ethnicity)   
 * MDQuintile (The higher the quintile the more likely to take part. Higher indicates less deprived)   
-* AGE_BAND (younger groups;18-25; less likey to take part compared to largest respondent group - 35-44. Older; 45-54 and 65-74; more likely to take part)   
-* ETHNICITY (White British more likely to take part than any other group) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
+* AGE_BAND (younger groups;18-25; less like to take part compared to largest respondent group - 35-44. Older; 45-54 and 65-74; more likely to take part)   
+* ETHNICITY (White British more likely to take part than any other group) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage. '*'   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to take part relative to married/civil partnered people)   
-* QUALTYPE (Those without educational and vocational qualifications less likely to take part)   
-* EDUCATION (Those with less than degree level less likely to take part than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications less likely to take part) '*'      
+* EDUCATION (Those with less than degree level less likely to take part than those with degree level) '*'      
 * DEGREE (Those without a degree and less likely to take part than those with a degree)   
-* WorkingStatus_PrePandemic (those who were full time students or unemployed pre pandemic less likely to take part)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave)   
-* WorkingStatus (those who are full time students or unemployed less likely to take part)   
-* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)   
+* WorkingStatus_PrePandemic (those who were full time students or unemployed pre pandemic less likely to take part) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave) '*'   
+* WorkingStatus (those who are full time students or unemployed less likely to take part) '*'  
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)    
 * TENURE (People who own their property outright are more likely to take part than those who rent)
 
 #### Receive genetic feedback about things preventable or treatable binary
@@ -32241,15 +32245,15 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 * Black_filter (Black respondents less likely to want feedback relative to all other ethnicity)   
 * MDQuintile (The higher the quintile the more likely to want feedbackt. Higher indicates less deprived)   
 * AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
-* ETHNICITY_LFS (Black respondents less likely to want feedback compared to white respondents) Do not appear to be differences driven by communities and will use LFS collapsed ethnicity here.   
+* ETHNICITY_LFS (Black respondents less likely to want feedback compared to white respondents) Do not appear to be differences driven by communities and will use LFS collapsed ethnicity here. '*'   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
 * RELIGIOSITY (people who are practicing their religion are less likely to want feedback relative to those who re not religious)    
-* RELIGION (people of the Muslim faith are less likely than those with no religion to want feedback) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
-* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
-* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* RELIGION (people of the Muslim faith are less likely than those with no religion to want feedback) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases.
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'  
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level) '*'  
 * DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
-* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
+* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave) '*'   
 * WorkingStatus (those who are retired less likely to want feedback)   
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
 * TENURE (People who own their property with a mortgage more likely to want feedback than those who rent)
@@ -32260,34 +32264,34 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 * SEX (men more likely to want feedback relative to women)
 * ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
-* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
-* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
-* DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
-* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
-* WorkingStatus (those who are retired less likely to want feedback)   
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level) '*'   
+* DEGREE (Those without a degree and less likely to want feedback than those with a degree)    
+* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave) '*'   
+* WorkingStatus (those who are retired less likely to want feedback)    
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
 
 #### Receive genetic feedback ancestry binary
 
-* Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)   
+* Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)    
 * Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
 * MDQuintile (higher quintile more likely to want ancestry; higher is less deprived)    
 * SEX (men more likely to want ancestry relative to women)
-* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities)       
-* MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)  
+* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities) '*'       
+* MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)      
 * RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
 * RELIGION (people of the Muslim faith are less likely than those with no religion to want ancestry) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
-* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry)   
-* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry) '*'   
+* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level) '*'   
 * DEGREE (Those without a degree and less likely to want ancestry than those with a degree)   
-* WorkingStatus_PrePandemic (those who were looking after family or home or doing something else less likely to want ancestry)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave)   
-* WorkingStatus (those who are looking after family or home less likely to want ancestry)   
+* WorkingStatus_PrePandemic (those who were looking after family or home or doing something else less likely to want ancestry) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave) '*'   
+* WorkingStatus (those who are looking after family or home less likely to want ancestry) '*'   
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want ancestry)   
 
 
-#### Yes v No v Unasure multi-level outcomes
+### identify selected  Yes v No v Unsure multi-level outcomes
 #### Taking part in our future health: Yes, No, Unsure
 
 * MDQuintile (The higher the quintile the less likely to be unsure about taking part relative to not. Higher indicates less deprived)   
@@ -32295,12 +32299,12 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 * SEX (Men likely to be unsure relative to women)
 * ETHNICITY (White British more likely to take part than black caribbean or pakistani) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to be unsure or to take part relative to married/civil partnered people)   
-* QUALTYPE (Those without educational and vocational qualifications less likely to take part)   
-* EDUCATION (Those with less than degree level less likely to take part or be unsure than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications less likely to take part) '*'   
+* EDUCATION (Those with less than degree level less likely to take part or be unsure than those with degree level) '*'   
 * DEGREE (Those without a degree and less likely to take part or be unsure (compared to no) than those with a degree)   
-* WorkingStatus_PrePandemic (those who were full time students less likely to take part, those who are retired are less likely to be unsure )   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave)   
-* WorkingStatus (those who were full time students less likely to take part, those who are retired are less likely to be unsure )     
+* WorkingStatus_PrePandemic (those who were full time students less likely to take part, those who are retired are less likely to be unsure ) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave) '*'   
+* WorkingStatus (those who were full time students less likely to take part, those who are retired are less likely to be unsure ) '*'     
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)   
 * TENURE (People who own their property outright are more likely to be sunure about taking part than those who rent)
 
@@ -32310,12 +32314,12 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 * AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
 * RELIGIOSITY (people who are practicing their religion are less likely to want feedback relative to those who re not religious)    
-* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
-* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level) '*'   
 * DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
-* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
-* WorkingStatus (those who are retired less likely to want feedback)   
+* WorkingStatus_PrePandemic (those who were retired pre pandemic less likely to want feedback) '*'   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave) '*'   
+* WorkingStatus (those who are retired less likely to want feedback) '*'   
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
 * TENURE (People who own their property with a mortgage more likely to want feedback than those who rent)
 
@@ -32323,53 +32327,1251 @@ Significant demographic predictors for each outcome are as follows (signfiicance
 
 * AGE_BAND (75 +; less to want feedback compared to largest respondent group - 35-44)   
 * ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
-* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback)   
-* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'   
+* EDUCATION (Those with less than degree level less likely to want feedback than those with degree level) '*'   
 * DEGREE (Those without a degree and less likely to want feedback than those with a degree)   
-* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave)   
-* WorkingStatus (those who are retired less likely to want feedback)   
-* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback)   
+* WorkingStatus_PrePandemic (those who were retired  pre pandemic less likely to want feedback) '*'  
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want feedback relative to employed or on mt leave) '*'  
+* WorkingStatus (those who are retired less likely to want feedback)    
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to want feedback) '*'  
 
 #### Receive genetic feedback ancestry binary: Yes, No, Unsure
 
 * Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)   
 * Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
-* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities)       
+* ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities) '*'       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)  
 * RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
 * RELIGION (people of the Muslim faith are less likely than those with no religion to want ancestry) ***note*** a lot of missing data here.Will likely include as a sensitivity model, but wont include in main as will result in too many dropped cases. 
-* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry)   
-* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level)   
+* QUALTYPE (Those without educational and vocational qualifications or less likely to want ancestry)'*'  
+* EDUCATION (Those with less than degree level less likely to want ancestry than those with degree level)'*'   
 * DEGREE (Those without a degree and less likely to want ancestry than those with a degree)   
-* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave)   
+* WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave) '*'   
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want ancestry)   
 
-#####  set variable lists for significant predictors for each outcome
+####  set variable lists for significant demographic predictors for each outcome
 
+I am dropping marital status for now as these people are all missing their MDQuintile data, and there are very few of them. Will do later sensitivty analyses in this group
 
 ```r
 ## binary
-demo.pred.takepart.binary <- c()
+demo.pred.takepart.binary <- c("Asian_filter", "MDQuintile", "AGE_BAND", 
+                                 "DEGREE", 
+                               "WorkingStatus_Binary",  
+                               "TENURE")
 
-demo.pred.prevent.binary <- c()
+demo.pred.takepart.nocont <- c("Asian_filter", "AGE_BAND", 
+                               "ETHNICITY",   "DEGREE", 
+                               "WorkingStatus",  
+                               "TENURE")
 
-demo.pred.noprevent.binary <- c()
+demo.pred.prevent.binary <- c("Black_filter", "MDQuintile", "AGE_BAND", 
+                           
+                              "RELIGIOSITY", "DEGREE", 
+                              "WorkingStatus", "WorkingStatus_Binary", 
+                              "TENURE")
 
-demo.pred.ancestry.binary <- c()
+demo.pred.noprevent.binary <- c("AGE_BAND", "SEX", 
+                                "ETHNICITY","DEGREE",  
+                                "WorkingStatus", "WorkingStatus_Binary")
+
+demo.pred.ancestry.binary <- c("Black_filter", "Asian_filter", 
+                                                    "MDQuintile", "SEX", 
+                                                    "RELIGIOSITY", "DEGREE", "WorkingStatus_Binary")
+
+demo.pred.ancestry.binary.religion.sensitivity <- c("Black_filter", "Asian_filter", 
+                                                    "MDQuintile", "SEX", 
+                                                    "RELIGIOSITY","Religion", "DEGREE", "WorkingStatus_Binary")
 
 ## categorical
-demo.pred.takepart.multi <- c()
+demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "SEX", 
+                               "ETHNICITY",    "DEGREE", 
+                               "WorkingStatus_Binary","TENURE")
 
-demo.pred.prevent.multi <- c()
+demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", 
+                             "RELIGIOSITY",   "DEGREE", 
+                              "WorkingStatus_Binary", "TENURE")
 
-demo.pred.noprevent.multi <- c()
+demo.pred.noprevent.multi <- c( "AGE_BAND", "ETHNICITY", "DEGREE",  "WorkingStatus")
 
-demo.pred.ancestry.multi <- c()
+demo.pred.ancestry.multi <- c("Black_filter", "Asian_filter",
+                              "RELIGIOSITY", 
+                              "DEGREE", 
+                              "WorkingStatus_Binary")
+
+demo.pred.ancestry.multi.religion.sensitivity <- c("Black_filter","Asian_filter",
+                               "RELIGIOSITY", "RELIGION", "DEGREE",
+                              "WorkingStatus_Binary")
 ```
 
 
-## finished the4 above. next run model 1
+
+### binomial regression
+
+for the binary outcomes and the demographic predictors
+
+
+```r
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",demo.pred.takepart.binary)
+```
+
+```
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.087 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.806 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 1.84 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.016 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.679 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.087 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.312 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus_Binary </td>
+   <td style="text-align:center;"> Working or on maternity leave or on furlough </td>
+   <td style="text-align:left;"> Not working </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.845 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it but with a mortgage to pay off </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.573 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it outright (no mortgage to pay off) </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.342 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",demo.pred.prevent.binary)
+```
+
+```
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Black_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.300000e+00 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.641 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.180000e+00 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 9.600000e-01 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.031 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.110000e+00 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.178 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.510000e+00 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.780 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 9.800000e-01 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.039 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 7.600000e-01 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 7.900000e-01 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Not practising </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.280000e+00 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.919 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Practising </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.000000e+00 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.053 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 2.290000e+00 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Doing something else </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 1.390000e+00 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.216 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Full-time student </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 3.000000e+00 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Long-term sick or disabled </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 2.060000e+00 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.624 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Looking after family or home </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.160000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.179 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On a government training scheme </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 6.480000e+00 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.654 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On furlough </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 49250.38 </td>
+   <td style="text-align:center;"> 1.317956e+281 </td>
+   <td style="text-align:center;"> 15993754.87 </td>
+   <td style="text-align:center;"> 0.973 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On maternity leave </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 3.650000e+00 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.705 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Retired </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.600000e+00 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.916 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Self employed </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.270000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.450 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unemployed </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 1.080000e+00 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.104 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unpaid worker in family business </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 108763.49 </td>
+   <td style="text-align:center;"> 2.910247e+281 </td>
+   <td style="text-align:center;"> 35320261.84 </td>
+   <td style="text-align:center;"> 0.972 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> _BinaryNot working </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it but with a mortgage to pay off </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.430000e+00 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.433 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it outright (no mortgage to pay off) </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.600000e+00 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.236 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_no_prevent_agree",demo.pred.noprevent.binary)
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.080000e+00 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.125 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.160000e+00 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.425 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.420000e+00 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.612 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.080000e+00 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.153 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.210000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.294 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 1.150000e+00 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.153 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 8.300000e+00 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 0.561 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.390000e+00 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.049 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other Asian background </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 2.490000e+00 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.155 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other Black background </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 1.070000e+00 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.075 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other single ethnic group </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 5.510000e+00 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.991 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other White background </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 2.450000e+00 </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Arab </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 429858.25 </td>
+   <td style="text-align:center;"> 8.208718e+207 </td>
+   <td style="text-align:center;"> 102150352.20 </td>
+   <td style="text-align:center;"> 0.956 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Bangladeshi </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.440000e+00 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.486 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Black African </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.350000e+00 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.763 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Black Caribbean </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.460000e+00 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.877 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Chinese </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.150000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.180 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Indian </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.430000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.742 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Mixed/Multiple ethnic groups </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 2.250000e+00 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.625 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Pakistani </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.670000e+00 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.710 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.570000e+00 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Doing something else </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 1.250000e+00 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.154 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Full-time student </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.520000e+00 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.839 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Long-term sick or disabled </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 2.090000e+00 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.333 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Looking after family or home </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.190000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.252 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On a government training scheme </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 2.490000e+00 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.221 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On furlough </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 371186.24 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 198737265.53 </td>
+   <td style="text-align:center;"> 0.981 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On maternity leave </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 5.420000e+00 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.590 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Retired </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.350000e+00 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.692 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Self employed </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.410000e+00 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.873 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unemployed </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.640000e+00 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.664 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unpaid worker in family business </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 510608.15 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 273385313.35 </td>
+   <td style="text-align:center;"> 0.980 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> _BinaryNot working </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_agree",demo.pred.ancestry.binary)
+```
+
+```
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for ancestry?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Black_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.947 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.271 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 4.18 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.808 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.562 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Not practising </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.474 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Practising </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.043 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 2.15 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus_Binary </td>
+   <td style="text-align:center;"> Working or on maternity leave or on furlough </td>
+   <td style="text-align:left;"> Not working </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.025 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+</tbody>
+</table>
 
 
 
@@ -32378,4 +33580,15 @@ demo.pred.ancestry.multi <- c()
 
 
 ### forest plots
+
+# Notes and thoughts
+
+## marital status
+
+* Very few people who are not married or in a civil partnership (6% of the whole sample!). ALL of these are missing their IMD quintile data   
+
+## 
+
+## 
+
 

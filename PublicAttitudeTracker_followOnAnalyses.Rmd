@@ -933,15 +933,15 @@ Select the strongest univariable predictor where one or more similar variables/v
 * Asian_filter (Asian respondents less likely to take part relative to all other ethnicity)   
 * MDQuintile (The higher the quintile the more likely to take part. Higher indicates less deprived)   
 * AGE_BAND (younger groups;18-25; less like to take part compared to largest respondent group - 35-44. Older; 45-54 and 65-74; more likely to take part)   
-* ETHNICITY (White British more likely to take part than any other group) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
+* ETHNICITY (White British more likely to take part than any other group) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage. '*'   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to take part relative to married/civil partnered people)   
 * QUALTYPE (Those without educational and vocational qualifications less likely to take part) '*'      
 * EDUCATION (Those with less than degree level less likely to take part than those with degree level) '*'      
 * DEGREE (Those without a degree and less likely to take part than those with a degree)   
 * WorkingStatus_PrePandemic (those who were full time students or unemployed pre pandemic less likely to take part) '*'   
 * WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to take part relative to employed or on mt leave) '*'   
-* WorkingStatus (those who are full time students or unemployed less likely to take part)   
-* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part) '*'   
+* WorkingStatus (those who are full time students or unemployed less likely to take part) '*'  
+* WorkingStatus_Binary (those who are not working or on mat leave less likely to take part)    
 * TENURE (People who own their property outright are more likely to take part than those who rent)
 
 #### Receive genetic feedback about things preventable or treatable binary
@@ -1053,7 +1053,6 @@ Select the strongest univariable predictor where one or more similar variables/v
 * WorkingStatus_PrePandemic_Binary (those who were unemployed less likely to want ancestry relative to employed or on mt leave) '*'   
 * WorkingStatus_Binary (those who are not working or on mat leave less likely to want ancestry)   
 
-### regression
 ####  set variable lists for significant demographic predictors for each outcome
 
 I am dropping marital status for now as these people are all missing their MDQuintile data, and there are very few of them. Will do later sensitivty analyses in this group
@@ -1061,61 +1060,71 @@ I am dropping marital status for now as these people are all missing their MDQui
 
 ## binary
 demo.pred.takepart.binary <- c("Asian_filter", "MDQuintile", "AGE_BAND", 
-                               "ETHNICITY",  "MARSTAT", "DEGREE", 
-                               "WorkingStatus",  
+                                 "DEGREE", 
+                               "WorkingStatus_Binary",  
                                "TENURE")
 
 demo.pred.takepart.nocont <- c("Asian_filter", "AGE_BAND", 
-                               "ETHNICITY",  "MARSTAT", "DEGREE", 
+                               "ETHNICITY",   "DEGREE", 
                                "WorkingStatus",  
                                "TENURE")
 
 demo.pred.prevent.binary <- c("Black_filter", "MDQuintile", "AGE_BAND", 
-                              "MARSTAT", 
+                           
                               "RELIGIOSITY", "DEGREE", 
                               "WorkingStatus", "WorkingStatus_Binary", 
                               "TENURE")
 
 demo.pred.noprevent.binary <- c("AGE_BAND", "SEX", 
-                                "ETHNICITY","MARSTAT","DEGREE",  
+                                "ETHNICITY","DEGREE",  
                                 "WorkingStatus", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", "MARSTAT", 
+                                                    "MDQuintile", "SEX", 
                                                     "RELIGIOSITY", "DEGREE", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary.religion.sensitivity <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", "MARSTAT", 
+                                                    "MDQuintile", "SEX", 
                                                     "RELIGIOSITY","Religion", "DEGREE", "WorkingStatus_Binary")
 
 ## categorical
 demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "SEX", 
-                               "ETHNICITY",  "MARSTAT",  "DEGREE", 
+                               "ETHNICITY",    "DEGREE", 
                                "WorkingStatus_Binary","TENURE")
 
-demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", "MARSTAT", 
+demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", 
                              "RELIGIOSITY",   "DEGREE", 
                               "WorkingStatus_Binary", "TENURE")
 
 demo.pred.noprevent.multi <- c( "AGE_BAND", "ETHNICITY", "DEGREE",  "WorkingStatus")
 
 demo.pred.ancestry.multi <- c("Black_filter", "Asian_filter",
-                              "MARSTAT", "RELIGIOSITY", 
+                              "RELIGIOSITY", 
                               "DEGREE", 
                               "WorkingStatus_Binary")
 
 demo.pred.ancestry.multi.religion.sensitivity <- c("Black_filter","Asian_filter",
-                              "MARSTAT", "RELIGIOSITY", "RELIGION", "DEGREE",
+                               "RELIGIOSITY", "RELIGION", "DEGREE",
                               "WorkingStatus_Binary")
 ```
 
 
-### correlations between variables to select only one for each underlying trait
 
-```{r correlate predictors}
-corr
+### binomial regression
+
+for the binary outcomes and the demographic predictors
+
+```{r run binomial multivariable,results='asis'}
+ 
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",demo.pred.takepart.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",demo.pred.prevent.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_no_prevent_agree",demo.pred.noprevent.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_agree",demo.pred.ancestry.binary)
+
 ```
-
 
 
 
