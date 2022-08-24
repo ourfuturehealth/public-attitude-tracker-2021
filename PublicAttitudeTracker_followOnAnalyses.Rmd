@@ -1126,6 +1126,22 @@ do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_agree",dem
 
 ```
 
+### Multinomial regression
+
+for the binary outcomes and the demographic predictors
+
+```{r run multinomial multivariable,results='asis'}
+ 
+do.multivariable.binomial.regression(regression_df,"ofhact_all",demo.pred.takepart.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.binary)
+
+do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.binary)
+
+```
+
 
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Data cleaning and preparation for Kantar Public Attitude Tracker 2022 data"
 author: "K L Purves"
-date: '18 August, 2022'
+date: '24 August, 2022'
 output:
   html_document:
     
@@ -53,6 +53,10 @@ editor_options:
 ```
 
 ```
+## #Uighur
+```
+
+```
 ## 
 ## Attaching package: 'psych'
 ```
@@ -92,6 +96,12 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
+```
+
+```
+## 
+## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
+##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
