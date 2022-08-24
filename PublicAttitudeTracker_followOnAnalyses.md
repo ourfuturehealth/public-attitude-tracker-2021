@@ -100,6 +100,12 @@ editor_options:
 
 ```
 ## 
+## Use 'expss_output_viewer()' to display tables in the RStudio Viewer.
+##  To return to the console output, use 'expss_output_default()'.
+```
+
+```
+## 
 ## Attaching package: 'expss'
 ```
 
@@ -33586,6 +33592,7 @@ for the binary outcomes and the demographic predictors
 do.multivariable.multinomial.regression(regression_df,"ofhact_all",demo.pred.takepart.multi)
 ```
 
+[1] "#####"
 # weights:  81 (52 variable)
 initial  value 2674.022311 
 iter  10 value 2444.410707
@@ -34328,6 +34335,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.multi)
 ```
 
+[1] "#####"
 # weights:  45 (28 variable)
 initial  value 3009.099059 
 iter  10 value 2308.478220
@@ -34731,6 +34739,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.multi)
 ```
 
+[1] "#####"
 # weights:  96 (62 variable)
 initial  value 3022.282406 
 iter  10 value 2523.352723
@@ -35616,6 +35625,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.multi)
 ```
 
+[1] "#####"
 # weights:  24 (14 variable)
 initial  value 3015.690732 
 iter  10 value 2102.105734

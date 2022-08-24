@@ -1132,11 +1132,15 @@ for the binary outcomes and the demographic predictors
 
 ```{r run multinomial multivariable,results='asis',warning=FALSE}
  
+
 do.multivariable.multinomial.regression(regression_df,"ofhact_all",demo.pred.takepart.multi)
+
 
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.multi)
 
+
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.multi)
+
 
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.multi)
 

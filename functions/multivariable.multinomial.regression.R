@@ -9,6 +9,7 @@ do.multivariable.multinomial.regression<- function(dataframe, outcome, independe
   glm.formula <<- paste(set.largest.ref(outcome), paste(set.largest.ref(independent.variable.list), collapse=" + "), sep=" ~ ")
   dataframe <<- dataframe
   
+  print("#####")
   model <<- multinom(formula=glm.formula, data=dataframe,trace=FALSE)
   
   # create table
