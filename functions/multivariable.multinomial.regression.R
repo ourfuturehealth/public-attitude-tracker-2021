@@ -66,4 +66,9 @@ do.multivariable.multinomial.regression<- function(dataframe, outcome, independe
     kable_styling(bootstrap_options = c("striped", "hover")) %>%
     print()
   
+  ## print forest plot
+  
+  print(multinomial.forest.plot(data.in=df,
+                                title=paste("<b>Multinomial logistic regression of multiple variables predicting",label(dataframe[[outcome]]),"</b>",sep=" "),
+        colourpal= c("#FFC62B","#011D4B")))
 }
