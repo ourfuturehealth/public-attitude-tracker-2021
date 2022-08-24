@@ -798,7 +798,7 @@ pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3", "GENFBACK_1", 
-"GENFBACK_2", "GENFBACK_3", "PARTNA", "PARTNB", "OFHACT2", "RECONTACT", 
+"GENFBACK_2", "GENFBACK_3", "RECONTACT", 
  "GENFBACK_prevent_agree", 
 "GENFBACK_prevent_all", "GENFBACK_no_prevent_agree", "GENFBACK_no_prevent_all", 
 "GENFBACK_ancestry_agree", "GENFBACK_ancestry_all","DISABILITY", 
@@ -1321,17 +1321,82 @@ When accounting for covariates, the following variables are significant precicto
 
 ### predicting binary Yes/no
 
-* Life events
+Putting predictors in groups for now.
+
+Note: still need to 1) correct for multiple comparisons. Many will drop
+
 ```{r predictor list for multivariable predictor models}
 
-significant.pred.articipation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
+significant.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
                                           "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
                                           "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
-                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST","")
+                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST",
+                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
+                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
+                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL",
+                                          "BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1","BARRSB_2","BLOODS_1","BLOODS_2",
+                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3",
+                                          "GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+                                          "GENFBACK_ancestry_agree",
+                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                          )
+
+lapply(regression_df[significant.pred.participation.binary],label)
+
+characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL",
+                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
+                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+                                          "SCITRUST_TOTAL","COVRES",
+                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                          )
+
+ofh.attitudes.pred.participation.binary <- c("OFHAWARE","UNDERST",
+                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
+                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
+                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL"
+                                          )
+
+data.security.attitudes.pred.participation.binary <- c("BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1","BARRSB_2")
+
+practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
+                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3")
+
+genetic.pred.participation.binary <- c("GENFAM","GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+                                          "GENFBACK_ancestry_agree")
+```
+
+
+
+## Model 3: multivariable significant predictors with covariates
+
+run models predicting outcomes with all significant predicotrs within their groupoed categories and covariates
+to identify indepdent predictors of taking part
+
+### binomial outcomes  yes/ no 
+```{r multivariable with covariates predictor groups binomial, results='asis'}
+
+# personal characteristics
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,characteristics.pred.participation.binary))
+
+# attitudes and awareness about our future health
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,ofh.attitudes.pred.participation.binary ))
+
+# data security concerns 
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,data.security.attitudes.pred.participation.binary))
+
+# practical barriers
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,practical.barriers.pred.participation.binary ))
+
+# attitudes and knowledge of genetics and genetic feedback
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,genetic.pred.participation.binary))
 
 ```
 
-## Model 2: each predictor with significant demographic predictors as covariates
+
 
 
 # Notes and thoughts

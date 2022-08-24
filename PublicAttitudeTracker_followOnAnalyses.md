@@ -59,7 +59,7 @@ editor_options:
 ```
 
 ```
-## #BlackLivesMatter
+## #Uighur
 ```
 
 ```
@@ -4601,7 +4601,7 @@ pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
 "BLOODS_1", "BLOODS_2", "BLOODS_3", "BLOODS_4", "BLOODS_5", "BLOODS_6", 
 "BLOODS_7", "PRACBAR_1", "PRACBAR_2", "PRACBAR_3", "GENFBACK_1", 
-"GENFBACK_2", "GENFBACK_3", "PARTNA", "PARTNB", "OFHACT2", "RECONTACT", 
+"GENFBACK_2", "GENFBACK_3", "RECONTACT", 
  "GENFBACK_prevent_agree", 
 "GENFBACK_prevent_all", "GENFBACK_no_prevent_agree", "GENFBACK_no_prevent_all", 
 "GENFBACK_ancestry_agree", "GENFBACK_ancestry_all","DISABILITY", 
@@ -45631,578 +45631,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 9.600000e-01 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.022 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 8.100000e-01 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.340000e+00 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.788 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.55 </td>
-   <td style="text-align:center;"> 2.050000e+00 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.670000e+00 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.133 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 1.980000e+00 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.022 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.350000e+00 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.618 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.430000e+00 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.043 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 2.500000e-01 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 3.200000e-01 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 3.000000e-01 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.63 </td>
-   <td style="text-align:center;"> 3.52 </td>
-   <td style="text-align:center;"> 4.710000e+00 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 8.853693e+198 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.947 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.752 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.56 </td>
-   <td style="text-align:center;"> 2.04 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.123 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 2.04 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.007 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.935 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> Less likely to take part </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> More likely to take part </td>
-   <td style="text-align:center;"> 2.78 </td>
-   <td style="text-align:center;"> 3.45 </td>
-   <td style="text-align:center;"> 4.29 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.635 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.324 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.994 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 2.34 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.045 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 2.35 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.058 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.73 </td>
-   <td style="text-align:center;"> 2.81 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.028 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 2.03 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.842 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.60 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.122 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> No, definitely not </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> No, probably not </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> Yes, definitely </td>
-   <td style="text-align:center;"> 3.94 </td>
-   <td style="text-align:center;"> 6.76 </td>
-   <td style="text-align:center;"> 11.61 </td>
-   <td style="text-align:center;"> 1.86 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.64 </td>
    <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 0.97 </td>
@@ -46321,7 +45749,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46468,7 +45896,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46628,7 +46056,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46775,7 +46203,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46935,7 +46363,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47082,7 +46510,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47242,7 +46670,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47411,7 +46839,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47554,7 +46982,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47691,7 +47119,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-70.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
 
 ### Categorical (yes/no/unsure)
 
@@ -58915,651 +58343,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.053 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.016 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.965 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.912 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.950 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.814 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.026 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 12.52 </td>
-   <td style="text-align:center;"> 1.79 </td>
-   <td style="text-align:center;"> 0.542 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.032 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.22 </td>
-   <td style="text-align:center;"> 3.17 </td>
-   <td style="text-align:center;"> 4.54 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNA </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.017 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.563 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.747 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.984 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.901 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.057 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 1.50 </td>
-   <td style="text-align:center;"> 1.79 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 6.00 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.890 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.063 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> Less likely to take part </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> More likely to take part </td>
-   <td style="text-align:center;"> 3.19 </td>
-   <td style="text-align:center;"> 4.17 </td>
-   <td style="text-align:center;"> 5.46 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PARTNB </td>
-   <td style="text-align:center;"> No more or less likely to take part </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.375 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.270 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.647 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.57 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.769 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.227 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.65 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.794 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.720 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.65 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.665 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 1.68 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.064 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 3.81 </td>
-   <td style="text-align:center;"> 39.02 </td>
-   <td style="text-align:center;"> 4.52 </td>
-   <td style="text-align:center;"> 0.260 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.224 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> No, definitely not </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> No, probably not </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT2 </td>
-   <td style="text-align:center;"> Yes, probably </td>
-   <td style="text-align:left;"> Yes, definitely </td>
-   <td style="text-align:center;"> 1.92 </td>
-   <td style="text-align:center;"> 4.25 </td>
-   <td style="text-align:center;"> 9.40 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.84 </td>
    <td style="text-align:center;"> 1.05 </td>
@@ -59704,7 +58487,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59877,7 +58660,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60063,7 +58846,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60232,7 +59015,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60418,7 +59201,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60591,7 +59374,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60777,7 +59560,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60972,7 +59755,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61141,7 +59924,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61304,23 +60087,3201 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-70.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
 
 ## significant predictors of participation from model 2
 When accounting for covariates, the following variables are significant precictors of participation and will be included in model 3
 
 ### predicting binary Yes/no
 
-* Life events
+Putting predictors in groups for now.
+
+Note: still need to 1) correct for multiple comparisons. Many will drop
+
 
 ```r
-significant.pred.articipation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
+significant.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
                                           "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
                                           "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
-                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST","")
+                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST",
+                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
+                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
+                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL",
+                                          "BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1","BARRSB_2","BLOODS_1","BLOODS_2",
+                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3",
+                                          "GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+                                          "GENFBACK_ancestry_agree",
+                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                          )
+
+lapply(regression_df[significant.pred.participation.binary],label)
 ```
 
-## Model 2: each predictor with significant demographic predictors as covariates
+```
+$LIFEEVENT
+$LIFEEVENT$LIFEEVENT
+[1] "In the last 12 months have you experienced a major life event?"
+
+
+$PROSO_EVER_TOTAL
+$PROSO_EVER_TOTAL$PROSO_EVER_TOTAL
+[1] "Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
+
+
+$PROSO4W_TOTAL
+$PROSO4W_TOTAL$PROSO4W_TOTAL
+[1] "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
+
+
+$GENFAM
+$GENFAM$GENFAM
+[1] "Do you have a family history of any disease or health condition?"
+
+
+$GENTEST
+$GENTEST$GENTEST
+[1] "Have you ever had a genetic test?"
+
+
+$DISABFAM
+$DISABFAM$DISABFAM
+[1] "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?"
+
+
+$HEALTH
+$HEALTH$HEALTH
+[1] "To what extent do you agree or disagree - I am someone who looks after my health very well"
+
+
+$HRES_TOTAL
+$HRES_TOTAL$HRES_TOTAL
+[1] "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups."
+
+
+$HEALTHSEEK_TOTAL
+$HEALTHSEEK_TOTAL$HEALTHSEEK_TOTAL
+[1] "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics"
+
+
+$TRUSTGEN
+$TRUSTGEN$<NA>
+NULL
+
+
+$TRUSTORG_A
+$TRUSTORG_A$<NA>
+NULL
+
+
+$TRUSTORG_B
+$TRUSTORG_B$<NA>
+NULL
+
+
+$TRUSTORG_C
+$TRUSTORG_C$<NA>
+NULL
+
+
+$TRUSTORG_D
+$TRUSTORG_D$<NA>
+NULL
+
+
+$TRUSTORG_E
+$TRUSTORG_E$<NA>
+NULL
+
+
+$SCIINT
+$SCIINT$SCIINT
+[1] "How interested are you in science?"
+
+
+$SCIINF
+$SCIINF$SCIINF
+[1] "How well informed do you feel about science and scientific developments?"
+
+
+$SCITRUST_TOTAL
+$SCITRUST_TOTAL$SCITRUST_TOTAL
+[1] "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall."
+
+
+$COVRES
+$COVRES$COVRES
+[1] "How much do you think scientific medical research has helped prevent and treat COVID-19?"
+
+
+$OFHAWARE
+$OFHAWARE$OFHAWARE
+[1] "Have you heard of the Our Future Health research programme?"
+
+
+$UNDERST
+$UNDERST$UNDERST
+[1] "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme"
+
+
+$OFHPAIR_A
+$OFHPAIR_A$<NA>
+NULL
+
+
+$OFHPAIR_B
+$OFHPAIR_B$<NA>
+NULL
+
+
+$OFHPAIR_C
+$OFHPAIR_C$<NA>
+NULL
+
+
+$OFHPAIR_D
+$OFHPAIR_D$<NA>
+NULL
+
+
+$OFHPAIR_E
+$OFHPAIR_E$<NA>
+NULL
+
+
+$OFHBEN_1
+$OFHBEN_1$OFHBEN_1
+[1] "OFH will... advance medical research"
+
+
+$OFHBEN_2
+$OFHBEN_2$OFHBEN_2
+[1] "OFH will... better treatments"
+
+
+$OFHBEN_3
+$OFHBEN_3$OFHBEN_3
+[1] "OFH will... early detection"
+
+
+$OFHBEN_4
+$OFHBEN_4$OFHBEN_4
+[1] "OFH will... help me"
+
+
+$OFHBEN_5
+$OFHBEN_5$OFHBEN_5
+[1] "OFH will... help family/friends"
+
+
+$OFHBEN_6
+$OFHBEN_6$OFHBEN_6
+[1] "OFH will... help community"
+
+
+$OFHBEN_7
+$OFHBEN_7$OFHBEN_7
+[1] "OFH will... help people in UK"
+
+
+$OFHBEN_8
+$OFHBEN_8$OFHBEN_8
+[1] "OFH will... help people in world"
+
+
+$OFHBEN_9
+$OFHBEN_9$OFHBEN_9
+[1] "OFH will... help representation of people like me"
+
+
+$OFHBENCL
+$OFHBENCL$OFHBENCL
+[1] "The potential benefits of taking part in the Our Future Health research programme are clear to me"
+
+
+$BARRSA_1
+$BARRSA_1$BARRSA_1
+[1] "Comfortable health info in large database"
+
+
+$BARRSA_2
+$BARRSA_2$BARRSA_2
+[1] "Comfortable share health info with OFH"
+
+
+$BARRSA_3
+$BARRSA_3$BARRSA_3
+[1] "Comfortable how OFH use health info"
+
+
+$BARRSA_4
+$BARRSA_4$BARRSA_4
+[1] "Comfortable OFH access to medical records"
+
+
+$BARRSB_1
+$BARRSB_1$BARRSB_1
+[1] "Comfortable academics access to health records"
+
+
+$BARRSB_2
+$BARRSB_2$BARRSB_2
+[1] "Comfortable companies access to health records"
+
+
+$BLOODS_1
+$BLOODS_1$BLOODS_1
+[1] "Willing give sample if part of routine blood test"
+
+
+$BLOODS_2
+$BLOODS_2$BLOODS_2
+[1] "Willing give sample if soley for OFH"
+
+
+$BLOODS_3
+$BLOODS_3$BLOODS_3
+[1] "Difficult to give sample on weekday"
+
+
+$BLOODS_4
+$BLOODS_4$BLOODS_4
+[1] "Difficult to give sample on weekend"
+
+
+$BLOODS_5
+$BLOODS_5$BLOODS_5
+[1] "The thought of providing a blood sample makes me anxious"
+
+
+$BLOODS_6
+$BLOODS_6$BLOODS_6
+[1] "I have a fear of needles"
+
+
+$BLOODS_7
+$BLOODS_7$BLOODS_7
+[1] "I have a fear of needles that would stop me from providing a blood sample"
+
+
+$PRACBAR_1
+$PRACBAR_1$PRACBAR_1
+[1] "I don't have time to take part in the Our Future Health research programme"
+
+
+$PRACBAR_2
+$PRACBAR_2$PRACBAR_2
+[1] "have time for 10 min questionnaire"
+
+
+$PRACBAR_3
+$PRACBAR_3$PRACBAR_3
+[1] "have time for 30 min questionnaire"
+
+
+$GENFBACK_prevent_agree
+$GENFBACK_prevent_agree$GENFBACK_prevent_agree
+[1] "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say"
+
+
+$GENFBACK_no_prevent_agree
+$GENFBACK_no_prevent_agree$GENFBACK_no_prevent_agree
+[1] "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
+
+
+$GENFBACK_ancestry_agree
+$GENFBACK_ancestry_agree$GENFBACK_ancestry_agree
+[1] "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
+
+
+$RECONTACT
+$RECONTACT$RECONTACT
+[1] "Recontact for future qualitative research"
+
+
+$DISABILITY
+$DISABILITY$DISABILITY
+[1] "Long-term ill health/disability status"
+
+
+$DISAB1
+$DISAB1$DISAB1
+[1] "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?"
+
+
+$DISABEVER
+$DISABEVER$DISABEVER
+[1] "Have you ever had a physical or mental health condition or illness lasting 12 months or more?"
+```
+
+```r
+characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL",
+                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
+                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+                                          "SCITRUST_TOTAL","COVRES",
+                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                          )
+
+ofh.attitudes.pred.participation.binary <- c("OFHAWARE","UNDERST",
+                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
+                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
+                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL"
+                                          )
+
+data.security.attitudes.pred.participation.binary <- c("BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1","BARRSB_2")
+
+practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
+                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3")
+
+genetic.pred.participation.binary <- c("GENFAM","GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+                                          "GENFBACK_ancestry_agree")
+```
+
+
+
+## Model 3: multivariable significant predictors with covariates
+
+run models predicting outcomes with all significant predicotrs within their groupoed categories and covariates
+to identify indepdent predictors of taking part
+
+### binomial outcomes  yes/ no 
+
+```r
+# personal characteristics
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,characteristics.pred.participation.binary))
+```
+
+```
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.650 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.142 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.601 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.89 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.073 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.88 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.115 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.092 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.525 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.421 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> LIFEEVENT </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.69 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PROSO_EVER_TOTAL </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PROSO4W_TOTAL </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.316 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISABFAM </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.378 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> HEALTH </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.657 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> HEALTH </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.193 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> HEALTH </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 2.38 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.754 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> HRES_TOTAL </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> HEALTH </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> SEEK_TOTAL </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.025 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTGEN </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.882 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTORG_A </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.141 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTORG_B </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.143 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTORG_C </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.206 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTORG_D </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.388 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TRUSTORG_E </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.157 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINT </td>
+   <td style="text-align:center;"> Quite interested </td>
+   <td style="text-align:left;"> Neither interested nor not interested </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.419 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINT </td>
+   <td style="text-align:center;"> Quite interested </td>
+   <td style="text-align:left;"> Not at all interested </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.131 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINT </td>
+   <td style="text-align:center;"> Quite interested </td>
+   <td style="text-align:left;"> Not very interested </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.995 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINT </td>
+   <td style="text-align:center;"> Quite interested </td>
+   <td style="text-align:left;"> Very interested </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.257 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINF </td>
+   <td style="text-align:center;"> Fairly well informed </td>
+   <td style="text-align:left;"> Neither well informed nor not informed </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.065 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINF </td>
+   <td style="text-align:center;"> Fairly well informed </td>
+   <td style="text-align:left;"> Not at all informed </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 3.16 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.272 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINF </td>
+   <td style="text-align:center;"> Fairly well informed </td>
+   <td style="text-align:left;"> Not very well informed </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.093 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCIINF </td>
+   <td style="text-align:center;"> Fairly well informed </td>
+   <td style="text-align:left;"> Very well informed </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.262 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SCITRUST_TOTAL </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.018 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> COVRES </td>
+   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:left;"> Not at all </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> COVRES </td>
+   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:left;"> Not very much </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.271 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> COVRES </td>
+   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:left;"> Quite a lot </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.292 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RECONTACT </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISABILITY </td>
+   <td style="text-align:center;"> No long-term ill health/disability </td>
+   <td style="text-align:left;"> Long-term ill health/disability that does not limit day-to-day activities </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.721 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISABILITY </td>
+   <td style="text-align:center;"> No long-term ill health/disability </td>
+   <td style="text-align:left;"> Long-term ill health/disability that limits day-to-day activities a little </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.793 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISABILITY </td>
+   <td style="text-align:center;"> No long-term ill health/disability </td>
+   <td style="text-align:left;"> Long-term ill health/disability that limits day-to-day activities a lot </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.763 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISAB1 </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DISABEVER </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.681 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-1.png" width="100%" />
+
+```r
+# attitudes and awareness about our future health
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,ofh.attitudes.pred.participation.binary ))
+```
+
+```
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+Warning: non-vector elements will be ignored
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.718 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.146 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.854 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 2.45 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.66 </td>
+   <td style="text-align:center;"> 2.61 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 3.04 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 2.97 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.236 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.772 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHAWARE </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Not sure </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.577 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHAWARE </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 2.04 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.836 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> UNDERST </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 2.08 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.678 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> UNDERST </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.662 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> UNDERST </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.990 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> UNDERST </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.979 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHPAIR_A </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 3.49 </td>
+   <td style="text-align:center;"> 4.13 </td>
+   <td style="text-align:center;"> 4.90 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHPAIR_B </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.803 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHPAIR_C </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.901 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHPAIR_D </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.047 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHPAIR_E </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.717 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 3.40 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.880 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.080 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.639 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 1.91 </td>
+   <td style="text-align:center;"> 7.75 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.368 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 3.76 </td>
+   <td style="text-align:center;"> 13.78 </td>
+   <td style="text-align:center;"> 2.49 </td>
+   <td style="text-align:center;"> 0.046 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.342 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 2.65 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.229 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 8.54 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.951 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 3.09 </td>
+   <td style="text-align:center;"> 13.11 </td>
+   <td style="text-align:center;"> 2.28 </td>
+   <td style="text-align:center;"> 0.126 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 2.08 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.532 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 2.13 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.431 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 2.46 </td>
+   <td style="text-align:center;"> 14.18 </td>
+   <td style="text-align:center;"> 2.20 </td>
+   <td style="text-align:center;"> 0.315 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.69 </td>
+   <td style="text-align:center;"> 2.38 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.093 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 2.04 </td>
+   <td style="text-align:center;"> 4.28 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.058 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_5 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.420 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_5 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.827 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_5 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.213 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_5 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 5.35 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.737 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_6 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 3.97 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.498 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_6 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.963 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_6 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.90 </td>
+   <td style="text-align:center;"> 3.94 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.082 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_6 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 2.36 </td>
+   <td style="text-align:center;"> 16.04 </td>
+   <td style="text-align:center;"> 2.31 </td>
+   <td style="text-align:center;"> 0.381 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_7 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 3.28 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.624 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_7 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.337 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_7 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.571 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_7 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 5.19 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.526 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_8 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.089 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_8 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.63 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.973 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_8 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.63 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.714 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_8 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 4.15 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.729 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_9 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 2.86 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.538 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_9 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.700 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_9 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.150 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_9 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 2.35 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.220 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.037 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.805 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.977 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```
+Warning: Transformation introduced infinite values in continuous y-axis
+```
+
+```
+Warning: Transformation introduced infinite values in continuous y-axis
+Transformation introduced infinite values in continuous y-axis
+```
+
+```
+Warning: Removed 2 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-2.png" width="100%" />
+
+```r
+# data security concerns 
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,data.security.attitudes.pred.participation.binary))
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.691 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.759 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.235 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 1.95 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.118 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.410 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.049 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.073 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.515 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.63 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.447 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 2.47 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.711 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.330 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 3.34 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.430 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.116 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.092 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.079 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.283 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 2.16 </td>
+   <td style="text-align:center;"> 5.16 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.083 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.100 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.932 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.079 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.067 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.343 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 2.08 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.910 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.319 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
+
+```r
+# practical barriers
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,practical.barriers.pred.participation.binary ))
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.821 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.421 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.182 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.291 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.759 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.410 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.194 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.893 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.034 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.97 </td>
+   <td style="text-align:center;"> 3.61 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.553 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.467 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.762 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.121 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.320 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 2.30 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.342 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.645 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.344 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 2.53 </td>
+   <td style="text-align:center;"> 5.34 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.304 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.012 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.935 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.651 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 3.47 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.604 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.975 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.385 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.259 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.321 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 2.18 </td>
+   <td style="text-align:center;"> 7.80 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.229 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.023 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.451 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_7 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 2.19 </td>
+   <td style="text-align:center;"> 3.79 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_7 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.69 </td>
+   <td style="text-align:center;"> 2.63 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_7 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.247 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_7 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 3.94 </td>
+   <td style="text-align:center;"> 8.57 </td>
+   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_7 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.623 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.43 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.081 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.138 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.069 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 2.27 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.037 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 4.05 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.476 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.033 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.165 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly agree </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.67 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.924 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.203 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-4.png" width="100%" />
+
+```r
+# attitudes and knowledge of genetics and genetic feedback
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,genetic.pred.participation.binary))
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.154 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.06 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.067 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 1.97 </td>
+   <td style="text-align:center;"> 2.78 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.525 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.180 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENFAM </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.761 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENTEST </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 2.21 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENFBACK_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 2.18 </td>
+   <td style="text-align:center;"> 3.00 </td>
+   <td style="text-align:center;"> 4.11 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 2.27 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 2.15 </td>
+   <td style="text-align:center;"> 2.84 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+</tbody>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
+
+
 
 
 # Notes and thoughts
