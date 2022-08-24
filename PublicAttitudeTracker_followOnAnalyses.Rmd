@@ -445,7 +445,7 @@ lapply(factor_df[Volunteering.ever_cols],label)
 
 ####  4 weeks pro social
 ```{r sum score vectors prosocial 4 weeks}
-# Volunteering ever
+
 Volunteering.4_cols <- factor_df %>%
   select(contains("PROSO4W_"),
          -"PROSO4W_NONE") %>%
@@ -457,13 +457,23 @@ lapply(factor_df[Volunteering.4_cols],label)
 
 #### Scientific trust
 ```{r sum score vectors science}
-# Volunteering 4 weeks
+
 science_cols <- factor_df %>%
   select(contains("SCI"),
          -c("SCIINF","SCIINT")) %>%
   colnames()
 
 lapply(factor_df[science_cols],label)
+
+```
+####  actively seeking health information
+```{r sum score vectors seeking health info}
+
+healthseek_cols <- factor_df %>%
+  select(contains("HACT12")) %>%
+  colnames()
+
+lapply(factor_df[healthseek_cols],label)
 
 ```
 
@@ -480,6 +490,18 @@ lapply(factor_df[participation_cols],label)
 
 ```
 
+#### trust in organisations
+
+```{r sum score vectors trust}
+
+
+trust_cols <- factor_df %>%
+  select(contains("TRUSTORG")) %>%
+  colnames()
+
+lapply(factor_df[trust_cols],label)
+
+```
 ### create sum scores.
 
 use column vectors to mutate new columns
@@ -561,13 +583,40 @@ SCITRUST_TOTAL="Composite score indicating trust or distrust in science overall.
 #### Research participation
 
 
+Both Covid-19 AND another health topic = 2
+Another health topic = 1
+Covid-19 = 1
+Neither = 0
+
+
+minimum score = 0 (never actively sought any health information)
+Maximum score = 8 (used any medium to search for maximum amount of health science information)
+
+```{r create research participation sum score}
+
+ factor_df <- factor_df %>%
+  mutate(HEALTHSEEK_TOTAL = 0 + (rowSums(factor_df[healthseek_cols] == "Both Covid-19 AND another health topic") * 2) +
+         (rowSums(factor_df[healthseek_cols] == "Another health topic")) +
+         (rowSums(factor_df[healthseek_cols] == "Covid-19")) +
+         (rowSums(factor_df[healthseek_cols] == "Neither") * 0)
+         ) 
+
+
+
+factor_df = apply_labels(factor_df, 
+HEALTHSEEK_TOTAL="Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+```
+
+#### Total score for actively seeking health information
+
+
 Yes = 1
 No = 0 
 
 minimum score = 0 (never taken part in health research)
 Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
 
-```{r create research participation sum score}
+```{r create health interest sum score}
 
  factor_df <- factor_df %>%
   mutate(HRES_TOTAL = 0 + (rowSums(factor_df[participation_cols] == "Yes"))
@@ -577,6 +626,29 @@ Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
 factor_df = apply_labels(factor_df, 
 HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
 ```
+
+#### Total score for trusting organisations
+
+numeric, so add total score for each organisation type and divide by 5 to get average organisation trust score per person
+
+***organisations:***
+NHS
+Government
+Pharmaceutical companies
+Medical charities
+Medical researchers and universities
+
+```{r create overall organisation trust sum score}
+
+ factor_df <- factor_df %>%
+  mutate(TRUSTORG_TOTAL = rowSums(factor_df[trust_cols])/5)
+         
+
+
+factor_df = apply_labels(factor_df, 
+TRUSTORG_TOTAL="Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+```
+
 
 
 # Data preparation
@@ -604,10 +676,9 @@ all.vars <- c(
 "DISAB1", "DISAB2", "DISABEVER", "GENFAM", "GENTEST", "GENTEST_1", 
 "GENTEST_2", "GENTEST_3", "GENTEST_4", "GENTEST_5", "GENTEST_5OPEN", 
 "GENTTYP_1", "GENTTYP_2", "GENTTYP_3", "GENTTYP_4", "GENTTYP_5", 
-"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", 
-"HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HEALTHSEEK_TOTAL", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL",
+"TRUSTORG_E","TRUSTORG_TOTAL","SCIINT", "SCIINF", "SCITRUST_TOTAL",
 "COVRES", "OFHAWARE", "VIDEO", "AUDIO", "UNDERST", "OFHACT", 
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
@@ -659,9 +730,9 @@ outcomes <- c("ofhact_agree","ofhact_all",
 pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", 
 "GENFAM", "GENTEST",
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL",
-"HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
-"TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
+"HEALTHSEEK_TOTAL",
+"TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D",
+"TRUSTORG_E","TRUSTORG_TOTAL", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
 "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
@@ -682,9 +753,9 @@ pred.gen.vars <-c( "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE",
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary","OCCUPATION_NSSEC",
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",  "GENFAM", "GENTEST", 
-"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HEALTHSEEK_TOTAL",
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
+"TRUSTORG_E","TRUSTORG_TOTAL", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
  "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
@@ -703,9 +774,9 @@ all.pred.vars <- c(
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  "OCCUPATION_NSSEC",
 "EDUCATION",  "WorkingStatus_Binary",  
  "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", "GENFAM", "GENTEST",  
-"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
+"DISABFAM", "AID", "HEALTH", "HRES_TOTAL","HEALTHSEEK_TOTAL",
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
-"TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
+"TRUSTORG_E","TRUSTORG_TOTAL", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
  "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
@@ -722,11 +793,6 @@ gated.pred.vars <- c("RELIGION","GENTEST_1",
 "OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
 "OFHDK2_OPEN","DISAB2")
 ```
-
-##### DOING/To DO
-create an aggreagte score for seeking information about different things 
-collapse occupation NSEC so that sub categories are all under the same bigger category 
-fix multinomial regression
 
 # Data summaries {.tabset}
 
@@ -1191,6 +1257,21 @@ for (x in pred.participate.vars){
 }
 
 ```
+
+## significant predictors of participation from model 2
+When accounting for covariates, the following variables are significant precictors of participation and will be included in model 3
+
+### predicting binary Yes/no
+
+* Life events
+```{r predictor list for multivariable predictor models}
+
+significant.pred.articipation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
+                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","")
+
+```
+
+## Model 2: each predictor with significant demographic predictors as covariates
 
 
 # Notes and thoughts
