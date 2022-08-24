@@ -69,6 +69,7 @@ do.multivariable.multinomial.regression<- function(dataframe, outcome, independe
   ## print forest plot
   
   print(multinomial.forest.plot(data.in=df,
-                                title=paste("<b>Multinomial logistic regression of multiple variables predicting",label(dataframe[[outcome]]),"</b>",sep=" "),
+                                title=paste(paste("Multinomial logistic regression of variables predicting",label(dataframe[[outcome]]),sep=" "),
+                                            "Reference level:", df$outcome.reference[1],sep = "\n"),
         colourpal= c("#FFC62B","#011D4B")))
 }

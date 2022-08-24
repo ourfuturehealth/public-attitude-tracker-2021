@@ -32,12 +32,15 @@ editor_options:
 
 
 ```
-##         ./functions/frequency_and_plot.R ./functions/is.labelled.R
-## value   ?                                ?                        
-## visible FALSE                            FALSE                    
-##         ./functions/load_package.R ./functions/multinom.p.extract.R
-## value   ?                          ?                               
-## visible FALSE                      FALSE                           
+##         ./functions/binomial.forest.plot.R ./functions/frequency_and_plot.R
+## value   ?                                  ?                               
+## visible FALSE                              FALSE                           
+##         ./functions/is.labelled.R ./functions/load_package.R
+## value   ?                         ?                         
+## visible FALSE                     FALSE                     
+##         ./functions/multinom.p.extract.R ./functions/multinomial.forest.plot.R
+## value   ?                                ?                                    
+## visible FALSE                            FALSE                                
 ##         ./functions/multivariable.binary.regression.R
 ## value   ?                                            
 ## visible FALSE                                        
@@ -83,8 +86,7 @@ editor_options:
 
 ```
 ## 
-## To modify variables or add new variables:
-##              let(mtcars, new_var = 42, new_var2 = new_var*hp) %>% head()
+## To select rows from data: rows(mtcars, am==0)
 ```
 
 ```
@@ -96,12 +98,6 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
-```
-
-```
-## 
-## Use 'expss_output_viewer()' to display tables in the RStudio Viewer.
-##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -4388,7 +4384,7 @@ Note: Using an external vector in selections is ambiguous.
 This message is displayed once per session.
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-1.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-1.png" width="100%" />
 
 ```
 Frequencies  
@@ -4404,7 +4400,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-2.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-2.png" width="100%" />
 
 ```
 Frequencies  
@@ -4424,7 +4420,7 @@ Type: Factor
 Warning: Removed 313 rows containing non-finite values (stat_count).
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-3.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-3.png" width="100%" />
 
 ```
 Frequencies  
@@ -4443,7 +4439,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-4.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-4.png" width="100%" />
 
 ```
 Frequencies  
@@ -4464,7 +4460,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-5.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-5.png" width="100%" />
 
 ```
 Frequencies  
@@ -4482,7 +4478,7 @@ Type: Factor
                         Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-6.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-6.png" width="100%" />
 
 ```
 Frequencies  
@@ -4510,7 +4506,7 @@ Type: Factor
                               Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-7.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-7.png" width="100%" />
 
 ```
 Frequencies  
@@ -4534,7 +4530,7 @@ Type: Factor
                                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-8.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-8.png" width="100%" />
 
 ```
 Frequencies  
@@ -4560,7 +4556,7 @@ Type: Factor
                 Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-9.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-9.png" width="100%" />
 
 ```
 Frequencies  
@@ -4577,7 +4573,7 @@ Type: Factor
                           Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-10.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-10.png" width="100%" />
 
 ```
 Frequencies  
@@ -4598,7 +4594,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-11.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-11.png" width="100%" />
 
 ```
 Frequencies  
@@ -4615,7 +4611,7 @@ Type: Factor
                                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-12.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-12.png" width="100%" />
 
 ```
 Frequencies  
@@ -4633,7 +4629,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-13.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-13.png" width="100%" />
 
 ```
 Frequencies  
@@ -4656,7 +4652,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-14.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-14.png" width="100%" />
 
 ```
 Frequencies  
@@ -4675,7 +4671,7 @@ Type: Factor
                                                             Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-15.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-15.png" width="100%" />
 
 ```
 Frequencies  
@@ -4693,7 +4689,7 @@ Type: Factor
                                          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-16.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-16.png" width="100%" />
 
 ```
 Frequencies  
@@ -4710,7 +4706,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-17.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-17.png" width="100%" />
 
 ```
 Frequencies  
@@ -4735,7 +4731,7 @@ Type: Factor
                                        Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-18.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-18.png" width="100%" />
 
 ```
 Frequencies  
@@ -4751,7 +4747,7 @@ Type: Factor
                               Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-19.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-19.png" width="100%" />
 
 ```
 Frequencies  
@@ -4777,7 +4773,7 @@ Type: Factor
                                        Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-20.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-20.png" width="100%" />
 
 ```
 Frequencies  
@@ -4793,7 +4789,7 @@ Type: Factor
                                              Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-21.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-21.png" width="100%" />
 
 ```
 Frequencies  
@@ -4839,7 +4835,7 @@ Type: Factor
                                                                           Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-22.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/freq demographic variables-22.png" width="100%" />
 
 ```
 Frequencies  
@@ -4871,7 +4867,7 @@ Note: Using an external vector in selections is ambiguous.
 This message is displayed once per session.
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-1.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-1.png" width="100%" />
 
 ```
 Frequencies  
@@ -4888,7 +4884,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-2.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-2.png" width="100%" />
 
 ```
 Frequencies  
@@ -4906,7 +4902,7 @@ Type: Factor
        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-3.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-3.png" width="100%" />
 
 ```
 Frequencies  
@@ -4923,7 +4919,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-4.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-4.png" width="100%" />
 
 ```
 Frequencies  
@@ -4941,7 +4937,7 @@ Type: Factor
        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-5.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-5.png" width="100%" />
 
 ```
 Frequencies  
@@ -4958,7 +4954,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-6.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-6.png" width="100%" />
 
 ```
 Frequencies  
@@ -4976,7 +4972,7 @@ Type: Factor
        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-7.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-7.png" width="100%" />
 
 ```
 Frequencies  
@@ -4993,7 +4989,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-8.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of outcome variables-8.png" width="100%" />
 
 ```
 Frequencies  
@@ -5022,7 +5018,7 @@ for (i in all.pred.vars){
 Warning: Removed 313 rows containing non-finite values (stat_count).
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-1.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-1.png" width="100%" />
 
 ```
 Frequencies  
@@ -5041,7 +5037,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-2.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-2.png" width="100%" />
 
 ```
 Frequencies  
@@ -5062,7 +5058,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-3.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-3.png" width="100%" />
 
 ```
 Frequencies  
@@ -5080,7 +5076,7 @@ Type: Factor
                         Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-4.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-4.png" width="100%" />
 
 ```
 Frequencies  
@@ -5104,7 +5100,7 @@ Type: Factor
                                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-5.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-5.png" width="100%" />
 
 ```
 Frequencies  
@@ -5130,7 +5126,7 @@ Type: Factor
                 Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-6.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-6.png" width="100%" />
 
 ```
 Frequencies  
@@ -5151,7 +5147,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-7.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-7.png" width="100%" />
 
 ```
 Frequencies  
@@ -5168,7 +5164,7 @@ Type: Factor
                                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-8.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-8.png" width="100%" />
 
 ```
 Frequencies  
@@ -5187,7 +5183,7 @@ Type: Factor
                    Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-9.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-9.png" width="100%" />
 
 ```
 Frequencies  
@@ -5203,7 +5199,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-10.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-10.png" width="100%" />
 
 ```
 Frequencies  
@@ -5219,7 +5215,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-11.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-11.png" width="100%" />
 
 ```
 Frequencies  
@@ -5235,7 +5231,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-12.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-12.png" width="100%" />
 
 ```
 Frequencies  
@@ -5251,7 +5247,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-13.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-13.png" width="100%" />
 
 ```
 Frequencies  
@@ -5267,7 +5263,7 @@ Type: Factor
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-14.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-14.png" width="100%" />
 
 ```
 Frequencies  
@@ -5291,7 +5287,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-15.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-15.png" width="100%" />
 
 ```
 Frequencies  
@@ -5321,7 +5317,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-16.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-16.png" width="100%" />
 
 ```
 Frequencies  
@@ -5341,7 +5337,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-17.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-17.png" width="100%" />
 
 ```
 Frequencies  
@@ -5359,7 +5355,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-18.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-18.png" width="100%" />
 
 ```
 Frequencies  
@@ -5405,7 +5401,7 @@ Type: Factor
                                                                           Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-19.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-19.png" width="100%" />
 
 ```
 Frequencies  
@@ -5423,7 +5419,7 @@ Type: Factor
                                          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-20.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-20.png" width="100%" />
 
 ```
 Frequencies  
@@ -5439,7 +5435,7 @@ Type: Factor
                                              Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-21.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-21.png" width="100%" />
 
 ```
 Frequencies  
@@ -5456,7 +5452,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-22.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-22.png" width="100%" />
 
 ```
 Frequencies  
@@ -5479,7 +5475,7 @@ Type: Numeric
 Warning: Removed 352 rows containing non-finite values (stat_count).
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-23.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-23.png" width="100%" />
 
 ```
 Frequencies  
@@ -5497,7 +5493,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-24.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-24.png" width="100%" />
 
 ```
 Frequencies  
@@ -5515,7 +5511,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-25.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-25.png" width="100%" />
 
 ```
 Frequencies  
@@ -5533,7 +5529,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-26.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-26.png" width="100%" />
 
 ```
 Frequencies  
@@ -5550,7 +5546,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-27.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-27.png" width="100%" />
 
 ```
 Frequencies  
@@ -5566,7 +5562,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-28.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-28.png" width="100%" />
 
 ```
 Frequencies  
@@ -5584,7 +5580,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-29.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-29.png" width="100%" />
 
 ```
 Frequencies  
@@ -5599,7 +5595,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-30.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-30.png" width="100%" />
 
 ```
 Frequencies  
@@ -5617,7 +5613,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-31.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-31.png" width="100%" />
 
 ```
 Frequencies  
@@ -5635,7 +5631,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-32.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-32.png" width="100%" />
 
 ```
 Frequencies  
@@ -5653,7 +5649,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-33.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-33.png" width="100%" />
 
 ```
 Frequencies  
@@ -5671,7 +5667,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-34.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-34.png" width="100%" />
 
 ```
 Frequencies  
@@ -5696,7 +5692,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-35.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-35.png" width="100%" />
 
 ```
 Frequencies  
@@ -5721,7 +5717,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-36.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-36.png" width="100%" />
 
 ```
 Frequencies  
@@ -5746,7 +5742,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-37.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-37.png" width="100%" />
 
 ```
 Frequencies  
@@ -5771,7 +5767,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-38.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-38.png" width="100%" />
 
 ```
 Frequencies  
@@ -5796,7 +5792,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-39.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-39.png" width="100%" />
 
 ```
 Frequencies  
@@ -5821,7 +5817,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-40.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-40.png" width="100%" />
 
 ```
 Frequencies  
@@ -5841,7 +5837,7 @@ Type: Factor
                                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-41.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-41.png" width="100%" />
 
 ```
 Frequencies  
@@ -5861,7 +5857,7 @@ Type: Factor
                                        Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-42.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-42.png" width="100%" />
 
 ```
 Frequencies  
@@ -5888,7 +5884,7 @@ Type: Numeric
       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-43.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-43.png" width="100%" />
 
 ```
 Frequencies  
@@ -5907,7 +5903,7 @@ Type: Factor
               Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-44.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-44.png" width="100%" />
 
 ```
 Frequencies  
@@ -5924,7 +5920,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-45.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-45.png" width="100%" />
 
 ```
 Frequencies  
@@ -5944,7 +5940,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-46.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-46.png" width="100%" />
 
 ```
 Frequencies  
@@ -5963,7 +5959,7 @@ Type: Factor
                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-47.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-47.png" width="100%" />
 
 ```
 Frequencies  
@@ -5984,7 +5980,7 @@ Type: Factor
              Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-48.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-48.png" width="100%" />
 
 ```
 Frequencies  
@@ -6005,7 +6001,7 @@ Type: Factor
                     Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-49.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-49.png" width="100%" />
 
 ```
 Frequencies  
@@ -6026,7 +6022,7 @@ Type: Factor
                 Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-50.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-50.png" width="100%" />
 
 ```
 Frequencies  
@@ -6047,7 +6043,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-51.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-51.png" width="100%" />
 
 ```
 Frequencies  
@@ -6068,7 +6064,7 @@ Type: Factor
          Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-52.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-52.png" width="100%" />
 
 ```
 Frequencies  
@@ -6088,7 +6084,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-53.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-53.png" width="100%" />
 
 ```
 Frequencies  
@@ -6108,7 +6104,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-54.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-54.png" width="100%" />
 
 ```
 Frequencies  
@@ -6128,7 +6124,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-55.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-55.png" width="100%" />
 
 ```
 Frequencies  
@@ -6148,7 +6144,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-56.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-56.png" width="100%" />
 
 ```
 Frequencies  
@@ -6168,7 +6164,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-57.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-57.png" width="100%" />
 
 ```
 Frequencies  
@@ -6188,7 +6184,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-58.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-58.png" width="100%" />
 
 ```
 Frequencies  
@@ -6208,7 +6204,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-59.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-59.png" width="100%" />
 
 ```
 Frequencies  
@@ -6228,7 +6224,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-60.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-60.png" width="100%" />
 
 ```
 Frequencies  
@@ -6248,7 +6244,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-61.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-61.png" width="100%" />
 
 ```
 Frequencies  
@@ -6268,7 +6264,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-62.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-62.png" width="100%" />
 
 ```
 Frequencies  
@@ -6288,7 +6284,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-63.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-63.png" width="100%" />
 
 ```
 Frequencies  
@@ -6308,7 +6304,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-64.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-64.png" width="100%" />
 
 ```
 Frequencies  
@@ -6328,7 +6324,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-65.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-65.png" width="100%" />
 
 ```
 Frequencies  
@@ -6348,7 +6344,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-66.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-66.png" width="100%" />
 
 ```
 Frequencies  
@@ -6368,7 +6364,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-67.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-67.png" width="100%" />
 
 ```
 Frequencies  
@@ -6388,7 +6384,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-68.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-68.png" width="100%" />
 
 ```
 Frequencies  
@@ -6408,7 +6404,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-69.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-69.png" width="100%" />
 
 ```
 Frequencies  
@@ -6428,7 +6424,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-70.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-70.png" width="100%" />
 
 ```
 Frequencies  
@@ -6448,7 +6444,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-71.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-71.png" width="100%" />
 
 ```
 Frequencies  
@@ -6468,7 +6464,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-72.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-72.png" width="100%" />
 
 ```
 Frequencies  
@@ -6488,7 +6484,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-73.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-73.png" width="100%" />
 
 ```
 Frequencies  
@@ -6508,7 +6504,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-74.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-74.png" width="100%" />
 
 ```
 Frequencies  
@@ -6528,7 +6524,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-75.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-75.png" width="100%" />
 
 ```
 Frequencies  
@@ -6548,7 +6544,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-76.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-76.png" width="100%" />
 
 ```
 Frequencies  
@@ -6568,7 +6564,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-77.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-77.png" width="100%" />
 
 ```
 Frequencies  
@@ -6588,7 +6584,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-78.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-78.png" width="100%" />
 
 ```
 Frequencies  
@@ -6608,7 +6604,7 @@ Type: Factor
                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-79.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-79.png" width="100%" />
 
 ```
 Frequencies  
@@ -6626,7 +6622,7 @@ Type: Factor
                                     Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-80.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-80.png" width="100%" />
 
 ```
 Frequencies  
@@ -6645,7 +6641,7 @@ Type: Factor
                       Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-81.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-81.png" width="100%" />
 
 ```
 Frequencies  
@@ -6661,7 +6657,7 @@ Type: Factor
       Total   2767   100.000        100.000   100.000        100.000
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-82.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-82.png" width="100%" />
 
 ```
 Frequencies  
@@ -6679,7 +6675,7 @@ Type: Factor
                                                                            Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-83.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-83.png" width="100%" />
 
 ```
 Frequencies  
@@ -6696,7 +6692,7 @@ Type: Factor
                   Total   2767    100.00         100.00    100.00         100.00
 ```
 
-![](PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-84.png)<!-- -->
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-84.png" width="100%" />
 
 ```
 Frequencies  
@@ -32610,7 +32606,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",demo.pred.prevent.binary)
@@ -32971,6 +32967,16 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   </tr>
 </tbody>
 </table>
+
+```
+Warning: Transformation introduced infinite values in continuous y-axis
+```
+
+```
+Warning: Removed 3 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-2.png" width="100%" />
 
 ```r
 do.multivariable.binomial.regression(regression_df,"GENFBACK_no_prevent_agree",demo.pred.noprevent.binary)
@@ -33431,6 +33437,16 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </tbody>
 </table>
 
+```
+Warning: Transformation introduced infinite values in continuous y-axis
+```
+
+```
+Warning: Removed 4 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-3.png" width="100%" />
+
 ```r
 do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_agree",demo.pred.ancestry.binary)
 ```
@@ -33581,7 +33597,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
 
 ### Multinomial regression
 
@@ -34329,7 +34345,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.multi)
@@ -34733,7 +34749,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.multi)
@@ -35619,7 +35635,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.multi)
@@ -35826,7 +35842,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
 
 
 ### forest plots

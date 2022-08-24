@@ -5,7 +5,8 @@ multinomial.forest.plot <- function(data.in,
                             colourpal,
                             pointsize=2,linesize=1,errorsize=1,
                       axistext=12,axistitle=16,legtitle=12,stripsize=12,
-                      lowlim=0,uplim=3.5,dodge=0.5)
+                      lowlim=0.2,uplim=3.5,dodge=0.5,
+                      title.size=14)
   
   {
 
@@ -25,7 +26,7 @@ multinomial.forest.plot <- function(data.in,
     ylab("\nEstimate (95% Confidence Interval)")  +
     ggtitle(title) +
     
-    geom_errorbar(aes(ymin = LowerBoundOR,
+    geom_errorbar(aes(ymin = ifelse(LowerBoundOR < lowlim,lowlim,LowerBoundOR), 
                       ymax = ifelse(UpperBoundOR > uplim,uplim,UpperBoundOR)),
                   width = 1,
                   position = position_dodge(dodge),
@@ -42,7 +43,9 @@ multinomial.forest.plot <- function(data.in,
                        limits = c(NA,uplim),
                       breaks=seq(lowlim,uplim,0.5)) +
     
-    theme(plot.title=element_blank(), #element_text(size=0,face="bold"),
+    theme(plot.title=element_text(face="bold",
+                                  size=title.size,
+                                  hjust = 0.5), #element_text(size=0,face="bold"),
           axis.text=element_text(face="bold",size=axistext,),
           legend.text=element_text(size=axistext,),
           legend.title=element_text(face="bold",size=legtitle,),
@@ -53,8 +56,7 @@ multinomial.forest.plot <- function(data.in,
           panel.background = element_blank(),
           strip.background = element_rect(fill = "light grey"),
           panel.border = element_rect(colour = "grey",fill = NA)) +
-    # guides(color = guide_legend(reverse = TRUE)) +
-    geom_segment(aes(x = 1, y = 5, xend = 1, yend = 5)) +
+    # guides(color = guide_legend(reverse = TRUE)) 
     coord_flip() 
 
   return(p)

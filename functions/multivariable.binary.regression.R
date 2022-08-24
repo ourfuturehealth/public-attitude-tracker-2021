@@ -63,5 +63,11 @@ do.multivariable.binomial.regression<- function(dataframe, outcome, independent.
       kable_styling(bootstrap_options = c("striped", "hover")) %>%
       print()
     
+    ## print forest plot
+    
+    print(binomial.forest.plot(data.in=df,
+                                  title=paste(paste("Binomial logistic regression of variables predicting",label(dataframe[[outcome]]),sep=" "),
+                                              "Reference level:", df$outcome.reference[1],sep = "\n"),
+                                  colourpal= c("#FFC62B")))
 }
 

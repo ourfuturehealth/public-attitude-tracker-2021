@@ -42,7 +42,10 @@ sapply(files.sources, source)
 knitr::opts_chunk$set(echo = TRUE,
                       comment=NA,
                       prompt=FALSE,
-                      cache=FALSE)
+                      cache=FALSE,
+                      fig.width = 15,
+                      fig.asp = 1,
+                      out.width = "100%")
 
 
 # this chunk installs any required packages if you dont already have them in your local library. 
@@ -1146,8 +1149,27 @@ do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",de
 
 ```
 
+# final list of covariates for each model
 
-### forest plots
+based on which are significant predictors of the outcome when controlling for others
+
+## binary participation
+
+Significant predictors are:
+
+* Relative to people who do no identify as Asian, people who identify as Asian in ethnicity are less likely to say they want to take part   
+* Relative to people who are 35-44, people who are 18-24 are less likely tosay they want to take part. People who are 45-54 are more likely to say they want to take part    
+* Relative to people without a degree level education, people with a degree are more likely to say they want to take part.
+
+```{r}
+
+takepart.binary.covariates <- c(Asian_filter,AGE_BAND,DEGREE)
+  
+```
+
+## Model 2: each predictor with significant demographic predictors as covariates
+
+
 
 
 
