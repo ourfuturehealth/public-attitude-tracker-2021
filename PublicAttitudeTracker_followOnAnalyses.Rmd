@@ -334,6 +334,14 @@ table(factor_df$RELIGIOSITY)
 
 ```
 
+## rename SEX to gender to match question text
+We ask about gender, we do not know about biological sex assigned at birth
+
+```{r rename sex}
+
+factor_df <- factor_df %>%
+  rename(GENDER=SEX)
+```
 ## Transform to numeric where appropriate
 
 The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
@@ -582,7 +590,7 @@ Note, using total score variables instead of individual variables where composit
 ```{r list of vars for univariable analyses}
 all.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE", "AGE_BAND", 
-"SEX", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "NUMADULTS", 
+"GENDER", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "NUMADULTS", 
 "NUMCHILDU16", "COHAB", "COHAB_BINARY", "MARSTAT", "CHILDHERE", 
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "HHSTRUCTURE", 
 "PLACEINHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
@@ -618,7 +626,7 @@ all.vars <- c(
 ```{r list of demographic vars for univariable analyses}
 dem.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE_BAND", 
-"SEX", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "MARSTAT", 
+"GENDER", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "MARSTAT", 
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
 "WorkingStatus", "WorkingStatus_Binary",
@@ -650,7 +658,7 @@ outcomes <- c("ofhact_agree","ofhact_all",
 ```{r list of independent vars for univariable analyses}
 pred.participate.vars <- c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
@@ -679,7 +687,7 @@ pred.participate.vars <- c(
   
 pred.gen.vars <-c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
@@ -701,7 +709,7 @@ pred.gen.vars <-c(
 
 all.pred.vars <- c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  "OCCUPATION_NSSEC",
@@ -856,9 +864,6 @@ Replicate Alice's regressions. identify which demographic features are important
 * 3 or more levels in outcome: multinomial regression    
 
 
-### create formulas
-Use function and loop to create a formula for every outcome/predictor pairing
-
 ## demographic predictors
 
 Run univariable regressions and output each set as a new row in a final summary table
@@ -968,7 +973,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 #### Receive genetic feedback about things that are not preventable or treatable binary
 
 * AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
-* SEX (men more likely to want feedback relative to women)
+* GENDER (men more likely to want feedback relative to women)
 * ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
 * QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'   
@@ -984,7 +989,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 * Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)    
 * Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
 * MDQuintile (higher quintile more likely to want ancestry; higher is less deprived)    
-* SEX (men more likely to want ancestry relative to women)
+* GENDER (men more likely to want ancestry relative to women)
 * ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities) '*'       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)      
 * RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
@@ -1003,7 +1008,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 
 * MDQuintile (The higher the quintile the less likely to be unsure about taking part relative to not. Higher indicates less deprived)   
 * AGE_BAND (oldder groupd less likey to be unsure about taking part compared to not taking part relative to 35-44yr olds)   
-* SEX (Men likely to be unsure relative to women)
+* GENDER (Men likely to be unsure relative to women)
 * ETHNICITY (White British more likely to take part than black caribbean or pakistani) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to be unsure or to take part relative to married/civil partnered people)   
 * QUALTYPE (Those without educational and vocational qualifications less likely to take part) '*'   
@@ -1078,21 +1083,21 @@ demo.pred.prevent.binary <- c("Black_filter", "MDQuintile", "AGE_BAND",
                               "WorkingStatus", "WorkingStatus_Binary", 
                               "TENURE")
 
-demo.pred.noprevent.binary <- c("AGE_BAND", "SEX", 
+demo.pred.noprevent.binary <- c("AGE_BAND", "GENDER", 
                                 "ETHNICITY","DEGREE",  
                                 "WorkingStatus", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", 
+                                                    "MDQuintile", "GENDER", 
                                                     "RELIGIOSITY", "DEGREE", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary.religion.sensitivity <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", 
+                                                    "MDQuintile", "GENDER", 
                                                     "RELIGIOSITY","Religion", "DEGREE", "WorkingStatus_Binary")
 
 ## categorical
-demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "SEX", 
-                               "ETHNICITY",    "DEGREE", 
+demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "GENDER", 
+                               "Asian_filter",    "DEGREE", 
                                "WorkingStatus_Binary","TENURE")
 
 demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", 
@@ -1153,17 +1158,27 @@ do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",de
 
 based on which are significant predictors of the outcome when controlling for others
 
-## binary participation
+## Intention to participate
 
-Significant predictors are:
+### binary covariates
+Significant demographic predictors to be used as covariates are:
 
 * Relative to people who do no identify as Asian, people who identify as Asian in ethnicity are less likely to say they want to take part   
 * Relative to people who are 35-44, people who are 18-24 are less likely tosay they want to take part. People who are 45-54 are more likely to say they want to take part    
 * Relative to people without a degree level education, people with a degree are more likely to say they want to take part.
 
+### Multi covariates
+Significant demographic predictors to be used as covariates are:
+
+* Relative to people who do no identify as Asian, people who identify as Asian in ethnicity are less likely to say they want to take part. They are equally likely to be unsure about participation.
+* Relative to people who are 35-44, people who are 18-24 are less likely to say they want to take part. People who are 45-54 are more likely to be unsure about taking part, rather than saying they do not want to take part. 
+* Relative to people without a degree level education, people with a degree are more likely to say they want to take part, and more likely to say they are unsure rather than saying no outright.    
+* Whilst there are no gender differences in how likely respondents are to say yes versus no to participation, men are more likely to say no outright as opposed to being unsure than women
+
 ```{r}
 
-takepart.binary.covariates <- c(Asian_filter,AGE_BAND,DEGREE)
+takepart.binary.covariates <- c("Asian_filter","AGE_BAND","DEGREE")
+takepart.multi.covariates <- c("Asian_filter","AGE_BAND","DEGREE","GENDER")
   
 ```
 

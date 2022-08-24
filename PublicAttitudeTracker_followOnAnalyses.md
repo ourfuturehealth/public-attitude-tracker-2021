@@ -86,7 +86,7 @@ editor_options:
 
 ```
 ## 
-## To select rows from data: rows(mtcars, am==0)
+## To aggregate all non-grouping columns: take_all(mtcars, mean, by = am)
 ```
 
 ```
@@ -98,6 +98,12 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
+```
+
+```
+## 
+## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
+##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -3768,6 +3774,14 @@ Missing reponse      Practising  Not practising   Not religious
              10             899             562            1296 
 ```
 
+## rename SEX to gender to match question text
+We ask about gender, we do not know about biological sex assigned at birth
+
+
+```r
+factor_df <- factor_df %>%
+  rename(GENDER=SEX)
+```
 ## Transform to numeric where appropriate
 
 The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
@@ -4212,7 +4226,7 @@ Note, using total score variables instead of individual variables where composit
 ```r
 all.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE", "AGE_BAND", 
-"SEX", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "NUMADULTS", 
+"GENDER", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "NUMADULTS", 
 "NUMCHILDU16", "COHAB", "COHAB_BINARY", "MARSTAT", "CHILDHERE", 
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "HHSTRUCTURE", 
 "PLACEINHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
@@ -4249,7 +4263,7 @@ all.vars <- c(
 ```r
 dem.vars <- c(
 "Black_filter", "Asian_filter", "MDQuintile", "AGE_BAND", 
-"SEX", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "MARSTAT", 
+"GENDER", "ETHNICITY", "ETHNICITY_LFS", "NUMPEOPLE", "MARSTAT", 
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "RELIGIOSITY", "RELIGION", "QUALTYPE", 
 "EDUCATION", "DEGREE", "WorkingStatus_PrePandemic", "WorkingStatus_PrePandemic_Binary", 
 "WorkingStatus", "WorkingStatus_Binary",
@@ -4282,7 +4296,7 @@ outcomes <- c("ofhact_agree","ofhact_all",
 ```r
 pred.participate.vars <- c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
@@ -4311,7 +4325,7 @@ pred.participate.vars <- c(
   
 pred.gen.vars <-c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
@@ -4333,7 +4347,7 @@ pred.gen.vars <-c(
 
 all.pred.vars <- c(
 "MDQuintile",  "AGE_BAND", 
-"SEX", "ETHNICITY_LFS", "NUMPEOPLE",
+"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
 "NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY",  "OCCUPATION_NSSEC",
@@ -4464,7 +4478,7 @@ Type: Factor
 
 ```
 Frequencies  
-SEX  
+GENDER  
 Label: Would you describe yourself as…  
 Type: Factor  
 
@@ -5062,7 +5076,7 @@ Type: Factor
 
 ```
 Frequencies  
-SEX  
+GENDER  
 Label: Would you describe yourself as…  
 Type: Factor  
 
@@ -6799,9 +6813,6 @@ Replicate Alice's regressions. identify which demographic features are important
 * 3 or more levels in outcome: multinomial regression    
 
 
-### create formulas
-Use function and loop to create a formula for every outcome/predictor pairing
-
 ## demographic predictors
 
 Run univariable regressions and output each set as a new row in a final summary table
@@ -7102,7 +7113,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> (Intercept) </td>
    <td style="text-align:center;"> 0.88 </td>
@@ -7116,7 +7127,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.15 </td>
@@ -7130,7 +7141,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.96 </td>
@@ -9529,7 +9540,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> (Intercept) </td>
    <td style="text-align:center;"> 3.04 </td>
@@ -9543,7 +9554,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.18 </td>
@@ -9557,7 +9568,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.80 </td>
@@ -11956,7 +11967,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> (Intercept) </td>
    <td style="text-align:center;"> 1.56 </td>
@@ -11970,7 +11981,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.35 </td>
@@ -11984,7 +11995,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 1.01 </td>
@@ -14383,7 +14394,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> (Intercept) </td>
    <td style="text-align:center;"> 2.96 </td>
@@ -14397,7 +14408,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.18 </td>
@@ -14411,7 +14422,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.81 </td>
@@ -16910,7 +16921,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -16924,7 +16935,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Male </td>
@@ -16938,7 +16949,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -16952,7 +16963,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Male </td>
@@ -20835,7 +20846,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -20849,7 +20860,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Male </td>
@@ -20863,7 +20874,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -20877,7 +20888,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Male </td>
@@ -24760,7 +24771,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -24774,7 +24785,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Male </td>
@@ -24788,7 +24799,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -24802,7 +24813,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Male </td>
@@ -28681,7 +28692,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -28695,7 +28706,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> Male </td>
@@ -28709,7 +28720,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Identify in another way </td>
@@ -28723,7 +28734,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Unsure </td>
    <td style="text-align:center;"> Male </td>
@@ -32267,7 +32278,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 #### Receive genetic feedback about things that are not preventable or treatable binary
 
 * AGE_BAND (older groups ; 65 +; less to want feedback compared to largest respondent group - 35-44)   
-* SEX (men more likely to want feedback relative to women)
+* GENDER (men more likely to want feedback relative to women)
 * ETHNICITY (People from White other backgrounds more likely to want feedback compared wo White British)       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want feedback relative to married/civil partnered people)  
 * QUALTYPE (Those without educational and vocational qualifications or without any degree less likely to want feedback) '*'   
@@ -32283,7 +32294,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 * Black_filter (Black respondents less likely to want ancestry relative to all other ethnicity)    
 * Asian_filter (Asian respondents less likely to want ancestry relative to all other ethnicity)   
 * MDQuintile (higher quintile more likely to want ancestry; higher is less deprived)    
-* SEX (men more likely to want ancestry relative to women)
+* GENDER (men more likely to want ancestry relative to women)
 * ETHNICITY_LFS (People from White other backgrounds more likely to want ancestry compared to many other ethnicities) '*'       
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to want ancestry relative to married/civil partnered people)      
 * RELIGIOSITY (people who are practicing religios are more likely than not religious to want ancestry)    
@@ -32302,7 +32313,7 @@ Select the strongest univariable predictor where one or more similar variables/v
 
 * MDQuintile (The higher the quintile the less likely to be unsure about taking part relative to not. Higher indicates less deprived)   
 * AGE_BAND (oldder groupd less likey to be unsure about taking part compared to not taking part relative to 35-44yr olds)   
-* SEX (Men likely to be unsure relative to women)
+* GENDER (Men likely to be unsure relative to women)
 * ETHNICITY (White British more likely to take part than black caribbean or pakistani) Will include this rather than collapsed for now as there are distinct effects in smaller subgroups. Will consider power and whether better to collapse at a later stage.   
 * MARSTAT (People who are neither married nor in a civil partnership are less likely to be unsure or to take part relative to married/civil partnered people)   
 * QUALTYPE (Those without educational and vocational qualifications less likely to take part) '*'   
@@ -32377,21 +32388,21 @@ demo.pred.prevent.binary <- c("Black_filter", "MDQuintile", "AGE_BAND",
                               "WorkingStatus", "WorkingStatus_Binary", 
                               "TENURE")
 
-demo.pred.noprevent.binary <- c("AGE_BAND", "SEX", 
+demo.pred.noprevent.binary <- c("AGE_BAND", "GENDER", 
                                 "ETHNICITY","DEGREE",  
                                 "WorkingStatus", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", 
+                                                    "MDQuintile", "GENDER", 
                                                     "RELIGIOSITY", "DEGREE", "WorkingStatus_Binary")
 
 demo.pred.ancestry.binary.religion.sensitivity <- c("Black_filter", "Asian_filter", 
-                                                    "MDQuintile", "SEX", 
+                                                    "MDQuintile", "GENDER", 
                                                     "RELIGIOSITY","Religion", "DEGREE", "WorkingStatus_Binary")
 
 ## categorical
-demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "SEX", 
-                               "ETHNICITY",    "DEGREE", 
+demo.pred.takepart.multi <- c( "MDQuintile", "AGE_BAND", "GENDER", 
+                               "Asian_filter",    "DEGREE", 
                                "WorkingStatus_Binary","TENURE")
 
 demo.pred.prevent.multi <- c("Black_filter", "AGE_BAND", 
@@ -33086,7 +33097,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.32 </td>
@@ -33099,7 +33110,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 1.00 </td>
@@ -33521,7 +33532,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.16 </td>
@@ -33534,7 +33545,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   <tr>
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.77 </td>
@@ -33609,15 +33620,12 @@ do.multivariable.multinomial.regression(regression_df,"ofhact_all",demo.pred.tak
 ```
 
 [1] "#####"
-# weights:  81 (52 variable)
-initial  value 2674.022311 
-iter  10 value 2444.410707
-iter  20 value 2395.214489
-iter  30 value 2390.192801
-iter  40 value 2389.896251
-iter  50 value 2389.787923
-iter  60 value 2389.744823
-final  value 2389.744346 
+# weights:  48 (30 variable)
+initial  value 2678.416760 
+iter  10 value 2446.520948
+iter  20 value 2416.937548
+iter  30 value 2411.068137
+final  value 2410.685524 
 converged
 
 ```
@@ -33651,11 +33659,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> MDQuintile </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.09 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.979 </td>
+   <td style="text-align:center;"> 0.654 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33669,7 +33677,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.66 </td>
    <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.027 </td>
+   <td style="text-align:center;"> 0.024 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -33681,9 +33689,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 25-34 </td>
    <td style="text-align:center;"> 0.70 </td>
    <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.680 </td>
+   <td style="text-align:center;"> 0.670 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33694,10 +33702,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 45-54 </td>
    <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.58 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.366 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.386 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33707,11 +33715,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 55-64 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.586 </td>
+   <td style="text-align:center;"> 0.635 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33721,11 +33729,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 65-74 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.63 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.732 </td>
+   <td style="text-align:center;"> 0.624 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33735,206 +33743,52 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 75+ </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.060 </td>
+   <td style="text-align:center;"> 0.081 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:left;"> Female </td>
    <td style="text-align:center;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 5.88 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 0.924 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 6.16 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.995 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:left;"> Female </td>
    <td style="text-align:center;"> Male </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.239 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other Asian background </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.026 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other Black background </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.245 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other single ethnic group </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 2.37 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.360 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other White background </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 2.15 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.105 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Arab </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 4.58 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.641 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Bangladeshi </td>
-   <td style="text-align:center;"> 0.41 </td>
    <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.367 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.319 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Black African </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.113 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:left;"> No </td>
    <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Black Caribbean </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.190 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Chinese </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.044 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Indian </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.114 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Mixed/Multiple ethnic groups </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 3.08 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.340 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Pakistani </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -33945,10 +33799,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:left;"> No degree </td>
    <td style="text-align:center;"> Degree educated </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 1.88 </td>
-   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 1.87 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -33959,11 +33813,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> WorkingStatus_Binary </td>
    <td style="text-align:left;"> Working or on maternity leave or on furlough </td>
    <td style="text-align:center;"> Not working </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.955 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.801 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33973,11 +33827,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> TENURE </td>
    <td style="text-align:left;"> Rent / other </td>
    <td style="text-align:center;"> Own it but with a mortgage to pay off </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.367 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.258 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -33987,11 +33841,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> TENURE </td>
    <td style="text-align:left;"> Rent / other </td>
    <td style="text-align:center;"> Own it outright (no mortgage to pay off) </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 1.47 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.411 </td>
+   <td style="text-align:center;"> 0.369 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34001,11 +33855,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> MDQuintile </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> 0.024 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -34015,11 +33869,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 18-24 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.743 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.652 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34029,11 +33883,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 25-34 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.564 </td>
+   <td style="text-align:center;"> 0.659 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34047,7 +33901,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.59 </td>
    <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> 0.014 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -34057,11 +33911,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 55-64 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.089 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.106 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34071,11 +33925,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 65-74 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.032 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.041 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -34085,37 +33939,37 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:left;"> 35-44 </td>
    <td style="text-align:center;"> 75+ </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.048 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> SEX </td>
-   <td style="text-align:left;"> Female </td>
-   <td style="text-align:center;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 2.07 </td>
-   <td style="text-align:center;"> 12.97 </td>
-   <td style="text-align:center;"> 1.94 </td>
-   <td style="text-align:center;"> 0.437 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.062 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> GENDER </td>
+   <td style="text-align:left;"> Female </td>
+   <td style="text-align:center;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 12.85 </td>
+   <td style="text-align:center;"> 1.94 </td>
+   <td style="text-align:center;"> 0.427 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Unsure </td>
+   <td style="text-align:center;"> GENDER </td>
    <td style="text-align:left;"> Female </td>
    <td style="text-align:center;"> Male </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.82 </td>
    <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -34124,168 +33978,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other Asian background </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.681 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other Black background </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 4.00 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.896 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other single ethnic group </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Any other White background </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.57 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.685 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Arab </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 7.91 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 0.758 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Bangladeshi </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.033 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Black African </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.061 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Black Caribbean </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.76 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.841 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Chinese </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.67 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.813 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Indian </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.077 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Mixed/Multiple ethnic groups </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 3.01 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.730 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Unsure </td>
-   <td style="text-align:center;"> ETHNICITY </td>
-   <td style="text-align:left;"> White British </td>
-   <td style="text-align:center;"> Pakistani </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.180 </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:left;"> No </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.079 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34295,11 +33995,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:left;"> No degree </td>
    <td style="text-align:center;"> Degree educated </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.60 </td>
-   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 2.01 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -34310,10 +34010,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Working or on maternity leave or on furlough </td>
    <td style="text-align:center;"> Not working </td>
    <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.824 </td>
+   <td style="text-align:center;"> 0.764 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34323,11 +34023,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> TENURE </td>
    <td style="text-align:left;"> Rent / other </td>
    <td style="text-align:center;"> Own it but with a mortgage to pay off </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.64 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.310 </td>
+   <td style="text-align:center;"> 0.187 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -34337,11 +34037,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> TENURE </td>
    <td style="text-align:left;"> Rent / other </td>
    <td style="text-align:center;"> Own it outright (no mortgage to pay off) </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.44 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.774 </td>
+   <td style="text-align:center;"> 0.984 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
@@ -35844,8 +35544,36 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </tbody>
 </table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
 
+# final list of covariates for each model
 
-### forest plots
+based on which are significant predictors of the outcome when controlling for others
+
+## Intention to participate
+
+### binary covariates
+Significant demographic predictors to be used as covariates are:
+
+* Relative to people who do no identify as Asian, people who identify as Asian in ethnicity are less likely to say they want to take part   
+* Relative to people who are 35-44, people who are 18-24 are less likely tosay they want to take part. People who are 45-54 are more likely to say they want to take part    
+* Relative to people without a degree level education, people with a degree are more likely to say they want to take part.
+
+### Multi covariates
+Significant demographic predictors to be used as covariates are:
+
+* Relative to people who do no identify as Asian, people who identify as Asian in ethnicity are less likely to say they want to take part. They are equally likely to be unsure about participation.
+* Relative to people who are 35-44, people who are 18-24 are less likely to say they want to take part. People who are 45-54 are more likely to be unsure about taking part, rather than saying they do not want to take part. 
+* Relative to people without a degree level education, people with a degree are more likely to say they want to take part, and more likely to say they are unsure rather than saying no outright.    
+* Whilst there are no gender differences in how likely respondents are to say yes versus no to participation, men are more likely to say no outright as opposed to being unsure than women
+
+
+```r
+takepart.binary.covariates <- c("Asian_filter","AGE_BAND","DEGREE")
+takepart.multi.covariates <- c("Asian_filter","AGE_BAND","DEGREE","GENDER")
+```
+
+## Model 2: each predictor with significant demographic predictors as covariates
+
+
 
 
 
