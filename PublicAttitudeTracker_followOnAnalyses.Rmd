@@ -342,8 +342,10 @@ We ask about gender, we do not know about biological sex assigned at birth
 factor_df <- factor_df %>%
   rename(GENDER=SEX)
 ```
+
 ## Transform to numeric where appropriate
 
+### TRUST VARS
 The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
 
 first grab the labels to add back on after the transformation
@@ -393,6 +395,62 @@ factor_df %>%
 
 table(factor_df$TRUSTGEN)
 dput(sapply(factor_df[trust_vars],label))
+```
+
+### Perceptions of taking part in oFH
+These are currently unordered factors, but should be numeric (... on a scale of 1 - 7)
+
+first grab the labels to add back on after the transformation
+
+```{r grab perception labels}
+
+perception_vars <- factor_df %>%
+    select(starts_with("OFHPAIR")) %>%
+  colnames() 
+
+perception_labels <- dput(sapply(factor_df[perception_vars],label))
+```
+
+then transform
+```{r transform perception to numeric}
+
+factor_df <- factor_df %>%
+  mutate(across(starts_with("OFHPAIR"), 
+         ~as.numeric(case_when(. == "1 - Confusing" ~ 1,
+                               . == "1 - Negative" ~ 1,
+                               . == "1 - Boring" ~ 1,
+                               . == "1 - Hard" ~ 1,
+                               . == "1 - Slow" ~ 1,
+                               . == "2" ~ 2,
+                               . == "3" ~ 3,
+                               . == "4" ~ 4,
+                               . == "5" ~ 5,
+                               . == "6" ~ 6,
+                               . == "7 - Straightforward" ~ 7,
+                               . == "7 - Positive" ~ 7,
+                               . == "7 - Interesting" ~ 7,
+                               . == "7 - Easy" ~ 7,
+                               . == "7 - Fast" ~ 7,
+                               TRUE ~ NA_real_ ))))
+
+```
+
+add the labels back
+```{r add perception labels back}
+label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
+```
+
+Check this all worked as expected
+
+```{r show perception variables}
+
+factor_df %>% 
+  select(starts_with("OFHPAIR")) %>%
+  skimr::skim() %>%
+  select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
+
+table(factor_df$OFHPAIR_A)
+dput(sapply(factor_df[perception_vars],label))
 ```
 
 ## create summed variables 
@@ -733,7 +791,7 @@ pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",
 "HEALTHSEEK_TOTAL",
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D",
 "TRUSTORG_E","TRUSTORG_TOTAL", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
-"COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
+"COVRES", "OFHAWARE", "UNDERST", 
 "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
 "OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
@@ -1267,7 +1325,9 @@ When accounting for covariates, the following variables are significant precicto
 ```{r predictor list for multivariable predictor models}
 
 significant.pred.articipation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
-                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","")
+                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
+                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST","")
 
 ```
 

@@ -3786,8 +3786,10 @@ We ask about gender, we do not know about biological sex assigned at birth
 factor_df <- factor_df %>%
   rename(GENDER=SEX)
 ```
+
 ## Transform to numeric where appropriate
 
+### TRUST VARS
 The trust variables are currently unordered factors, but should be numeric (how much do you trust.... on a scale of 0 - 10)
 
 first grab the labels to add back on after the transformation
@@ -3969,6 +3971,188 @@ list(TRUSTGEN.TRUSTGEN = "How much do you trust most people",
     TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies", 
     TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities", 
     TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+```
+
+### Perceptions of taking part in oFH
+These are currently unordered factors, but should be numeric (... on a scale of 1 - 7)
+
+first grab the labels to add back on after the transformation
+
+
+```r
+perception_vars <- factor_df %>%
+    select(starts_with("OFHPAIR")) %>%
+  colnames() 
+
+perception_labels <- dput(sapply(factor_df[perception_vars],label))
+```
+
+```
+c(OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?", 
+OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?", 
+OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?", 
+OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
+OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?"
+)
+```
+
+then transform
+
+```r
+factor_df <- factor_df %>%
+  mutate(across(starts_with("OFHPAIR"), 
+         ~as.numeric(case_when(. == "1 - Confusing" ~ 1,
+                               . == "1 - Negative" ~ 1,
+                               . == "1 - Boring" ~ 1,
+                               . == "1 - Hard" ~ 1,
+                               . == "1 - Slow" ~ 1,
+                               . == "2" ~ 2,
+                               . == "3" ~ 3,
+                               . == "4" ~ 4,
+                               . == "5" ~ 5,
+                               . == "6" ~ 6,
+                               . == "7 - Straightforward" ~ 7,
+                               . == "7 - Positive" ~ 7,
+                               . == "7 - Interesting" ~ 7,
+                               . == "7 - Easy" ~ 7,
+                               . == "7 - Fast" ~ 7,
+                               TRUE ~ NA_real_ ))))
+```
+
+add the labels back
+
+```r
+label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
+```
+
+Check this all worked as expected
+
+
+```r
+factor_df %>% 
+  select(starts_with("OFHPAIR")) %>%
+  skimr::skim() %>%
+  select(skim_type, skim_variable, n_missing, numeric.mean, numeric.sd,numeric.hist)
+```
+
+
+<table style='width: auto;'
+        class='table table-condensed'>
+<caption>Data summary</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:left;">   </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Name </td>
+   <td style="text-align:left;"> Piped data </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Number of rows </td>
+   <td style="text-align:left;"> 2767 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Number of columns </td>
+   <td style="text-align:left;"> 5 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> _______________________ </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Column type frequency: </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> 5 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ________________________ </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Group variables </td>
+   <td style="text-align:left;"> None </td>
+  </tr>
+</tbody>
+</table>
+
+
+**Variable type: numeric**
+
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> skim_variable </th>
+   <th style="text-align:right;"> n_missing </th>
+   <th style="text-align:right;"> mean </th>
+   <th style="text-align:right;"> sd </th>
+   <th style="text-align:left;"> hist </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> OFHPAIR_A </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 4.67 </td>
+   <td style="text-align:right;"> 1.62 </td>
+   <td style="text-align:left;"> ▃▂▅▆▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> OFHPAIR_B </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 5.03 </td>
+   <td style="text-align:right;"> 1.41 </td>
+   <td style="text-align:left;"> ▁▂▃▅▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> OFHPAIR_C </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 4.92 </td>
+   <td style="text-align:right;"> 1.43 </td>
+   <td style="text-align:left;"> ▂▂▅▆▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> OFHPAIR_D </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 4.83 </td>
+   <td style="text-align:right;"> 1.43 </td>
+   <td style="text-align:left;"> ▂▂▅▇▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> OFHPAIR_E </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 4.28 </td>
+   <td style="text-align:right;"> 1.35 </td>
+   <td style="text-align:left;"> ▂▃▇▆▅ </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+table(factor_df$OFHPAIR_A)
+```
+
+```
+
+  1   2   3   4   5   6   7 
+143 179 306 485 694 622 338 
+```
+
+```r
+dput(sapply(factor_df[perception_vars],label))
+```
+
+```
+list(OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?", 
+    OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?", 
+    OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?", 
+    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
+    OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
 ```
 
 ## create summed variables 
@@ -4410,7 +4594,7 @@ pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL",
 "HEALTHSEEK_TOTAL",
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D",
 "TRUSTORG_E","TRUSTORG_TOTAL", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
-"COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
+"COVRES", "OFHAWARE", "UNDERST", 
 "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
 "OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
@@ -6091,19 +6275,19 @@ Type: Factor
 Frequencies  
 OFHPAIR_A  
 Label: How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?  
-Type: Factor  
+Type: Numeric  
 
-                     Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------- ------ --------- -------------- --------- --------------
-      1 - Negative    143      5.17           5.17      5.17           5.17
-                 2    179      6.47          11.64      6.47          11.64
-                 3    306     11.06          22.70     11.06          22.70
-                 4    485     17.53          40.22     17.53          40.22
-                 5    694     25.08          65.31     25.08          65.31
-                 6    622     22.48          87.78     22.48          87.78
-      7 - Positive    338     12.22         100.00     12.22         100.00
-              <NA>      0                               0.00         100.00
-             Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+          1    143      5.17           5.17      5.17           5.17
+          2    179      6.47          11.64      6.47          11.64
+          3    306     11.06          22.70     11.06          22.70
+          4    485     17.53          40.22     17.53          40.22
+          5    694     25.08          65.31     25.08          65.31
+          6    622     22.48          87.78     22.48          87.78
+          7    338     12.22         100.00     12.22         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-46.png" width="100%" />
@@ -6112,19 +6296,19 @@ Type: Factor
 Frequencies  
 OFHPAIR_B  
 Label: How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?  
-Type: Factor  
+Type: Numeric  
 
-                            Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
-------------------------- ------ --------- -------------- --------- --------------
-            1 - Confusing     50      1.81           1.81      1.81           1.81
-                        2     92      3.32           5.13      3.32           5.13
-                        3    247      8.93          14.06      8.93          14.06
-                        4    492     17.78          31.84     17.78          31.84
-                        5    751     27.14          58.98     27.14          58.98
-                        6    713     25.77          84.75     25.77          84.75
-      7 - Straightforward    422     15.25         100.00     15.25         100.00
-                     <NA>      0                               0.00         100.00
-                    Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+          1     50      1.81           1.81      1.81           1.81
+          2     92      3.32           5.13      3.32           5.13
+          3    247      8.93          14.06      8.93          14.06
+          4    492     17.78          31.84     17.78          31.84
+          5    751     27.14          58.98     27.14          58.98
+          6    713     25.77          84.75     25.77          84.75
+          7    422     15.25         100.00     15.25         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-47.png" width="100%" />
@@ -6133,19 +6317,19 @@ Type: Factor
 Frequencies  
 OFHPAIR_C  
 Label: How boring or interesting do you think taking part in the Our Future Health research programme would be?  
-Type: Factor  
+Type: Numeric  
 
-                        Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
---------------------- ------ --------- -------------- --------- --------------
-           1 - Boring     61      2.20           2.20      2.20           2.20
-                    2    107      3.87           6.07      3.87           6.07
-                    3    233      8.42          14.49      8.42          14.49
-                    4    582     21.03          35.53     21.03          35.53
-                    5    781     28.23          63.75     28.23          63.75
-                    6    603     21.79          85.54     21.79          85.54
-      7 - Interesting    400     14.46         100.00     14.46         100.00
-                 <NA>      0                               0.00         100.00
-                Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+          1     61      2.20           2.20      2.20           2.20
+          2    107      3.87           6.07      3.87           6.07
+          3    233      8.42          14.49      8.42          14.49
+          4    582     21.03          35.53     21.03          35.53
+          5    781     28.23          63.75     28.23          63.75
+          6    603     21.79          85.54     21.79          85.54
+          7    400     14.46         100.00     14.46         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-48.png" width="100%" />
@@ -6154,19 +6338,19 @@ Type: Factor
 Frequencies  
 OFHPAIR_D  
 Label: How hard or easy do you think taking part in the Our Future Health research programme would be?  
-Type: Factor  
+Type: Numeric  
 
-                 Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------- ------ --------- -------------- --------- --------------
-      1 - Hard     70      2.53           2.53      2.53           2.53
-             2    107      3.87           6.40      3.87           6.40
-             3    282     10.19          16.59     10.19          16.59
-             4    569     20.56          37.15     20.56          37.15
-             5    795     28.73          65.88     28.73          65.88
-             6    612     22.12          88.00     22.12          88.00
-      7 - Easy    332     12.00         100.00     12.00         100.00
-          <NA>      0                               0.00         100.00
-         Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+          1     70      2.53           2.53      2.53           2.53
+          2    107      3.87           6.40      3.87           6.40
+          3    282     10.19          16.59     10.19          16.59
+          4    569     20.56          37.15     20.56          37.15
+          5    795     28.73          65.88     28.73          65.88
+          6    612     22.12          88.00     22.12          88.00
+          7    332     12.00         100.00     12.00         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-49.png" width="100%" />
@@ -6175,19 +6359,19 @@ Type: Factor
 Frequencies  
 OFHPAIR_E  
 Label: How slow or fast you think taking part in the Our Future Health research programme would be?  
-Type: Factor  
+Type: Numeric  
 
-                 Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------- ------ --------- -------------- --------- --------------
-      1 - Slow     85      3.07           3.07      3.07           3.07
-             2    193      6.98          10.05      6.98          10.05
-             3    420     15.18          25.23     15.18          25.23
-             4    860     31.08          56.31     31.08          56.31
-             5    713     25.77          82.07     25.77          82.07
-             6    370     13.37          95.45     13.37          95.45
-      7 - Fast    126      4.55         100.00      4.55         100.00
-          <NA>      0                               0.00         100.00
-         Total   2767    100.00         100.00    100.00         100.00
+              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+----------- ------ --------- -------------- --------- --------------
+          1     85      3.07           3.07      3.07           3.07
+          2    193      6.98          10.05      6.98          10.05
+          3    420     15.18          25.23     15.18          25.23
+          4    860     31.08          56.31     31.08          56.31
+          5    713     25.77          82.07     25.77          82.07
+          6    370     13.37          95.45     13.37          95.45
+          7    126      4.55         100.00      4.55         100.00
+       <NA>      0                               0.00         100.00
+      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-50.png" width="100%" />
@@ -39234,7 +39418,8 @@ Transformation introduced infinite values in continuous y-axis
 ```
 
 ```
-Warning: glm.fit: algorithm did not converge
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -39266,11 +39451,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 17378.14 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.608 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39279,11 +39464,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 25118.73 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.090 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39292,11 +39477,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 21101.86 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.686 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39305,12 +39490,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 22882.43 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.66 </td>
+   <td style="text-align:center;"> 2.41 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39318,12 +39503,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 23772.55 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 2.30 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39331,12 +39516,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 25784.88 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 2.66 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39344,11 +39529,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 33583.94 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 2.97 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.101 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39357,75 +39542,32 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 14333.12 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.448 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> No, definitely not </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.998 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> No, probably not </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.998 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.998 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> Yes definitely </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 20696.27 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> OFHPAIR_A </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 5.10 </td>
+   <td style="text-align:center;"> 5.83 </td>
+   <td style="text-align:center;"> 6.66 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
 </table>
 
 ```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
+Warning: Removed 1 rows containing missing values (geom_point).
+non-vector elements will be ignored
 ```
 
 ```
@@ -39457,11 +39599,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.220000e+00 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.590 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.950 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39470,11 +39612,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.030000e+00 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.072 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.152 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39483,11 +39625,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.480000e+00 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.710 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.620 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39496,24 +39638,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.70 </td>
-   <td style="text-align:center;"> 2.480000e+00 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.005 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.58 </td>
-   <td style="text-align:center;"> 2.350000e+00 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.023 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.041 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -39521,12 +39650,25 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.537 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 1.74 </td>
-   <td style="text-align:center;"> 2.730000e+00 </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.016 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.050 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -39535,11 +39677,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.69 </td>
-   <td style="text-align:center;"> 3.080000e+00 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.852 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39548,88 +39690,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.370000e+00 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.508 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.240 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Negative </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 1.411797e+274 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.956 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 2.000000e-02 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 5.000000e-02 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 1.900000e-01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 4.32 </td>
-   <td style="text-align:center;"> 5.87 </td>
-   <td style="text-align:center;"> 7.990000e+00 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Positive </td>
-   <td style="text-align:center;"> 8.10 </td>
-   <td style="text-align:center;"> 14.18 </td>
-   <td style="text-align:center;"> 2.481000e+01 </td>
-   <td style="text-align:center;"> 4.05 </td>
+   <td style="text-align:center;"> OFHPAIR_B </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 2.13 </td>
+   <td style="text-align:center;"> 2.31 </td>
+   <td style="text-align:center;"> 2.49 </td>
+   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39637,13 +39714,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -39675,11 +39747,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.19 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.952 </td>
+   <td style="text-align:center;"> 0.641 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39688,11 +39760,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.141 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.424 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39701,11 +39773,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.665 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.245 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39714,11 +39786,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.033 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.94 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.017 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -39727,11 +39799,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.533 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.149 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39740,12 +39812,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.98 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.94 </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.036 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.063 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39753,11 +39825,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.65 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.790 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.713 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39766,88 +39838,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.316 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.039 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Confusing </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 2.13 </td>
-   <td style="text-align:center;"> 2.64 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Straightforward </td>
-   <td style="text-align:center;"> 3.00 </td>
-   <td style="text-align:center;"> 4.00 </td>
-   <td style="text-align:center;"> 5.33 </td>
-   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> OFHPAIR_C </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 2.57 </td>
+   <td style="text-align:center;"> 2.80 </td>
+   <td style="text-align:center;"> 3.06 </td>
+   <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39855,11 +39862,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -39891,11 +39895,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.707 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.511 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39904,12 +39908,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.404 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.032 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39917,11 +39921,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.56 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.227 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.925 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39930,12 +39934,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 2.00 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.012 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.085 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39943,11 +39947,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.78 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.100 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.428 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39956,12 +39960,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 2.03 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.041 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 2.21 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39969,11 +39973,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.753 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.330 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39982,88 +39986,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.53 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.059 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Boring </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> OFHPAIR_D </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 2.05 </td>
+   <td style="text-align:center;"> 2.20 </td>
+   <td style="text-align:center;"> 2.37 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 2.89 </td>
-   <td style="text-align:center;"> 3.68 </td>
-   <td style="text-align:center;"> 4.70 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Interesting </td>
-   <td style="text-align:center;"> 4.56 </td>
-   <td style="text-align:center;"> 6.32 </td>
-   <td style="text-align:center;"> 8.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40071,7 +40010,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: Removed 2 rows containing missing values (geom_point).
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -40103,12 +40043,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.581 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40116,12 +40056,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.031 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.170 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40129,11 +40069,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.821 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.271 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40142,12 +40082,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.054 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.024 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40155,11 +40095,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.60 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.242 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.170 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40168,11 +40108,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.66 </td>
-   <td style="text-align:center;"> 2.31 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 2.11 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.005 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -40181,11 +40121,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 2.05 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.218 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.514 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40194,88 +40134,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.65 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Hard </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 1.95 </td>
-   <td style="text-align:center;"> 2.46 </td>
-   <td style="text-align:center;"> 3.11 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Easy </td>
-   <td style="text-align:center;"> 2.14 </td>
-   <td style="text-align:center;"> 2.89 </td>
-   <td style="text-align:center;"> 3.90 </td>
-   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> OFHPAIR_E </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 1.98 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40287,218 +40162,6 @@ Joining, by = "predictor"
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-28.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.146 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.294 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 1.84 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.016 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.68 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.102 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 2.19 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.73 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.494 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 1 - Slow </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.011 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:center;"> 2.03 </td>
-   <td style="text-align:center;"> 2.49 </td>
-   <td style="text-align:center;"> 3.07 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 4.40 </td>
-   <td style="text-align:center;"> 5.90 </td>
-   <td style="text-align:center;"> 7.92 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 7 - Fast </td>
-   <td style="text-align:center;"> 3.33 </td>
-   <td style="text-align:center;"> 5.23 </td>
-   <td style="text-align:center;"> 8.22 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-29.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -40684,7 +40347,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-30.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-29.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -40870,7 +40533,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-31.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-30.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41056,7 +40719,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-32.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-31.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41242,7 +40905,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-33.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-32.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41424,7 +41087,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-34.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-33.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41610,7 +41273,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-35.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-34.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41796,7 +41459,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-36.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-35.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -41978,7 +41641,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-37.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-36.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -42160,7 +41823,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-38.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-37.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -42355,7 +42018,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-39.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-38.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -42537,7 +42200,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-40.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-39.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -42719,7 +42382,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-41.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-40.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -42901,7 +42564,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-42.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-41.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -43083,7 +42746,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-43.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-42.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -43265,7 +42928,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-44.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-43.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -43447,7 +43110,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-45.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-44.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -43642,7 +43305,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-46.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-45.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -43837,7 +43500,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-46.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -44032,7 +43695,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -44227,7 +43890,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -44422,7 +44085,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-50.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -44617,7 +44280,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-51.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-50.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -44812,7 +44475,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-52.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-51.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45007,7 +44670,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-53.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-52.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45202,7 +44865,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-54.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-53.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45397,7 +45060,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-55.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-54.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45579,7 +45242,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-56.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-55.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45761,7 +45424,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-57.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-56.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -45943,7 +45606,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-57.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46151,7 +45814,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46320,7 +45983,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46515,7 +46178,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46658,7 +46321,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46805,7 +46468,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -46965,7 +46628,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47112,7 +46775,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47272,7 +46935,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47419,7 +47082,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47579,7 +47242,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47748,7 +47411,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -47891,7 +47554,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-70.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
@@ -48028,7 +47691,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-71.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-70.png" width="100%" />
 
 ### Categorical (yes/no/unsure)
 
@@ -52168,7 +51831,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: glm.fit: algorithm did not converge
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -52200,11 +51864,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 17388.84 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.248 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52213,12 +51877,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 25139.38 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.044 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52226,11 +51890,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 21102.66 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.507 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52239,11 +51903,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 22886.06 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.397 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52252,11 +51916,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 23779.35 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.344 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52265,11 +51929,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 25798.43 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.900 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52278,11 +51942,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 33736.20 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.938 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52291,12 +51955,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 14343.05 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.67 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.020 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52304,11 +51968,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 126552.42 </td>
-   <td style="text-align:center;"> 1.000 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 7.04 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.795 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52317,75 +51981,32 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 13771.30 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.027 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> No, definitely not </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.998 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> No, probably not </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.998 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 20334.83 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHACT </td>
-   <td style="text-align:center;"> Yes probably </td>
-   <td style="text-align:left;"> Yes definitely </td>
-   <td style="text-align:center;"> 0 </td>
-   <td style="text-align:center;"> 1 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 20702.36 </td>
-   <td style="text-align:center;"> 1.000 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> OFHPAIR_A </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 3.74 </td>
+   <td style="text-align:center;"> 4.17 </td>
+   <td style="text-align:center;"> 4.65 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
 </table>
 
 ```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
+Warning: Removed 1 rows containing missing values (geom_point).
+non-vector elements will be ignored
 ```
 
 ```
@@ -52417,11 +52038,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.246 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.687 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52430,12 +52051,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.044 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.195 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52443,11 +52064,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.500 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.810 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52456,11 +52077,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.398 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.343 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52469,11 +52090,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.78 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.397 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.380 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52482,11 +52103,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.901 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.619 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52495,11 +52116,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.73 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.952 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.141 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52508,11 +52129,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.67 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.012 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -52521,11 +52142,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 6.88 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.778 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 2.00 </td>
+   <td style="text-align:center;"> 13.29 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 0.473 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52534,88 +52155,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.037 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Negative </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 3.30 </td>
-   <td style="text-align:center;"> 5.34 </td>
-   <td style="text-align:center;"> 8.65 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_A </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Positive </td>
-   <td style="text-align:center;"> 3.99 </td>
-   <td style="text-align:center;"> 8.68 </td>
-   <td style="text-align:center;"> 18.91 </td>
-   <td style="text-align:center;"> 3.45 </td>
+   <td style="text-align:center;"> OFHPAIR_B </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 1.95 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52623,13 +52179,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -52661,11 +52212,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.618 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.841 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52674,11 +52225,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.172 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.595 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52687,11 +52238,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.719 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.606 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52700,11 +52251,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.365 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.408 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52713,11 +52264,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.406 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.655 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52726,11 +52277,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.806 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.321 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52739,12 +52290,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.220 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52752,12 +52303,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.014 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52765,11 +52316,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 2.52 </td>
-   <td style="text-align:center;"> 19.20 </td>
-   <td style="text-align:center;"> 2.61 </td>
-   <td style="text-align:center;"> 0.373 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 10.37 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 0.720 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52778,93 +52329,33 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.033 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.976 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Confusing </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Straightforward </td>
-   <td style="text-align:center;"> 1.66 </td>
-   <td style="text-align:center;"> 2.30 </td>
-   <td style="text-align:center;"> 3.17 </td>
-   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> OFHPAIR_C </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 2.36 </td>
+   <td style="text-align:center;"> 2.56 </td>
+   <td style="text-align:center;"> 2.78 </td>
+   <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
 </table>
+
+```
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
+```
 
 ```
 Joining, by = "predictor"
@@ -52895,11 +52386,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.905 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.500 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52908,11 +52399,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.591 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.066 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52921,11 +52412,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.558 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.611 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52934,11 +52425,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.468 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.192 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52947,11 +52438,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.797 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.392 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52960,11 +52451,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.391 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.904 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52973,12 +52464,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.031 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.413 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52986,12 +52477,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.69 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52999,11 +52490,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 7.72 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.858 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 2.54 </td>
+   <td style="text-align:center;"> 15.89 </td>
+   <td style="text-align:center;"> 2.38 </td>
+   <td style="text-align:center;"> 0.319 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53012,88 +52503,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.70 </td>
    <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.990 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.041 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Boring </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 2.73 </td>
-   <td style="text-align:center;"> 3.79 </td>
-   <td style="text-align:center;"> 5.25 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Interesting </td>
-   <td style="text-align:center;"> 3.03 </td>
-   <td style="text-align:center;"> 4.56 </td>
-   <td style="text-align:center;"> 6.87 </td>
-   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> OFHPAIR_D </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 1.88 </td>
+   <td style="text-align:center;"> 2.02 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53101,7 +52527,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>
 
 ```
-Warning: Removed 2 rows containing missing values (geom_point).
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -53133,12 +52560,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.504 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.018 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53146,11 +52573,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.059 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.367 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53159,11 +52586,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.646 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.569 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53172,11 +52599,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.21 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.240 </td>
+   <td style="text-align:center;"> 0.498 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53185,11 +52612,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.550 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.779 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53198,11 +52625,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.766 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.934 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53211,11 +52638,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.547 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.239 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53224,10 +52651,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 1.69 </td>
-   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53237,11 +52664,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 2.90 </td>
-   <td style="text-align:center;"> 20.08 </td>
-   <td style="text-align:center;"> 2.86 </td>
-   <td style="text-align:center;"> 0.281 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 10.24 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.441 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53250,88 +52677,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.043 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 1 - Hard </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 2.40 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_D </td>
-   <td style="text-align:center;"> 5 </td>
-   <td style="text-align:left;"> 7 - Easy </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 2.18 </td>
-   <td style="text-align:center;"> 3.11 </td>
-   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> OFHPAIR_E </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.65 </td>
+   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 1.89 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53343,244 +52705,6 @@ Joining, by = "predictor"
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-28.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.014 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.311 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.654 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.571 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.955 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.814 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.272 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 1.81 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 2.06 </td>
-   <td style="text-align:center;"> 11.14 </td>
-   <td style="text-align:center;"> 1.77 </td>
-   <td style="text-align:center;"> 0.400 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.037 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 1 - Slow </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.039 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:center;"> 1.79 </td>
-   <td style="text-align:center;"> 2.25 </td>
-   <td style="text-align:center;"> 2.83 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 6 </td>
-   <td style="text-align:center;"> 3.76 </td>
-   <td style="text-align:center;"> 5.42 </td>
-   <td style="text-align:center;"> 7.80 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> 4 </td>
-   <td style="text-align:left;"> 7 - Fast </td>
-   <td style="text-align:center;"> 2.35 </td>
-   <td style="text-align:center;"> 4.01 </td>
-   <td style="text-align:center;"> 6.82 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
-```
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-29.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -53792,7 +52916,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-30.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-29.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -54004,7 +53128,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-31.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-30.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -54216,7 +53340,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-32.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-31.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -54428,7 +53552,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-33.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-32.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -54636,7 +53760,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-34.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-33.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -54848,7 +53972,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-35.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-34.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -55056,7 +54180,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-36.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-35.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -55264,7 +54388,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-37.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-36.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -55472,7 +54596,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-38.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-37.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -55680,7 +54804,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-39.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-38.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -55888,7 +55012,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-40.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-39.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56096,7 +55220,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-41.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-40.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56304,7 +55428,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-42.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-41.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56512,7 +55636,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-43.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-42.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56720,7 +55844,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-44.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-43.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56928,7 +56052,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-45.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-44.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -57149,7 +56273,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-46.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-45.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -57370,7 +56494,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-46.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -57591,7 +56715,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -57812,7 +56936,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -58033,7 +57157,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-50.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -58254,7 +57378,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-51.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-50.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -58475,7 +57599,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-52.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-51.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -58696,7 +57820,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-53.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-52.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -58917,7 +58041,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-54.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-53.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59138,7 +58262,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-55.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-54.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59346,7 +58470,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-56.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-55.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59554,7 +58678,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-57.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-56.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59766,7 +58890,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-57.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -59991,7 +59115,7 @@ Warning: Transformation introduced infinite values in continuous y-axis
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-58.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60190,7 +59314,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-59.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60411,7 +59535,7 @@ Warning: Removed 2 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-60.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60580,7 +59704,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-61.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60753,7 +59877,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-62.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -60939,7 +60063,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-63.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61108,7 +60232,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-64.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61294,7 +60418,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-65.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61467,7 +60591,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-66.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61653,7 +60777,7 @@ Warning: Removed 1 rows containing missing values (geom_point).
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -61848,7 +60972,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-68.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -62017,7 +61141,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-70.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-69.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -62180,7 +61304,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-71.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-70.png" width="100%" />
 
 ## significant predictors of participation from model 2
 When accounting for covariates, the following variables are significant precictors of participation and will be included in model 3
@@ -62191,7 +61315,9 @@ When accounting for covariates, the following variables are significant precicto
 
 ```r
 significant.pred.articipation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL","GENFAM","GENTEST",
-                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","")
+                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
+                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+                                          "SCITRUST_TOTAL","COVRES","OFHAWARE","UNDERST","")
 ```
 
 ## Model 2: each predictor with significant demographic predictors as covariates
