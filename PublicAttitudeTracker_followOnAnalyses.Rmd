@@ -570,7 +570,7 @@ Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
 ```{r create research participation sum score}
 
  factor_df <- factor_df %>%
-  mutate(HRES_TOTAL = 0 + (rowSums(factor_df[participation_cols] == "YES"))
+  mutate(HRES_TOTAL = 0 + (rowSums(factor_df[participation_cols] == "Yes"))
          ) 
 
 
@@ -584,7 +584,7 @@ HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 i
 prepare lists of variables that we are interested in for data summaries,
 and additional lists for predictors and outcomes we want to test in univariable regressions
 
-
+## Variable lists for analyses
 ***All variables***
 Note, using total score variables instead of individual variables where composites or sum scores exist
 ```{r list of vars for univariable analyses}
@@ -656,22 +656,14 @@ outcomes <- c("ofhact_agree","ofhact_all",
 
 ***independent variables***
 ```{r list of independent vars for univariable analyses}
-pred.participate.vars <- c(
-"MDQuintile",  "AGE_BAND", 
-"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
-"NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
- "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
-"DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
-"EDUCATION",  "WorkingStatus_Binary", "OCCUPATION_NSSEC",
- "LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", 
+pred.participate.vars <- c("LIFEEVENT", "PROSO_EVER_TOTAL","PROSO4W_TOTAL", 
 "GENFAM", "GENTEST",
 "DISABFAM", "AID", "HEALTH", "HRES_TOTAL",
 "HACT12_1", "HACT12_2", "HACT12_3", "HACT12_4", 
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
 "TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
-"OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
-"OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
+"OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
 "OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
@@ -685,10 +677,7 @@ pred.participate.vars <- c(
 
 
   
-pred.gen.vars <-c(
-"MDQuintile",  "AGE_BAND", 
-"GENDER", "ETHNICITY_LFS", "NUMPEOPLE",
-"NumOwnChildrenU16HH", "OwnChildU16OutsideHH", "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
+pred.gen.vars <-c( "INTERNET", "DEVICE_SMRTPHNE", "DEVICE_MOBILE", 
  "DEVICE_TABLET", "DEVICE_CPU", "DEVICE_WEAR", "DEVICE_TOTAL", 
 "DIGPROF_TOTAL", "FINNOW", "RELIGIOSITY", "RELIGION", 
 "EDUCATION",  "WorkingStatus_Binary","OCCUPATION_NSSEC",
@@ -697,8 +686,7 @@ pred.gen.vars <-c(
 "TRUSTGEN", "TRUSTORG_A", "TRUSTORG_B", "TRUSTORG_C", "TRUSTORG_D", 
 "TRUSTORG_E", "SCIINT", "SCIINF", "SCITRUST_TOTAL", 
 "COVRES", "OFHAWARE", "UNDERST", "OFHACT", 
-"OFHYN_FREQ", "OFHYN_OPEN", "OFHDK_FREQ", "OFHDK_OPEN", "OFHDK2_FREQ", 
-"OFHDK2_OPEN", "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
+ "OFHPAIR_A", "OFHPAIR_B", "OFHPAIR_C", "OFHPAIR_D", 
 "OFHPAIR_E", "OFHBEN_1", "OFHBEN_2", "OFHBEN_3", "OFHBEN_4", 
 "OFHBEN_5", "OFHBEN_6", "OFHBEN_7", "OFHBEN_8", "OFHBEN_9", "OFHBENCL", 
 "BARRSA_1", "BARRSA_2", "BARRSA_3", "BARRSA_4", "BARRSB_1", "BARRSB_2", 
@@ -1154,7 +1142,7 @@ do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",de
 
 ```
 
-# final list of covariates for each model
+## final list of covariates for each model
 
 based on which are significant predictors of the outcome when controlling for others
 
@@ -1175,7 +1163,7 @@ Significant demographic predictors to be used as covariates are:
 * Relative to people without a degree level education, people with a degree are more likely to say they want to take part, and more likely to say they are unsure rather than saying no outright.    
 * Whilst there are no gender differences in how likely respondents are to say yes versus no to participation, men are more likely to say no outright as opposed to being unsure than women
 
-```{r}
+```{r significant covariate list}
 
 takepart.binary.covariates <- c("Asian_filter","AGE_BAND","DEGREE")
 takepart.multi.covariates <- c("Asian_filter","AGE_BAND","DEGREE","GENDER")
@@ -1184,9 +1172,25 @@ takepart.multi.covariates <- c("Asian_filter","AGE_BAND","DEGREE","GENDER")
 
 ## Model 2: each predictor with significant demographic predictors as covariates
 
+### Binary (yes/no)
+```{r run single predictor binomial with covariates, results='asis'}
+
+for (x in pred.participate.vars){
+  do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates, x))
+}
 
 
 
+```
+
+### Categorical (yes/no/unsure)
+```{r run single predictor multinomial with covariates, results='asis'}
+
+for (x in pred.participate.vars){
+  do.multivariable.binomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates, x))
+}
+
+```
 
 
 # Notes and thoughts
