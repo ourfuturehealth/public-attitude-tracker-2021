@@ -41,6 +41,9 @@ editor_options:
 ##         ./functions/multivariable.binary.regression.R
 ## value   ?                                            
 ## visible FALSE                                        
+##         ./functions/multivariable.multinomial.regression.R
+## value   ?                                                 
+## visible FALSE                                             
 ##         ./functions/set.largest.ref.R
 ## value   ?                            
 ## visible FALSE                        
@@ -50,10 +53,6 @@ editor_options:
 ##         ./functions/univariable.multinomial.regression.R
 ## value   ?                                               
 ## visible FALSE
-```
-
-```
-## #Uighur
 ```
 
 ```
@@ -84,7 +83,7 @@ editor_options:
 
 ```
 ## 
-## To aggregate all non-grouping columns: take_all(mtcars, mean, by = am)
+## To aggregate data: take(mtcars, mean_mpg = mean(mpg), by = am)
 ```
 
 ```
@@ -96,12 +95,6 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
-```
-
-```
-## 
-## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
-##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -33583,7 +33576,1157 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </tbody>
 </table>
 
+### Multinomial regression
 
+for the binary outcomes and the demographic predictors
+
+
+```r
+do.multivariable.binomial.regression(regression_df,"ofhact_all",demo.pred.takepart.binary)
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.676 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.059 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.612 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.865 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.304 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.729 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus_Binary </td>
+   <td style="text-align:center;"> Working or on maternity leave or on furlough </td>
+   <td style="text-align:left;"> Not working </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.883 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it but with a mortgage to pay off </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.199 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it outright (no mortgage to pay off) </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.498 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.binary)
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Black_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.839 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.251 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.064 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.186 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.50 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.902 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.143 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.033 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.072 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Not practising </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.500 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Practising </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.052 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Doing something else </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 2.74 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.857 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Full-time student </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.60 </td>
+   <td style="text-align:center;"> 2.89 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.121 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Long-term sick or disabled </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 2.64 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.468 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Looking after family or home </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.637 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On a government training scheme </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 382658.25 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 194956685.28 </td>
+   <td style="text-align:center;"> 0.980 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On furlough </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 200428.87 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 176927266.44 </td>
+   <td style="text-align:center;"> 0.989 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On maternity leave </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 2.22 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.323 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Retired </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.349 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Self employed </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.874 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unemployed </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.420 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unpaid worker in family business </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 486560.81 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 429508340.70 </td>
+   <td style="text-align:center;"> 0.988 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> _BinaryNot working </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it but with a mortgage to pay off </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.091 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> TENURE </td>
+   <td style="text-align:center;"> Rent / other </td>
+   <td style="text-align:left;"> Own it outright (no mortgage to pay off) </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.127 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.binary)
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.226 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.421 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.781 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.263 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.816 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.343 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 2.31 </td>
+   <td style="text-align:center;"> 19.22 </td>
+   <td style="text-align:center;"> 2.50 </td>
+   <td style="text-align:center;"> 0.438 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.275 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other Asian background </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 3.28 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.087 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other Black background </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.629 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other single ethnic group </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 3.44 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.585 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Any other White background </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 2.46 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.052 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Arab </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 708835.20 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 279411313.59 </td>
+   <td style="text-align:center;"> 0.973 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Bangladeshi </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.468 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Black African </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.900 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Black Caribbean </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.850 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Chinese </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.274 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Indian </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.347 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Mixed/Multiple ethnic groups </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 2.34 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.729 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> ETHNICITY </td>
+   <td style="text-align:center;"> White British </td>
+   <td style="text-align:left;"> Pakistani </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 2.27 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.222 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.082 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Doing something else </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.94 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.608 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Full-time student </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.649 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Long-term sick or disabled </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 2.00 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.593 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Looking after family or home </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.417 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On a government training scheme </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 540220.20 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 274875050.20 </td>
+   <td style="text-align:center;"> 0.979 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On furlough </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 658379.22 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 581179904.08 </td>
+   <td style="text-align:center;"> 0.988 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> On maternity leave </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 6.56 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.661 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Retired </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.206 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Self employed </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 1.60 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.550 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unemployed </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.732 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> Unpaid worker in family business </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 794617.18 </td>
+   <td style="text-align:center;"> Inf </td>
+   <td style="text-align:center;"> 701443059.67 </td>
+   <td style="text-align:center;"> 0.988 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_no_prevent_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus </td>
+   <td style="text-align:center;"> In paid employment (full or part-time) </td>
+   <td style="text-align:left;"> _BinaryNot working </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```r
+do.multivariable.binomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.binary)
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Genetic feedback for ancestry?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Black_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.65 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.702 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> MDQuintile </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.286 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 10.31 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.842 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> SEX </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.363 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Not practising </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.755 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> RELIGIOSITY </td>
+   <td style="text-align:center;"> Not religious </td>
+   <td style="text-align:left;"> Practising </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> GENFBACK_ancestry_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> WorkingStatus_Binary </td>
+   <td style="text-align:center;"> Working or on maternity leave or on furlough </td>
+   <td style="text-align:left;"> Not working </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.076 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
 
 
 
