@@ -43,7 +43,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       comment=NA,
                       prompt=FALSE,
                       cache=FALSE,
-                      fig.width = 15,
+                      fig.width = 20,
                       fig.asp = 1,
                       out.width = "100%")
 
@@ -1447,23 +1447,23 @@ do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepar
 ```
 
 ### multinomial outcomes  yes/ no 
-```{r multivariable with covariates predictor groups binomial, results='asis'}
-
-# personal characteristics
-do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,characteristics.pred.participation.multi))
-
-# attitudes and awareness about our future health
-do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,ofh.attitudes.pred.participation.multi ))
-
-# data security concerns 
-do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,data.security.attitudes.pred.participation.multi))
-
-# practical barriers
-do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,practical.barriers.pred.participation.multi ))
-
-# attitudes and knowledge of genetics and genetic feedback
-do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,genetic.pred.participation.multi))
-
+```{r multivariable with covariates predictor groups multinomial, results='asis'}
+# 
+# # personal characteristics
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,characteristics.pred.participation.multi))
+# 
+# # attitudes and awareness about our future health
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,ofh.attitudes.pred.participation.multi ))
+# 
+# # data security concerns 
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,data.security.attitudes.pred.participation.multi))
+# 
+# # practical barriers
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,practical.barriers.pred.participation.multi ))
+# 
+# # attitudes and knowledge of genetics and genetic feedback
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,genetic.pred.participation.multi))
+```
 
 Based on this, we drop similar variables that are not highly associated when controlling for other variables.
 NB note - we need to revisit this method of variable selection in a more robust way (considering varibale correlations, changing order or predictors, looking at overall model fit and comparing between models, sensitivity models) but for now this will be a reasonable way of showing the most important relationships.
@@ -1471,6 +1471,7 @@ NB note - we need to revisit this method of variable selection in a more robust 
 
 We will drop the following from predictor lists:
 
+### bi
 *characteristics:*    
 PROSO4W_TOTAL
 HEALTH

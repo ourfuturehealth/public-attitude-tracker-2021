@@ -4,10 +4,11 @@ binomial.forest.plot <- function(data.in,
                                     title,
                                     colourpal,
                                     caption.text="",
-                                    pointsize=2,linesize=1,errorsize=1,
-                                    axistext=12,axistitle=16,legtitle=12,stripsize=10,
-                                    lowlim=0,uplim=7,dodge=0.5,
-                                 title.size=14)
+                                 pointsize=2,linesize=1,errorsize=1,
+                                 axistext=14,axistitle=16,legtitle=14,stripsize=16,
+                                 lowlim=0.2,uplim=7,dodge=0.5,
+                                 title.size=18,
+                                 cap.size=14)
   
 {
   
@@ -51,7 +52,7 @@ binomial.forest.plot <- function(data.in,
                                   size=title.size,
                                   hjust=0.5),
           plot.caption = element_text(face="bold",
-                                      size=8,
+                                      size=cap.size,
                                       hjust=0),
           axis.text=element_text(face="bold",size=axistext,),
           legend.text=element_text(size=axistext,),

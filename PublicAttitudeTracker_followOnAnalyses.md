@@ -86,7 +86,7 @@ editor_options:
 
 ```
 ## 
-## To select rows from data: rows(mtcars, am==0)
+## To aggregate all non-grouping columns: take_all(mtcars, mean, by = am)
 ```
 
 ```
@@ -98,12 +98,6 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
-```
-
-```
-## 
-## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
-##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -32910,7 +32904,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
     TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-[1] "Is this an Asian respondent?\nSample frame (PV): IMD quintile within country\nWhat is your age band?\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
 
 ```r
@@ -33277,7 +33270,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status", 
     WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
     TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-[1] "Is this a black respondent?\nSample frame (PV): IMD quintile within country\nWhat is your age band?\nReligiosity\nDegree (yes/no)\nWorking status\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
 
 ```
 Warning: Transformation introduced infinite values in continuous y-axis
@@ -33749,7 +33741,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(AGE_BAND.AGE_BAND = "What is your age band?", GENDER.NA = NA_character_, 
     ETHNICITY.ETHNICITY = "Ethnic group (detailed)", DEGREE.DEGREE = "Degree (yes/no)", 
     WorkingStatus.WorkingStatus = "Working status", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-[1] "What is your age band?\nNA\nEthnic group (detailed)\nDegree (yes/no)\nWorking status\nWorking (yes/no)"
 
 ```
 Warning: Transformation introduced infinite values in continuous y-axis
@@ -33916,7 +33907,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
     GENDER.NA = NA_character_, RELIGIOSITY.RELIGIOSITY = "Religiosity", 
     DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-[1] "Is this a black respondent?\nIs this an Asian respondent?\nSample frame (PV): IMD quintile within country\nNA\nReligiosity\nDegree (yes/no)\nWorking (yes/no)"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
 
 ### Multinomial regression
@@ -34359,7 +34349,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
     TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-[1] "Sample frame (PV): IMD quintile within country\nWhat is your age band?\nNA\nIs this an Asian respondent?\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
 
 ```r
@@ -34768,7 +34757,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     AGE_BAND.AGE_BAND = "What is your age band?", RELIGIOSITY.RELIGIOSITY = "Religiosity", 
     DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
     TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-[1] "Is this a black respondent?\nWhat is your age band?\nReligiosity\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
 
 ```r
@@ -35657,7 +35645,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </tbody>
 </table>list(AGE_BAND.AGE_BAND = "What is your age band?", ETHNICITY.ETHNICITY = "Ethnic group (detailed)", 
     DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status")
-[1] "What is your age band?\nEthnic group (detailed)\nDegree (yes/no)\nWorking status"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
 
 ```r
@@ -35869,7 +35856,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     RELIGIOSITY.RELIGIOSITY = "Religiosity", DEGREE.DEGREE = "Degree (yes/no)", 
     WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-[1] "Is this a black respondent?\nIs this an Asian respondent?\nReligiosity\nDegree (yes/no)\nWorking (yes/no)"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
 
 ## final list of covariates for each model
@@ -36053,7 +36039,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nIn the last 12 months have you experienced a major life event?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36204,7 +36189,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     PROSO_EVER_TOTAL.NA = NA_character_)
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36355,7 +36339,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComposite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
 
 ```
 Joining, by = "predictor"
@@ -36501,7 +36484,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have a family history of any disease or health condition?"
 
 ```
 Joining, by = "predictor"
@@ -36647,7 +36629,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENTEST.GENTEST = "Have you ever had a genetic test?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a genetic test?"
 
 ```
 Joining, by = "predictor"
@@ -36793,7 +36774,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -36939,7 +36919,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWhether have caring responsibilities for someone with LT illness/disability inside/outside home"
 
 ```
 Joining, by = "predictor"
@@ -37085,7 +37064,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nTo what extent do you agree or disagree - I am someone who looks after my health very well"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37236,7 +37214,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups."
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37387,7 +37364,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37538,7 +37514,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTGEN.TRUSTGEN = "How much do you trust most people")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust most people"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37689,7 +37664,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust the NHS"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37840,7 +37814,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust the Government"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37991,7 +37964,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Pharmaceutical companies"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38142,7 +38114,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Medical charities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38293,7 +38264,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Medical researchers in universities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38444,7 +38414,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities"
 
 ```
 Joining, by = "predictor"
@@ -38629,7 +38598,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     SCIINT.SCIINT = "How interested are you in science?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow interested are you in science?"
 
 ```
 Joining, by = "predictor"
@@ -38814,7 +38782,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow well informed do you feel about science and scientific developments?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38965,7 +38932,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall."
 
 ```
 Joining, by = "predictor"
@@ -39137,7 +39103,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you think scientific medical research has helped prevent and treat COVID-19?"
 
 ```
 Joining, by = "predictor"
@@ -39296,7 +39261,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you heard of the Our Future Health research programme?"
 
 ```
 Joining, by = "predictor"
@@ -39455,7 +39419,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nTo what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39606,7 +39569,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39757,7 +39719,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39908,7 +39869,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow boring or interesting do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40059,7 +40019,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow hard or easy do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40210,7 +40169,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow slow or fast you think taking part in the Our Future Health research programme would be?"
 
 ```
 Joining, by = "predictor"
@@ -40369,7 +40327,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... advance medical research"
 
 ```
 Joining, by = "predictor"
@@ -40528,7 +40485,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... better treatments"
 
 ```
 Joining, by = "predictor"
@@ -40687,7 +40643,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... early detection"
 
 ```
 Joining, by = "predictor"
@@ -40846,7 +40801,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_4.OFHBEN_4 = "OFH will... help me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help me"
 
 ```
 Joining, by = "predictor"
@@ -41005,7 +40959,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help family/friends"
 
 ```
 Joining, by = "predictor"
@@ -41164,7 +41117,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_6.OFHBEN_6 = "OFH will... help community")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help community"
 
 ```
 Joining, by = "predictor"
@@ -41323,7 +41275,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help people in UK"
 
 ```
 Joining, by = "predictor"
@@ -41482,7 +41433,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help people in world"
 
 ```
 Joining, by = "predictor"
@@ -41641,7 +41591,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help representation of people like me"
 
 ```
 Joining, by = "predictor"
@@ -41800,7 +41749,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 
 ```
 Joining, by = "predictor"
@@ -41959,7 +41907,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable health info in large database"
 
 ```
 Joining, by = "predictor"
@@ -42118,7 +42065,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable share health info with OFH"
 
 ```
 Joining, by = "predictor"
@@ -42277,7 +42223,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable how OFH use health info"
 
 ```
 Joining, by = "predictor"
@@ -42436,7 +42381,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable OFH access to medical records"
 
 ```
 Joining, by = "predictor"
@@ -42595,7 +42539,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable academics access to health records"
 
 ```
 Joining, by = "predictor"
@@ -42754,7 +42697,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable companies access to health records"
 
 ```
 Joining, by = "predictor"
@@ -42926,7 +42868,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if part of routine blood test"
 
 ```
 Joining, by = "predictor"
@@ -43098,7 +43039,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if soley for OFH"
 
 ```
 Joining, by = "predictor"
@@ -43270,7 +43210,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDifficult to give sample on weekday"
 
 ```
 Joining, by = "predictor"
@@ -43442,7 +43381,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDifficult to give sample on weekend"
 
 ```
 Joining, by = "predictor"
@@ -43614,7 +43552,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nThe thought of providing a blood sample makes me anxious"
 
 ```
 Joining, by = "predictor"
@@ -43786,7 +43723,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_6.BLOODS_6 = "I have a fear of needles")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI have a fear of needles"
 
 ```
 Joining, by = "predictor"
@@ -43958,7 +43894,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI have a fear of needles that would stop me from providing a blood sample"
 
 ```
 Joining, by = "predictor"
@@ -44130,7 +44065,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI don't have time to take part in the Our Future Health research programme"
 
 ```
 Joining, by = "predictor"
@@ -44302,7 +44236,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nhave time for 10 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -44474,7 +44407,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nhave time for 30 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -44659,7 +44591,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRisk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)"
 
 ```
 Joining, by = "predictor"
@@ -44844,7 +44775,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRisk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)"
 
 ```
 Joining, by = "predictor"
@@ -45029,7 +44959,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nAncestry (where your relatives and ancestors likely came from and lived a long time ago)"
 
 ```
 Joining, by = "predictor"
@@ -45175,7 +45104,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     RECONTACT.RECONTACT = "Recontact for future qualitative research")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRecontact for future qualitative research"
 
 ```
 Joining, by = "predictor"
@@ -45321,7 +45249,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -45480,7 +45407,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -45626,7 +45552,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -45785,7 +45710,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -45931,7 +45855,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46090,7 +46013,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46262,7 +46184,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     DISABILITY.DISABILITY = "Long-term ill health/disability status")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nLong-term ill health/disability status"
 
 ```
 Joining, by = "predictor"
@@ -46408,7 +46329,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -46554,7 +46474,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
 
 ### Categorical (yes/no/unsure)
@@ -46735,7 +46654,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nIn the last 12 months have you experienced a major life event?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -46912,7 +46830,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, PROSO_EVER_TOTAL.NA = NA_character_)
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nNA"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -47089,7 +47006,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComposite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
 
 ```
 Joining, by = "predictor"
@@ -47261,7 +47177,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have a family history of any disease or health condition?"
 
 ```
 Joining, by = "predictor"
@@ -47433,7 +47348,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENTEST.GENTEST = "Have you ever had a genetic test?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you ever had a genetic test?"
 
 ```
 Joining, by = "predictor"
@@ -47605,7 +47519,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -47777,7 +47690,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWhether have caring responsibilities for someone with LT illness/disability inside/outside home"
 
 ```
 Joining, by = "predictor"
@@ -47949,7 +47861,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nTo what extent do you agree or disagree - I am someone who looks after my health very well"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48126,7 +48037,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups."
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48303,7 +48213,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48480,7 +48389,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTGEN.TRUSTGEN = "How much do you trust most people")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust most people"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48657,7 +48565,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust the NHS"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48834,7 +48741,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust the Government"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49011,7 +48917,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Pharmaceutical companies"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49188,7 +49093,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Medical charities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49365,7 +49269,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Medical researchers in universities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49542,7 +49445,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities"
 
 ```
 Joining, by = "predictor"
@@ -49753,7 +49655,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, SCIINT.SCIINT = "How interested are you in science?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow interested are you in science?"
 
 ```
 Joining, by = "predictor"
@@ -49964,7 +49865,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow well informed do you feel about science and scientific developments?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50141,7 +50041,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall."
 
 ```
 Joining, by = "predictor"
@@ -50339,7 +50238,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you think scientific medical research has helped prevent and treat COVID-19?"
 
 ```
 Joining, by = "predictor"
@@ -50524,7 +50422,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you heard of the Our Future Health research programme?"
 
 ```
 Joining, by = "predictor"
@@ -50709,7 +50606,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nTo what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50886,7 +50782,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51063,7 +50958,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51240,7 +51134,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow boring or interesting do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51417,7 +51310,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow hard or easy do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51594,7 +51486,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow slow or fast you think taking part in the Our Future Health research programme would be?"
 
 ```
 Joining, by = "predictor"
@@ -51779,7 +51670,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... advance medical research"
 
 ```
 Joining, by = "predictor"
@@ -51964,7 +51854,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... better treatments"
 
 ```
 Joining, by = "predictor"
@@ -52149,7 +52038,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... early detection"
 
 ```
 Joining, by = "predictor"
@@ -52334,7 +52222,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_4.OFHBEN_4 = "OFH will... help me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help me"
 
 ```
 Joining, by = "predictor"
@@ -52519,7 +52406,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help family/friends"
 
 ```
 Joining, by = "predictor"
@@ -52704,7 +52590,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_6.OFHBEN_6 = "OFH will... help community")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help community"
 
 ```
 Joining, by = "predictor"
@@ -52889,7 +52774,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help people in UK"
 
 ```
 Joining, by = "predictor"
@@ -53074,7 +52958,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help people in world"
 
 ```
 Joining, by = "predictor"
@@ -53259,7 +53142,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help representation of people like me"
 
 ```
 Joining, by = "predictor"
@@ -53444,7 +53326,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 
 ```
 Joining, by = "predictor"
@@ -53629,7 +53510,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable health info in large database"
 
 ```
 Joining, by = "predictor"
@@ -53814,7 +53694,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable share health info with OFH"
 
 ```
 Joining, by = "predictor"
@@ -53999,7 +53878,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable how OFH use health info"
 
 ```
 Joining, by = "predictor"
@@ -54184,7 +54062,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable OFH access to medical records"
 
 ```
 Joining, by = "predictor"
@@ -54369,7 +54246,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable academics access to health records"
 
 ```
 Joining, by = "predictor"
@@ -54554,7 +54430,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable companies access to health records"
 
 ```
 Joining, by = "predictor"
@@ -54752,7 +54627,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWilling give sample if part of routine blood test"
 
 ```
 Joining, by = "predictor"
@@ -54950,7 +54824,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWilling give sample if soley for OFH"
 
 ```
 Joining, by = "predictor"
@@ -55148,7 +55021,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDifficult to give sample on weekday"
 
 ```
 Joining, by = "predictor"
@@ -55346,7 +55218,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDifficult to give sample on weekend"
 
 ```
 Joining, by = "predictor"
@@ -55544,7 +55415,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nThe thought of providing a blood sample makes me anxious"
 
 ```
 Joining, by = "predictor"
@@ -55742,7 +55612,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_6.BLOODS_6 = "I have a fear of needles")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI have a fear of needles"
 
 ```
 Joining, by = "predictor"
@@ -55940,7 +55809,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI have a fear of needles that would stop me from providing a blood sample"
 
 ```
 Joining, by = "predictor"
@@ -56138,7 +56006,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI don't have time to take part in the Our Future Health research programme"
 
 ```
 Joining, by = "predictor"
@@ -56336,7 +56203,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nhave time for 10 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -56534,7 +56400,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nhave time for 30 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -56745,7 +56610,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRisk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)"
 
 ```
 Joining, by = "predictor"
@@ -56956,7 +56820,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRisk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)"
 
 ```
 Joining, by = "predictor"
@@ -57167,7 +57030,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nAncestry (where your relatives and ancestors likely came from and lived a long time ago)"
 
 ```
 Joining, by = "predictor"
@@ -57339,7 +57201,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, RECONTACT.RECONTACT = "Recontact for future qualitative research")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRecontact for future qualitative research"
 
 ```
 Joining, by = "predictor"
@@ -57511,7 +57372,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -57696,7 +57556,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -57868,7 +57727,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -58053,7 +57911,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -58225,7 +58082,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -58410,7 +58266,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -58608,7 +58463,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, DISABILITY.DISABILITY = "Long-term ill health/disability status")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nLong-term ill health/disability status"
 
 ```
 Joining, by = "predictor"
@@ -58780,7 +58634,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -58952,7 +58805,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
 </table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
     AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
     GENDER.NA = NA_character_, DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
 
 ## significant predictors of participation from model 2
@@ -59604,7 +59456,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.", 
     COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?", 
     DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nIn the last 12 months have you experienced a major life event?\nNA\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.\nHow much do you think scientific medical research has helped prevent and treat COVID-19?\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-1.png" width="100%" />
 
 ```r
@@ -59855,7 +59706,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
     OFHBEN_2.OFHBEN_2 = "OFH will... better treatments", OFHBEN_4.OFHBEN_4 = "OFH will... help me", 
     OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?\nHow hard or easy do you think taking part in the Our Future Health research programme would be?\nOFH will... better treatments\nOFH will... help me\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-2.png" width="100%" />
 
 ```r
@@ -60101,7 +59951,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info", 
     BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records", 
     BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable share health info with OFH\nComfortable how OFH use health info\nComfortable OFH access to medical records\nComfortable academics access to health records"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
 
 ```r
@@ -60558,7 +60407,6 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme", 
     PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire", 
     PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if part of routine blood test\nWilling give sample if soley for OFH\nDifficult to give sample on weekend\nI have a fear of needles\nI have a fear of needles that would stop me from providing a blood sample\nI don't have time to take part in the Our Future Health research programme\nhave time for 10 min questionnaire\nhave time for 30 min questionnaire"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-4.png" width="100%" />
 
 ```r
@@ -60751,8 +60599,27 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
     GENTEST.GENTEST = "Have you ever had a genetic test?", GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say", 
     GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
     GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a genetic test?\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
+
+### multinomial outcomes  yes/ no 
+
+```r
+# 
+# # personal characteristics
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,characteristics.pred.participation.multi))
+# 
+# # attitudes and awareness about our future health
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,ofh.attitudes.pred.participation.multi ))
+# 
+# # data security concerns 
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,data.security.attitudes.pred.participation.multi))
+# 
+# # practical barriers
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,practical.barriers.pred.participation.multi ))
+# 
+# # attitudes and knowledge of genetics and genetic feedback
+# do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,genetic.pred.participation.multi))
+```
 
 Based on this, we drop similar variables that are not highly associated when controlling for other variables.
 NB note - we need to revisit this method of variable selection in a more robust way (considering varibale correlations, changing order or predictors, looking at overall model fit and comparing between models, sensitivity models) but for now this will be a reasonable way of showing the most important relationships.
@@ -60760,6 +60627,7 @@ NB note - we need to revisit this method of variable selection in a more robust 
 
 We will drop the following from predictor lists:
 
+### bi
 *characteristics:*    
 PROSO4W_TOTAL
 HEALTH

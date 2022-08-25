@@ -68,10 +68,10 @@ do.multivariable.multinomial.regression<- function(dataframe, outcome, independe
   
   ## print forest plot
   
-  plot_caption <- paste(unlist(dput((sapply(dataframe[independent.variable.list],label)))),collapse="\n")
-  print(plot_caption)
-  
-  
+  label.text <- dput((sapply(dataframe[independent.variable.list],label)))
+  label.text.ordered <- label.text[order(names(label.text))]
+  plot_caption <- paste(unlist(label.text.ordered),collapse="\n")
+
   print(multinomial.forest.plot(data.in=df,
                                 caption.text=plot_caption,
                                 title=paste(paste("Multinomial logistic regression of variables predicting",label(dataframe[[outcome]]),sep=" "),

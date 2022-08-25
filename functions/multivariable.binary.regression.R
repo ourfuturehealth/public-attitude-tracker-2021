@@ -65,8 +65,11 @@ do.multivariable.binomial.regression<- function(dataframe, outcome, independent.
     
     ## print forest plot
     
-    plot_caption <- paste(unlist(dput((sapply(dataframe[independent.variable.list],label)))),collapse="\n")
-    print(plot_caption)
+    
+    label.text <- dput((sapply(dataframe[independent.variable.list],label)))
+    label.text.ordered <- label.text[order(names(label.text))]
+    plot_caption <- paste(unlist(label.text.ordered),collapse="\n")
+    
     
     print(binomial.forest.plot(data.in=df,
                                caption.text=plot_caption,
