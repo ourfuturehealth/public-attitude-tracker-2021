@@ -43,7 +43,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       comment=NA,
                       prompt=FALSE,
                       cache=FALSE,
-                      fig.width = 20,
+                      fig.width = 17,
                       fig.asp = 1,
                       out.width = "100%")
 
@@ -348,7 +348,6 @@ all_labels <- dput(sapply(factor_df,label))
 ## Create three category responses (agree, niether, disagree) for all agreement question types 
 
 ```{r recode agree type questions}
-
  agree_var_list<- factor_df %>% 
   select(names(which(lapply(factor_df, function (x) "Strongly agree" %in% levels(x)) == TRUE))) %>%
   colnames()
@@ -356,12 +355,12 @@ all_labels <- dput(sapply(factor_df,label))
 agree_labels <- dput(sapply(factor_df[agree_var_list],label))
 
 
-factor_df <- 
-  factor_df %>% 
+  factor_df <-   factor_df %>% 
   mutate_at(vars(agree_var_list),
-         list(~recode(.,"Strongly agree" = "Agree",
-                               "Agree" ="Agree",
-                               "Neither agree nor disagree" = "Neither",
+         list(~recode_factor(.,
+                             "Neither agree nor disagree" = "Neither",
+                             "Strongly agree" = "Agree",
+                              "Agree" ="Agree",
                                "Disagree" = "Disagree",
                                "Strongly disagree" = "Disagree",
                       "Don't know" = "Don't know")))
@@ -651,7 +650,8 @@ factor_df = apply_labels(factor_df,
 PROSO_EVER_TOTAL="Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed",
 PROSO4W_TOTAL="Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
 
-all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL","PROSO4W_TOTAL"],label),all_labels)
+all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL"],label),all_labels)
+all_labels <- append(sapply(factor_df["PROSO4W_TOTAL"],label),all_labels)
 ```
 
 #### Trust in science 
@@ -674,7 +674,8 @@ Score of 0 indicates neutrality
          (rowSums(factor_df[science_cols] == "Agree")) +
          (rowSums(factor_df[science_cols] == "Disagree") * -1) +
          (rowSums(factor_df[science_cols] == "Strongly disagree") * -2)
-         ) 
+         ) # practical barriers
+
 
 
 factor_df = apply_labels(factor_df, 
@@ -986,12 +987,12 @@ regression_df <- regression_df %>%
                 ~set.largest.ref(.)))
 ```
 
-### outcomes
+### set specific reference variables wehre it makes sense to do so
 
-s specific reference variables for my outcomes reflecting the outcome of greatest interest
+Yes/No, reference will be NO
+Agree type questions: reference will be neither
 
 ```{r}
-
 regression_df$ofhact_agree <-  relevel(regression_df$ofhact_agree,ref= "No")
 regression_df$ofhact_all <-  relevel(regression_df$ofhact_all,ref= "No")
 
@@ -1005,7 +1006,27 @@ regression_df$GENFBACK_ancestry_agree <-  relevel(regression_df$GENFBACK_ancestr
 regression_df$GENFBACK_ancestry_all <-  relevel(regression_df$GENFBACK_ancestry_all,ref= "No")
 
 
+agree_var_list <- agree_var_list[2:length(agree_var_list)]
+
+regression_df <- regression_df %>%
+  mutate_at(vars(agree_var_list),
+            ~relevel(.,ref= "Disagree"))
+
+  
+regression_df$HEALTH <-  relevel(regression_df$HEALTH ,ref= "Disagree")  
+regression_df$COVRES <-  relevel(regression_df$COVRES ,ref= "Not at all")
+
+yesno_var_list<- factor_df %>% 
+  select(names(which(lapply(factor_df, function (x) "No" %in% levels(x)) == TRUE))) %>%
+  colnames()
+
+regression_df <- regression_df %>%
+  mutate_at(vars(yesno_var_list),
+            ~relevel(.,ref= "No"))
+
 ```
+
+## set reference categories
 
 
 ## add labels back to data set
@@ -1411,9 +1432,10 @@ ofh.attitudes.pred.participation.binary <- c("OFHPAIR_A","OFHPAIR_D",
 data.security.attitudes.pred.participation.binary <- c("BARRSA_2","BARRSA_3","BARRSA_4",
                                           "BARRSB_1")
 
-practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
-                                         "BLOODS_4","BLOODS_6","BLOODS_7",
-                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3")
+blood.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
+                                         "BLOODS_4","BLOODS_6","BLOODS_7")
+
+barriers.pred.participation.binary <- c("PRACBAR_1","PRACBAR_2","PRACBAR_3")
 
 genetic.pred.participation.binary <- c("GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
                                           "GENFBACK_ancestry_agree")
@@ -1438,8 +1460,11 @@ do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepar
 # data security concerns 
 do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,data.security.attitudes.pred.participation.binary))
 
+# blood
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,blood.pred.participation.binary ))
+
 # practical barriers
-do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,practical.barriers.pred.participation.binary ))
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,barriers.pred.participation.binary ))
 
 # attitudes and knowledge of genetics and genetic feedback
 do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,genetic.pred.participation.binary))

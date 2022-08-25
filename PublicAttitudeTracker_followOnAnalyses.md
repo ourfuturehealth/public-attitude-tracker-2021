@@ -86,7 +86,11 @@ editor_options:
 
 ```
 ## 
-## To aggregate all non-grouping columns: take_all(mtcars, mean, by = am)
+## Use magrittr pipe '%>%' to chain several operations:
+##              mtcars %>%
+##                  let(mpg_hp = mpg/hp) %>%
+##                  take(mean(mpg_hp), by = am)
+## 
 ```
 
 ```
@@ -98,6 +102,12 @@ editor_options:
 ## The following object is masked from 'package:readr':
 ## 
 ##     cols
+```
+
+```
+## 
+## Use 'expss_output_viewer()' to display tables in the RStudio Viewer.
+##  To return to the console output, use 'expss_output_default()'.
 ```
 
 ```
@@ -3816,12 +3826,12 @@ PARTNA = "Partnerships with charities and industry will improve the Our Future H
 ```
 
 ```r
-factor_df <- 
-  factor_df %>% 
+  factor_df <-   factor_df %>% 
   mutate_at(vars(agree_var_list),
-         list(~recode(.,"Strongly agree" = "Agree",
-                               "Agree" ="Agree",
-                               "Neither agree nor disagree" = "Neither",
+         list(~recode_factor(.,
+                             "Neither agree nor disagree" = "Neither",
+                             "Strongly agree" = "Agree",
+                              "Agree" ="Agree",
                                "Disagree" = "Disagree",
                                "Strongly disagree" = "Disagree",
                       "Don't know" = "Don't know")))
@@ -4325,13 +4335,13 @@ lapply(factor_df[science_cols],label)
 
 ```
 $SCITRU
-[1] "To what extent do you agree or disagree - The information I hear about science is generally true"
+[1] NA
 
 $SCILIFE
-[1] "To what extent do you agree or disagree - In general, scientists want to make life better for the average person"
+[1] NA
 
 $SCIBEN
-[1] "To what extent do you agree or disagree - The benefits of science are greater than any harms"
+[1] NA
 ```
 ####  actively seeking health information
 
@@ -4461,7 +4471,8 @@ factor_df = apply_labels(factor_df,
 PROSO_EVER_TOTAL="Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed",
 PROSO4W_TOTAL="Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
 
-all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL","PROSO4W_TOTAL"],label),all_labels)
+all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL"],label),all_labels)
+all_labels <- append(sapply(factor_df["PROSO4W_TOTAL"],label),all_labels)
 ```
 
 #### Trust in science 
@@ -4484,7 +4495,8 @@ Score of 0 indicates neutrality
          (rowSums(factor_df[science_cols] == "Agree")) +
          (rowSums(factor_df[science_cols] == "Disagree") * -1) +
          (rowSums(factor_df[science_cols] == "Strongly disagree") * -2)
-         ) 
+         ) # practical barriers
+
 
 
 factor_df = apply_labels(factor_df, 
@@ -5919,7 +5931,6 @@ Type: Factor
 ```
 Frequencies  
 HEALTH  
-Label: To what extent do you agree or disagree - I am someone who looks after my health very well  
 Type: Factor  
 
                  Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6282,13 +6293,12 @@ Type: Factor
 ```
 Frequencies  
 UNDERST  
-Label: To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   2306     83.34          83.34     83.34          83.34
-         Neither    300     10.84          94.18     10.84          94.18
+         Neither    300     10.84          10.84     10.84          10.84
+           Agree   2306     83.34          94.18     83.34          94.18
         Disagree     96      3.47          97.65      3.47          97.65
       Don't know     65      2.35         100.00      2.35         100.00
             <NA>      0                               0.00         100.00
@@ -6419,13 +6429,12 @@ Type: Numeric
 ```
 Frequencies  
 OFHBEN_1  
-Label: OFH will... advance medical research  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1999     72.24          72.24     72.24          72.24
-         Neither    549     19.84          92.09     19.84          92.09
+         Neither    549     19.84          19.84     19.84          19.84
+           Agree   1999     72.24          92.09     72.24          92.09
         Disagree    115      4.16          96.24      4.16          96.24
       Don't know    104      3.76         100.00      3.76         100.00
             <NA>      0                               0.00         100.00
@@ -6437,13 +6446,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_2  
-Label: OFH will... better treatments  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   2082     75.24          75.24     75.24          75.24
-         Neither    484     17.49          92.74     17.49          92.74
+         Neither    484     17.49          17.49     17.49          17.49
+           Agree   2082     75.24          92.74     75.24          92.74
         Disagree    105      3.79          96.53      3.79          96.53
       Don't know     96      3.47         100.00      3.47         100.00
             <NA>      0                               0.00         100.00
@@ -6455,13 +6463,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_3  
-Label: OFH will... early detection  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   2151     77.74          77.74     77.74          77.74
-         Neither    445     16.08          93.82     16.08          93.82
+         Neither    445     16.08          16.08     16.08          16.08
+           Agree   2151     77.74          93.82     77.74          93.82
         Disagree     93      3.36          97.18      3.36          97.18
       Don't know     78      2.82         100.00      2.82         100.00
             <NA>      0                               0.00         100.00
@@ -6473,13 +6480,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_4  
-Label: OFH will... help me  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1013     36.61          36.61     36.61          36.61
-         Neither   1086     39.25          75.86     39.25          75.86
+         Neither   1086     39.25          39.25     39.25          39.25
+           Agree   1013     36.61          75.86     36.61          75.86
         Disagree    512     18.50          94.36     18.50          94.36
       Don't know    156      5.64         100.00      5.64         100.00
             <NA>      0                               0.00         100.00
@@ -6491,13 +6497,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_5  
-Label: OFH will... help family/friends  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1411     50.99          50.99     50.99          50.99
-         Neither    916     33.10          84.10     33.10          84.10
+         Neither    916     33.10          33.10     33.10          33.10
+           Agree   1411     50.99          84.10     50.99          84.10
         Disagree    297     10.73          94.83     10.73          94.83
       Don't know    143      5.17         100.00      5.17         100.00
             <NA>      0                               0.00         100.00
@@ -6509,13 +6514,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_6  
-Label: OFH will... help community  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1801     65.09          65.09     65.09          65.09
-         Neither    669     24.18          89.27     24.18          89.27
+         Neither    669     24.18          24.18     24.18          24.18
+           Agree   1801     65.09          89.27     65.09          89.27
         Disagree    171      6.18          95.45      6.18          95.45
       Don't know    126      4.55         100.00      4.55         100.00
             <NA>      0                               0.00         100.00
@@ -6527,13 +6531,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_7  
-Label: OFH will... help people in UK  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   2036     73.58          73.58     73.58          73.58
-         Neither    525     18.97          92.56     18.97          92.56
+         Neither    525     18.97          18.97     18.97          18.97
+           Agree   2036     73.58          92.56     73.58          92.56
         Disagree    111      4.01          96.57      4.01          96.57
       Don't know     95      3.43         100.00      3.43         100.00
             <NA>      0                               0.00         100.00
@@ -6545,13 +6548,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_8  
-Label: OFH will... help people in world  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1909     68.99          68.99     68.99          68.99
-         Neither    593     21.43          90.42     21.43          90.42
+         Neither    593     21.43          21.43     21.43          21.43
+           Agree   1909     68.99          90.42     68.99          90.42
         Disagree    141      5.10          95.52      5.10          95.52
       Don't know    124      4.48         100.00      4.48         100.00
             <NA>      0                               0.00         100.00
@@ -6563,13 +6565,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBEN_9  
-Label: OFH will... help representation of people like me  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1747     63.14          63.14     63.14          63.14
-         Neither    728     26.31          89.45     26.31          89.45
+         Neither    728     26.31          26.31     26.31          26.31
+           Agree   1747     63.14          89.45     63.14          89.45
         Disagree    176      6.36          95.81      6.36          95.81
       Don't know    116      4.19         100.00      4.19         100.00
             <NA>      0                               0.00         100.00
@@ -6581,13 +6582,12 @@ Type: Factor
 ```
 Frequencies  
 OFHBENCL  
-Label: The potential benefits of taking part in the Our Future Health research programme are clear to me  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1912     69.10          69.10     69.10          69.10
-         Neither    647     23.38          92.48     23.38          92.48
+         Neither    647     23.38          23.38     23.38          23.38
+           Agree   1912     69.10          92.48     69.10          92.48
         Disagree    135      4.88          97.36      4.88          97.36
       Don't know     73      2.64         100.00      2.64         100.00
             <NA>      0                               0.00         100.00
@@ -6599,13 +6599,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSA_1  
-Label: Comfortable health info in large database  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1174     42.43          42.43     42.43          42.43
-         Neither    635     22.95          65.38     22.95          65.38
+         Neither    635     22.95          22.95     22.95          22.95
+           Agree   1174     42.43          65.38     42.43          65.38
         Disagree    880     31.80          97.18     31.80          97.18
       Don't know     78      2.82         100.00      2.82         100.00
             <NA>      0                               0.00         100.00
@@ -6617,13 +6616,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSA_2  
-Label: Comfortable share health info with OFH  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1327     47.96          47.96     47.96          47.96
-         Neither    632     22.84          70.80     22.84          70.80
+         Neither    632     22.84          22.84     22.84          22.84
+           Agree   1327     47.96          70.80     47.96          70.80
         Disagree    746     26.96          97.76     26.96          97.76
       Don't know     62      2.24         100.00      2.24         100.00
             <NA>      0                               0.00         100.00
@@ -6635,13 +6633,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSA_3  
-Label: Comfortable how OFH use health info  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1312     47.42          47.42     47.42          47.42
-         Neither    669     24.18          71.59     24.18          71.59
+         Neither    669     24.18          24.18     24.18          24.18
+           Agree   1312     47.42          71.59     47.42          71.59
         Disagree    702     25.37          96.96     25.37          96.96
       Don't know     84      3.04         100.00      3.04         100.00
             <NA>      0                               0.00         100.00
@@ -6653,13 +6650,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSA_4  
-Label: Comfortable OFH access to medical records  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1222     44.16          44.16     44.16          44.16
-         Neither    571     20.64          64.80     20.64          64.80
+         Neither    571     20.64          20.64     20.64          20.64
+           Agree   1222     44.16          64.80     44.16          64.80
         Disagree    893     32.27          97.07     32.27          97.07
       Don't know     81      2.93         100.00      2.93         100.00
             <NA>      0                               0.00         100.00
@@ -6671,13 +6667,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSB_1  
-Label: Comfortable academics access to health records  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1400     50.60          50.60     50.60          50.60
-         Neither    556     20.09          70.69     20.09          70.69
+         Neither    556     20.09          20.09     20.09          20.09
+           Agree   1400     50.60          70.69     50.60          70.69
         Disagree    739     26.71          97.40     26.71          97.40
       Don't know     72      2.60         100.00      2.60         100.00
             <NA>      0                               0.00         100.00
@@ -6689,13 +6684,12 @@ Type: Factor
 ```
 Frequencies  
 BARRSB_2  
-Label: Comfortable companies access to health records  
 Type: Factor  
 
                    Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ---------------- ------ --------- -------------- --------- --------------
-           Agree   1065     38.49          38.49     38.49          38.49
-         Neither    625     22.59          61.08     22.59          61.08
+         Neither    625     22.59          22.59     22.59          22.59
+           Agree   1065     38.49          61.08     38.49          61.08
         Disagree   1002     36.21          97.29     36.21          97.29
       Don't know     75      2.71         100.00      2.71         100.00
             <NA>      0                               0.00         100.00
@@ -6707,13 +6701,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_1  
-Label: Willing give sample if part of routine blood test  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree   1548     55.95          55.95     55.95          55.95
-                    Neither    406     14.67          70.62     14.67          70.62
+                    Neither    406     14.67          14.67     14.67          14.67
+                      Agree   1548     55.95          70.62     55.95          70.62
                    Disagree    707     25.55          96.17     25.55          96.17
       Not sure / it depends    106      3.83         100.00      3.83         100.00
                        <NA>      0                               0.00         100.00
@@ -6725,13 +6718,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_2  
-Label: Willing give sample if soley for OFH  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree   1327     47.96          47.96     47.96          47.96
-                    Neither    473     17.09          65.05     17.09          65.05
+                    Neither    473     17.09          17.09     17.09          17.09
+                      Agree   1327     47.96          65.05     47.96          65.05
                    Disagree    852     30.79          95.84     30.79          95.84
       Not sure / it depends    115      4.16         100.00      4.16         100.00
                        <NA>      0                               0.00         100.00
@@ -6743,13 +6735,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_3  
-Label: Difficult to give sample on weekday  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    974     35.20          35.20     35.20          35.20
-                    Neither    590     21.32          56.52     21.32          56.52
+                    Neither    590     21.32          21.32     21.32          21.32
+                      Agree    974     35.20          56.52     35.20          56.52
                    Disagree   1078     38.96          95.48     38.96          95.48
       Not sure / it depends    125      4.52         100.00      4.52         100.00
                        <NA>      0                               0.00         100.00
@@ -6761,13 +6752,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_4  
-Label: Difficult to give sample on weekend  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    663     23.96          23.96     23.96          23.96
-                    Neither    638     23.06          47.02     23.06          47.02
+                    Neither    638     23.06          23.06     23.06          23.06
+                      Agree    663     23.96          47.02     23.96          47.02
                    Disagree   1328     47.99          95.01     47.99          95.01
       Not sure / it depends    138      4.99         100.00      4.99         100.00
                        <NA>      0                               0.00         100.00
@@ -6779,13 +6769,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_5  
-Label: The thought of providing a blood sample makes me anxious  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    765     27.65          27.65     27.65          27.65
-                    Neither    490     17.71          45.36     17.71          45.36
+                    Neither    490     17.71          17.71     17.71          17.71
+                      Agree    765     27.65          45.36     27.65          45.36
                    Disagree   1458     52.69          98.05     52.69          98.05
       Not sure / it depends     54      1.95         100.00      1.95         100.00
                        <NA>      0                               0.00         100.00
@@ -6797,13 +6786,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_6  
-Label: I have a fear of needles  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    567     20.49          20.49     20.49          20.49
-                    Neither    350     12.65          33.14     12.65          33.14
+                    Neither    350     12.65          12.65     12.65          12.65
+                      Agree    567     20.49          33.14     20.49          33.14
                    Disagree   1812     65.49          98.63     65.49          98.63
       Not sure / it depends     38      1.37         100.00      1.37         100.00
                        <NA>      0                               0.00         100.00
@@ -6815,13 +6803,12 @@ Type: Factor
 ```
 Frequencies  
 BLOODS_7  
-Label: I have a fear of needles that would stop me from providing a blood sample  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    349     12.61          12.61     12.61          12.61
-                    Neither    325     11.75          24.36     11.75          24.36
+                    Neither    325     11.75          11.75     11.75          11.75
+                      Agree    349     12.61          24.36     12.61          24.36
                    Disagree   2048     74.02          98.37     74.02          98.37
       Not sure / it depends     45      1.63         100.00      1.63         100.00
                        <NA>      0                               0.00         100.00
@@ -6833,13 +6820,12 @@ Type: Factor
 ```
 Frequencies  
 PRACBAR_1  
-Label: I don't have time to take part in the Our Future Health research programme  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree    731     26.42          26.42     26.42          26.42
-                    Neither    731     26.42          52.84     26.42          52.84
+                    Neither    731     26.42          26.42     26.42          26.42
+                      Agree    731     26.42          52.84     26.42          52.84
                    Disagree   1183     42.75          95.59     42.75          95.59
       Not sure / it depends    122      4.41         100.00      4.41         100.00
                        <NA>      0                               0.00         100.00
@@ -6851,13 +6837,12 @@ Type: Factor
 ```
 Frequencies  
 PRACBAR_2  
-Label: have time for 10 min questionnaire  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree   2175     78.60          78.60     78.60          78.60
-                    Neither    348     12.58          91.18     12.58          91.18
+                    Neither    348     12.58          12.58     12.58          12.58
+                      Agree   2175     78.60          91.18     78.60          91.18
                    Disagree    193      6.98          98.16      6.98          98.16
       Not sure / it depends     51      1.84         100.00      1.84         100.00
                        <NA>      0                               0.00         100.00
@@ -6869,13 +6854,12 @@ Type: Factor
 ```
 Frequencies  
 PRACBAR_3  
-Label: have time for 30 min questionnaire  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree   1478     53.42          53.42     53.42          53.42
-                    Neither    587     21.21          74.63     21.21          74.63
+                    Neither    587     21.21          21.21     21.21          21.21
+                      Agree   1478     53.42          74.63     53.42          74.63
                    Disagree    621     22.44          97.07     22.44          97.07
       Not sure / it depends     81      2.93         100.00      2.93         100.00
                        <NA>      0                               0.00         100.00
@@ -6887,13 +6871,12 @@ Type: Factor
 ```
 Frequencies  
 PARTNA  
-Label: Partnerships with charities and industry will improve the Our Future Health research programme  
 Type: Factor  
 
                               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 --------------------------- ------ --------- -------------- --------- --------------
-                      Agree   1719     62.13          62.13     62.13          62.13
-                    Neither    781     28.23          90.35     28.23          90.35
+                    Neither    781     28.23          28.23     28.23          28.23
+                      Agree   1719     62.13          90.35     62.13          90.35
                    Disagree    124      4.48          94.83      4.48          94.83
       Not sure / it depends    143      5.17         100.00      5.17         100.00
                        <NA>      0                               0.00         100.00
@@ -7056,9 +7039,10 @@ regression_df <- regression_df %>%
                 ~set.largest.ref(.)))
 ```
 
-### outcomes
+### set specific reference variables wehre it makes sense to do so
 
-s specific reference variables for my outcomes reflecting the outcome of greatest interest
+Yes/No, reference will be NO
+Agree type questions: reference will be neither
 
 
 ```r
@@ -7073,7 +7057,35 @@ regression_df$GENFBACK_no_prevent_all <-  relevel(regression_df$GENFBACK_no_prev
 
 regression_df$GENFBACK_ancestry_agree <-  relevel(regression_df$GENFBACK_ancestry_agree,ref= "No")
 regression_df$GENFBACK_ancestry_all <-  relevel(regression_df$GENFBACK_ancestry_all,ref= "No")
+
+
+agree_var_list <- agree_var_list[2:length(agree_var_list)]
+
+regression_df <- regression_df %>%
+  mutate_at(vars(agree_var_list),
+            ~relevel(.,ref= "Disagree"))
+
+  
+regression_df$HEALTH <-  relevel(regression_df$HEALTH ,ref= "Disagree")  
+regression_df$COVRES <-  relevel(regression_df$COVRES ,ref= "Not at all")
+
+yesno_var_list<- factor_df %>% 
+  select(names(which(lapply(factor_df, function (x) "No" %in% levels(x)) == TRUE))) %>%
+  colnames()
+
+regression_df <- regression_df %>%
+  mutate_at(vars(yesno_var_list),
+            ~relevel(.,ref= "No"))
 ```
+
+```
+Note: Using an external vector in selections is ambiguous.
+ℹ Use `all_of(yesno_var_list)` instead of `yesno_var_list` to silence this message.
+ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+This message is displayed once per session.
+```
+
+## set reference categories
 
 
 ## add labels back to data set
@@ -32899,12 +32911,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
-    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",demo.pred.prevent.binary)
@@ -33264,16 +33271,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
-    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
-    AGE_BAND.AGE_BAND = "What is your age band?", RELIGIOSITY.RELIGIOSITY = "Religiosity", 
-    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status", 
-    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
-    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
+</table>
 
 ```
 Warning: Removed 3 rows containing missing values (geom_point).
@@ -33738,13 +33736,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(AGE_BAND.AGE_BAND = "What is your age band?", GENDER.NA = NA_character_, 
-    ETHNICITY.ETHNICITY = "Ethnic group (detailed)", DEGREE.DEGREE = "Degree (yes/no)", 
-    WorkingStatus.WorkingStatus = "Working status", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
+</table>
 
 ```
 Warning: Removed 4 rows containing missing values (geom_point).
@@ -33902,12 +33894,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
-    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
-    GENDER.NA = NA_character_, RELIGIOSITY.RELIGIOSITY = "Religiosity", 
-    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
 
 ### Multinomial regression
 
@@ -34344,12 +34331,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
-    AGE_BAND.AGE_BAND = "What is your age band?", GENDER.NA = NA_character_, 
-    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
-    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.multi)
@@ -34753,11 +34735,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", RELIGIOSITY.RELIGIOSITY = "Religiosity", 
-    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
-    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.multi)
@@ -35643,9 +35621,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(AGE_BAND.AGE_BAND = "What is your age band?", ETHNICITY.ETHNICITY = "Ethnic group (detailed)", 
-    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.multi)
@@ -35852,11 +35828,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
-    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    RELIGIOSITY.RELIGIOSITY = "Religiosity", DEGREE.DEGREE = "Degree (yes/no)", 
-    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
 
 ## final list of covariates for each model
 
@@ -36036,9 +36008,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36186,9 +36156,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    PROSO_EVER_TOTAL.NA = NA_character_)
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36336,9 +36304,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -36481,9 +36447,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -36626,9 +36590,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENTEST.GENTEST = "Have you ever had a genetic test?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -36771,9 +36733,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -36916,9 +36876,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -37051,19 +37009,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.035 </td>
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37211,9 +37167,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37361,9 +37315,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37511,9 +37463,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTGEN.TRUSTGEN = "How much do you trust most people")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37661,9 +37611,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37811,9 +37759,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37961,9 +37907,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38111,9 +38055,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38261,9 +38203,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38411,9 +38351,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -38595,9 +38533,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    SCIINT.SCIINT = "How interested are you in science?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -38779,9 +38715,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38929,9 +38863,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -39064,12 +38996,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
-   <td style="text-align:left;"> Not at all </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Not at all </td>
+   <td style="text-align:left;"> A lot </td>
+   <td style="text-align:center;"> 3.96 </td>
+   <td style="text-align:center;"> 7.48 </td>
+   <td style="text-align:center;"> 14.14 </td>
+   <td style="text-align:center;"> 2.43 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39077,12 +39009,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Not very much </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 3.42 </td>
+   <td style="text-align:center;"> 6.66 </td>
+   <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39090,19 +39022,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Quite a lot </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 2.42 </td>
+   <td style="text-align:center;"> 4.58 </td>
+   <td style="text-align:center;"> 8.66 </td>
+   <td style="text-align:center;"> 1.49 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -39258,9 +39192,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -39393,12 +39325,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.03 </td>
+   <td style="text-align:center;"> 7.31 </td>
+   <td style="text-align:center;"> 13.26 </td>
+   <td style="text-align:center;"> 2.22 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39406,23 +39338,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 3.30 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.102 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
+</table>
 
 ```
-Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
-will be ignored
+Warning: Removed 1 rows containing missing values (geom_point).
+non-vector elements will be ignored
 ```
 
 ```
@@ -39566,9 +39496,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39716,9 +39644,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39866,9 +39792,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40016,9 +39940,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40166,9 +40088,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -40301,12 +40221,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 2.26 </td>
+   <td style="text-align:center;"> 3.38 </td>
+   <td style="text-align:center;"> 5.06 </td>
+   <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40314,19 +40234,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.48 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -40459,12 +40377,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.07 </td>
+   <td style="text-align:center;"> 4.84 </td>
+   <td style="text-align:center;"> 7.65 </td>
+   <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40472,19 +40390,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -40617,12 +40533,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.19 </td>
+   <td style="text-align:center;"> 5.29 </td>
+   <td style="text-align:center;"> 8.79 </td>
+   <td style="text-align:center;"> 1.37 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40630,19 +40546,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.060 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -40775,12 +40689,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 3.49 </td>
-   <td style="text-align:center;"> 4.24 </td>
-   <td style="text-align:center;"> 5.14 </td>
-   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 2.41 </td>
+   <td style="text-align:center;"> 3.10 </td>
+   <td style="text-align:center;"> 3.98 </td>
+   <td style="text-align:center;"> 0.40 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40788,19 +40702,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 10.07 </td>
+   <td style="text-align:center;"> 13.12 </td>
+   <td style="text-align:center;"> 17.10 </td>
+   <td style="text-align:center;"> 1.77 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_4.OFHBEN_4 = "OFH will... help me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -40933,12 +40849,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 7.47 </td>
+   <td style="text-align:center;"> 10.23 </td>
+   <td style="text-align:center;"> 14.02 </td>
+   <td style="text-align:center;"> 1.64 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40946,19 +40862,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.11 </td>
+   <td style="text-align:center;"> 2.91 </td>
+   <td style="text-align:center;"> 0.35 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41091,12 +41009,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 6.06 </td>
+   <td style="text-align:center;"> 9.17 </td>
+   <td style="text-align:center;"> 13.89 </td>
+   <td style="text-align:center;"> 1.94 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41104,19 +41022,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 2.61 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.020 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_6.OFHBEN_6 = "OFH will... help community")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41249,12 +41169,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 5.19 </td>
+   <td style="text-align:center;"> 8.71 </td>
+   <td style="text-align:center;"> 14.62 </td>
+   <td style="text-align:center;"> 2.30 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41262,19 +41182,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.810 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41407,12 +41329,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 5.61 </td>
+   <td style="text-align:center;"> 8.88 </td>
+   <td style="text-align:center;"> 14.08 </td>
+   <td style="text-align:center;"> 2.09 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41420,19 +41342,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 2.35 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.145 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41565,12 +41489,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 5.97 </td>
+   <td style="text-align:center;"> 8.95 </td>
+   <td style="text-align:center;"> 13.41 </td>
+   <td style="text-align:center;"> 1.85 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41578,19 +41502,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 2.50 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.024 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41723,12 +41649,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 16.10 </td>
+   <td style="text-align:center;"> 34.74 </td>
+   <td style="text-align:center;"> 74.96 </td>
+   <td style="text-align:center;"> 13.63 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41736,19 +41662,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 1.97 </td>
+   <td style="text-align:center;"> 4.33 </td>
+   <td style="text-align:center;"> 9.52 </td>
+   <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -41881,12 +41809,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 19.15 </td>
+   <td style="text-align:center;"> 24.35 </td>
+   <td style="text-align:center;"> 30.96 </td>
+   <td style="text-align:center;"> 2.98 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41894,19 +41822,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 4.22 </td>
+   <td style="text-align:center;"> 5.40 </td>
+   <td style="text-align:center;"> 6.90 </td>
+   <td style="text-align:center;"> 0.68 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42039,12 +41969,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 33.49 </td>
+   <td style="text-align:center;"> 44.90 </td>
+   <td style="text-align:center;"> 60.20 </td>
+   <td style="text-align:center;"> 6.72 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42052,19 +41982,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 4.76 </td>
+   <td style="text-align:center;"> 6.45 </td>
+   <td style="text-align:center;"> 8.75 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42197,12 +42129,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 25.90 </td>
+   <td style="text-align:center;"> 34.28 </td>
+   <td style="text-align:center;"> 45.37 </td>
+   <td style="text-align:center;"> 4.90 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42210,19 +42142,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 3.62 </td>
+   <td style="text-align:center;"> 4.84 </td>
+   <td style="text-align:center;"> 6.46 </td>
+   <td style="text-align:center;"> 0.71 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42355,12 +42289,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 25.32 </td>
+   <td style="text-align:center;"> 32.56 </td>
+   <td style="text-align:center;"> 41.85 </td>
+   <td style="text-align:center;"> 4.17 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42368,19 +42302,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 4.62 </td>
+   <td style="text-align:center;"> 6.00 </td>
+   <td style="text-align:center;"> 7.79 </td>
+   <td style="text-align:center;"> 0.80 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42513,12 +42449,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 18.93 </td>
+   <td style="text-align:center;"> 24.45 </td>
+   <td style="text-align:center;"> 31.59 </td>
+   <td style="text-align:center;"> 3.19 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42526,19 +42462,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 2.98 </td>
+   <td style="text-align:center;"> 3.94 </td>
+   <td style="text-align:center;"> 5.21 </td>
+   <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42671,12 +42609,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 14.23 </td>
+   <td style="text-align:center;"> 17.80 </td>
+   <td style="text-align:center;"> 22.25 </td>
+   <td style="text-align:center;"> 2.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42684,19 +42622,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 3.25 </td>
+   <td style="text-align:center;"> 4.06 </td>
+   <td style="text-align:center;"> 5.09 </td>
+   <td style="text-align:center;"> 0.47 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -42829,12 +42769,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 23.34 </td>
+   <td style="text-align:center;"> 31.06 </td>
+   <td style="text-align:center;"> 41.33 </td>
+   <td style="text-align:center;"> 4.53 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42842,12 +42782,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 3.61 </td>
+   <td style="text-align:center;"> 5.03 </td>
+   <td style="text-align:center;"> 7.02 </td>
+   <td style="text-align:center;"> 0.85 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -42855,19 +42795,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 3.05 </td>
+   <td style="text-align:center;"> 5.16 </td>
+   <td style="text-align:center;"> 0.82 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -43000,12 +42942,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 25.48 </td>
+   <td style="text-align:center;"> 32.85 </td>
+   <td style="text-align:center;"> 42.34 </td>
+   <td style="text-align:center;"> 4.26 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43013,12 +42955,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 3.46 </td>
+   <td style="text-align:center;"> 4.58 </td>
+   <td style="text-align:center;"> 6.07 </td>
+   <td style="text-align:center;"> 0.66 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43026,19 +42968,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 1.89 </td>
+   <td style="text-align:center;"> 2.98 </td>
+   <td style="text-align:center;"> 4.71 </td>
+   <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -43207,9 +43151,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -43378,9 +43320,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -43549,9 +43489,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -43720,9 +43658,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_6.BLOODS_6 = "I have a fear of needles")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -43891,9 +43827,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44062,9 +43996,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44197,12 +44129,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.12 </td>
+   <td style="text-align:center;"> 4.42 </td>
+   <td style="text-align:center;"> 6.26 </td>
+   <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44210,32 +44142,30 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.880 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44368,12 +44298,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.54 </td>
+   <td style="text-align:center;"> 5.62 </td>
+   <td style="text-align:center;"> 6.96 </td>
+   <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44381,12 +44311,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 2.30 </td>
+   <td style="text-align:center;"> 0.23 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44394,19 +44324,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.984 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44588,9 +44516,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44772,9 +44698,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -44956,9 +44880,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -45091,19 +45013,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> RECONTACT </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 8.55 </td>
+   <td style="text-align:center;"> 11.12 </td>
+   <td style="text-align:center;"> 14.45 </td>
+   <td style="text-align:center;"> 1.49 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    RECONTACT.RECONTACT = "Recontact for future qualitative research")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -45246,9 +45170,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -45404,9 +45326,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -45549,9 +45469,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -45707,9 +45625,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -45852,9 +45768,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -46010,9 +45924,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -46181,9 +46093,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    DISABILITY.DISABILITY = "Long-term ill health/disability status")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -46326,9 +46236,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -46471,10 +46379,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
 
 ### Categorical (yes/no/unsure)
 
@@ -46651,9 +46556,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -46827,9 +46730,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, PROSO_EVER_TOTAL.NA = NA_character_)
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -47003,9 +46904,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -47174,9 +47073,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -47345,9 +47242,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENTEST.GENTEST = "Have you ever had a genetic test?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -47516,9 +47411,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -47687,9 +47580,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -47848,19 +47739,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.076 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48034,9 +47923,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48210,9 +48097,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48386,9 +48271,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTGEN.TRUSTGEN = "How much do you trust most people")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48562,9 +48445,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48738,9 +48619,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48914,9 +48793,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49090,9 +48967,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49266,9 +49141,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49442,9 +49315,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -49652,9 +49523,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, SCIINT.SCIINT = "How interested are you in science?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -49862,9 +49731,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50038,9 +49905,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -50199,12 +50064,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
-   <td style="text-align:left;"> Not at all </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Not at all </td>
+   <td style="text-align:left;"> A lot </td>
+   <td style="text-align:center;"> 4.38 </td>
+   <td style="text-align:center;"> 7.48 </td>
+   <td style="text-align:center;"> 12.78 </td>
+   <td style="text-align:center;"> 2.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -50212,12 +50077,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Not very much </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 3.38 </td>
+   <td style="text-align:center;"> 5.94 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -50225,19 +50090,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Quite a lot </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 2.92 </td>
+   <td style="text-align:center;"> 4.98 </td>
+   <td style="text-align:center;"> 8.48 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -50419,9 +50286,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -50580,12 +50445,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.87 </td>
+   <td style="text-align:center;"> 6.17 </td>
+   <td style="text-align:center;"> 9.85 </td>
+   <td style="text-align:center;"> 1.47 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -50593,19 +50458,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 2.28 </td>
+   <td style="text-align:center;"> 3.79 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50779,9 +50642,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50955,9 +50816,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51131,9 +50990,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51307,9 +51164,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51483,9 +51338,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -51644,12 +51497,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.50 </td>
+   <td style="text-align:center;"> 5.17 </td>
+   <td style="text-align:center;"> 7.63 </td>
+   <td style="text-align:center;"> 1.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -51657,19 +51510,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.166 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -51828,12 +51679,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.42 </td>
+   <td style="text-align:center;"> 6.75 </td>
+   <td style="text-align:center;"> 10.31 </td>
+   <td style="text-align:center;"> 1.46 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -51841,19 +51692,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.564 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -52012,12 +51861,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.49 </td>
+   <td style="text-align:center;"> 7.10 </td>
+   <td style="text-align:center;"> 11.23 </td>
+   <td style="text-align:center;"> 1.66 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52025,19 +51874,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.500 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -52196,12 +52047,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 2.98 </td>
-   <td style="text-align:center;"> 3.74 </td>
-   <td style="text-align:center;"> 4.70 </td>
-   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 2.92 </td>
+   <td style="text-align:center;"> 3.66 </td>
+   <td style="text-align:center;"> 4.59 </td>
+   <td style="text-align:center;"> 0.42 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52209,19 +52060,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 10.49 </td>
+   <td style="text-align:center;"> 13.69 </td>
+   <td style="text-align:center;"> 17.87 </td>
+   <td style="text-align:center;"> 1.86 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_4.OFHBEN_4 = "OFH will... help me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -52380,12 +52233,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 8.47 </td>
+   <td style="text-align:center;"> 11.29 </td>
+   <td style="text-align:center;"> 15.06 </td>
+   <td style="text-align:center;"> 1.66 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52393,19 +52246,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 2.01 </td>
+   <td style="text-align:center;"> 2.67 </td>
+   <td style="text-align:center;"> 3.53 </td>
+   <td style="text-align:center;"> 0.38 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -52564,12 +52419,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 7.16 </td>
+   <td style="text-align:center;"> 10.25 </td>
+   <td style="text-align:center;"> 14.67 </td>
+   <td style="text-align:center;"> 1.88 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52577,19 +52432,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 2.35 </td>
+   <td style="text-align:center;"> 3.41 </td>
+   <td style="text-align:center;"> 0.45 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_6.OFHBEN_6 = "OFH will... help community")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -52748,12 +52605,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 6.62 </td>
+   <td style="text-align:center;"> 10.34 </td>
+   <td style="text-align:center;"> 16.14 </td>
+   <td style="text-align:center;"> 2.35 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52761,19 +52618,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.84 </td>
+   <td style="text-align:center;"> 2.93 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -52932,12 +52791,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 6.21 </td>
+   <td style="text-align:center;"> 9.14 </td>
+   <td style="text-align:center;"> 13.45 </td>
+   <td style="text-align:center;"> 1.80 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52945,19 +52804,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.96 </td>
+   <td style="text-align:center;"> 2.94 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -53116,12 +52977,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 7.27 </td>
+   <td style="text-align:center;"> 10.32 </td>
+   <td style="text-align:center;"> 14.66 </td>
+   <td style="text-align:center;"> 1.85 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53129,19 +52990,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 2.04 </td>
+   <td style="text-align:center;"> 2.93 </td>
+   <td style="text-align:center;"> 0.37 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -53300,12 +53163,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 9.14 </td>
+   <td style="text-align:center;"> 14.18 </td>
+   <td style="text-align:center;"> 21.99 </td>
+   <td style="text-align:center;"> 3.18 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53313,19 +53176,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 2.17 </td>
+   <td style="text-align:center;"> 3.42 </td>
+   <td style="text-align:center;"> 5.38 </td>
+   <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -53484,12 +53349,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 13.89 </td>
+   <td style="text-align:center;"> 17.67 </td>
+   <td style="text-align:center;"> 22.49 </td>
+   <td style="text-align:center;"> 2.17 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53497,19 +53362,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 3.90 </td>
+   <td style="text-align:center;"> 4.88 </td>
+   <td style="text-align:center;"> 6.12 </td>
+   <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -53668,12 +53535,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 30.12 </td>
+   <td style="text-align:center;"> 39.35 </td>
+   <td style="text-align:center;"> 51.41 </td>
+   <td style="text-align:center;"> 5.37 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53681,19 +53548,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 5.98 </td>
+   <td style="text-align:center;"> 7.64 </td>
+   <td style="text-align:center;"> 9.77 </td>
+   <td style="text-align:center;"> 0.96 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
+</table>
+
+```
+Warning: Removed 2 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -53852,12 +53721,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 21.68 </td>
+   <td style="text-align:center;"> 28.06 </td>
+   <td style="text-align:center;"> 36.32 </td>
+   <td style="text-align:center;"> 3.69 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53865,19 +53734,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 3.95 </td>
+   <td style="text-align:center;"> 5.00 </td>
+   <td style="text-align:center;"> 6.32 </td>
+   <td style="text-align:center;"> 0.60 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -54036,12 +53907,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 18.49 </td>
+   <td style="text-align:center;"> 23.77 </td>
+   <td style="text-align:center;"> 30.55 </td>
+   <td style="text-align:center;"> 3.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54049,19 +53920,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 4.07 </td>
+   <td style="text-align:center;"> 5.13 </td>
+   <td style="text-align:center;"> 6.48 </td>
+   <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -54220,12 +54093,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 16.26 </td>
+   <td style="text-align:center;"> 20.64 </td>
+   <td style="text-align:center;"> 26.20 </td>
+   <td style="text-align:center;"> 2.51 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54233,19 +54106,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 3.24 </td>
+   <td style="text-align:center;"> 4.11 </td>
+   <td style="text-align:center;"> 5.22 </td>
+   <td style="text-align:center;"> 0.50 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -54404,12 +54279,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 11.25 </td>
+   <td style="text-align:center;"> 14.32 </td>
+   <td style="text-align:center;"> 18.24 </td>
+   <td style="text-align:center;"> 1.77 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54417,19 +54292,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 3.36 </td>
+   <td style="text-align:center;"> 4.19 </td>
+   <td style="text-align:center;"> 5.23 </td>
+   <td style="text-align:center;"> 0.47 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -54588,12 +54465,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 25.15 </td>
+   <td style="text-align:center;"> 32.30 </td>
+   <td style="text-align:center;"> 41.47 </td>
+   <td style="text-align:center;"> 4.12 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54601,12 +54478,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 4.29 </td>
+   <td style="text-align:center;"> 5.63 </td>
+   <td style="text-align:center;"> 7.39 </td>
+   <td style="text-align:center;"> 0.78 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54614,19 +54491,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 4.94 </td>
+   <td style="text-align:center;"> 7.79 </td>
+   <td style="text-align:center;"> 12.28 </td>
+   <td style="text-align:center;"> 1.81 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
+</table>
+
+```
+Warning: Removed 2 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -54785,12 +54664,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 27.07 </td>
+   <td style="text-align:center;"> 35.18 </td>
+   <td style="text-align:center;"> 45.72 </td>
+   <td style="text-align:center;"> 4.70 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54798,12 +54677,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 4.58 </td>
+   <td style="text-align:center;"> 5.89 </td>
+   <td style="text-align:center;"> 7.56 </td>
+   <td style="text-align:center;"> 0.75 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54811,19 +54690,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 5.82 </td>
+   <td style="text-align:center;"> 9.29 </td>
+   <td style="text-align:center;"> 14.83 </td>
+   <td style="text-align:center;"> 2.22 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
+</table>
+
+```
+Warning: Removed 2 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -55018,9 +54899,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -55215,9 +55094,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -55412,9 +55289,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -55609,9 +55484,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_6.BLOODS_6 = "I have a fear of needles")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -55806,9 +55679,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -56003,9 +55874,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -56164,12 +56033,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.43 </td>
+   <td style="text-align:center;"> 6.11 </td>
+   <td style="text-align:center;"> 8.43 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56177,32 +56046,30 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.081 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 2.49 </td>
+   <td style="text-align:center;"> 4.69 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.005 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -56361,12 +56228,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.79 </td>
+   <td style="text-align:center;"> 5.92 </td>
+   <td style="text-align:center;"> 7.31 </td>
+   <td style="text-align:center;"> 0.64 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56374,12 +56241,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 2.24 </td>
+   <td style="text-align:center;"> 0.21 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56387,19 +56254,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 2.76 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -56607,9 +56472,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -56817,9 +56680,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -57027,9 +56888,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -57188,19 +57047,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> RECONTACT </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 6.48 </td>
+   <td style="text-align:center;"> 7.95 </td>
+   <td style="text-align:center;"> 9.76 </td>
+   <td style="text-align:center;"> 0.83 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, RECONTACT.RECONTACT = "Recontact for future qualitative research")
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
 
 ```
 Joining, by = "predictor"
@@ -57369,9 +57230,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -57553,9 +57412,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -57724,9 +57581,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -57908,9 +57763,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -58079,9 +57932,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -58263,9 +58114,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -58460,9 +58309,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, DISABILITY.DISABILITY = "Long-term ill health/disability status")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -58631,9 +58478,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
+</table>
 
 ```
 Joining, by = "predictor"
@@ -58802,10 +58647,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENDER.NA = NA_character_, DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
 
 ## significant predictors of participation from model 2
 When accounting for covariates, the following variables are significant precictors of participation and will be included in model 3
@@ -58844,8 +58686,8 @@ $LIFEEVENT$LIFEEVENT
 
 
 $PROSO_EVER_TOTAL
-$PROSO_EVER_TOTAL$<NA>
-[1] NA
+$PROSO_EVER_TOTAL$PROSO_EVER_TOTAL
+[1] "Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
 
 
 $PROSO4W_TOTAL
@@ -59148,9 +58990,10 @@ ofh.attitudes.pred.participation.binary <- c("OFHPAIR_A","OFHPAIR_D",
 data.security.attitudes.pred.participation.binary <- c("BARRSA_2","BARRSA_3","BARRSA_4",
                                           "BARRSB_1")
 
-practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
-                                         "BLOODS_4","BLOODS_6","BLOODS_7",
-                                          "PRACBAR_1","PRACBAR_2","PRACBAR_3")
+blood.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
+                                         "BLOODS_4","BLOODS_6","BLOODS_7")
+
+barriers.pred.participation.binary <- c("PRACBAR_1","PRACBAR_2","PRACBAR_3")
 
 genetic.pred.participation.binary <- c("GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
                                           "GENFBACK_ancestry_agree")
@@ -59397,12 +59240,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
-   <td style="text-align:left;"> Not at all </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> Not at all </td>
+   <td style="text-align:left;"> A lot </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 2.83 </td>
+   <td style="text-align:center;"> 5.80 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
@@ -59410,26 +59253,26 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Not very much </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.82 </td>
    <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.209 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 2.31 </td>
+   <td style="text-align:center;"> 4.76 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.023 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> COVRES </td>
-   <td style="text-align:center;"> A lot </td>
+   <td style="text-align:center;"> Not at all </td>
    <td style="text-align:left;"> Quite a lot </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 2.29 </td>
+   <td style="text-align:center;"> 4.63 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.021 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -59446,17 +59289,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?", 
-    PROSO_EVER_TOTAL.NA = NA_character_, DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?", 
-    HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.", 
-    HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics", 
-    TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities", 
-    SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.", 
-    COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?", 
-    DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-1.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-1.png" width="100%" />
 
 ```r
 # attitudes and awareness about our future health
@@ -59625,12 +59458,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 3.03 </td>
-   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.30 </td>
    <td style="text-align:center;"> 0.451 </td>
    <td style="text-align:center;">  </td>
   </tr>
@@ -59638,51 +59471,51 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 1.93 </td>
-   <td style="text-align:center;"> 2.53 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither </td>
-   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.050 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.65 </td>
+   <td style="text-align:center;"> 2.37 </td>
+   <td style="text-align:center;"> 0.31 </td>
    <td style="text-align:center;"> 0.007 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 2.18 </td>
+   <td style="text-align:center;"> 3.18 </td>
+   <td style="text-align:center;"> 4.62 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 4.78 </td>
+   <td style="text-align:center;"> 14.48 </td>
+   <td style="text-align:center;"> 2.70 </td>
    <td style="text-align:center;"> 0.006 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
@@ -59690,23 +59523,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 2.18 </td>
+   <td style="text-align:center;"> 6.70 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.175 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?", 
-    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
-    OFHBEN_2.OFHBEN_2 = "OFH will... better treatments", OFHBEN_4.OFHBEN_4 = "OFH will... help me", 
-    OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-2.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-2.png" width="100%" />
 
 ```r
 # data security concerns 
@@ -59844,12 +59671,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 4.27 </td>
+   <td style="text-align:center;"> 6.90 </td>
+   <td style="text-align:center;"> 11.17 </td>
+   <td style="text-align:center;"> 1.69 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -59857,12 +59684,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 2.99 </td>
+   <td style="text-align:center;"> 4.63 </td>
+   <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -59870,12 +59697,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.84 </td>
+   <td style="text-align:center;"> 3.00 </td>
+   <td style="text-align:center;"> 0.46 </td>
    <td style="text-align:center;"> 0.015 </td>
    <td style="text-align:center;"> x </td>
   </tr>
@@ -59883,51 +59710,51 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.67 </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.111 </td>
+   <td style="text-align:center;"> 0.718 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 2.72 </td>
+   <td style="text-align:center;"> 4.25 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 2.02 </td>
+   <td style="text-align:center;"> 3.02 </td>
    <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 2.42 </td>
+   <td style="text-align:center;"> 3.56 </td>
+   <td style="text-align:center;"> 0.48 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -59935,27 +59762,21 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.440 </td>
+   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH", 
-    BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info", 
-    BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records", 
-    BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
 
 ```r
-# practical barriers
-do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,practical.barriers.pred.participation.binary ))
+# blood
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,blood.pred.participation.binary ))
 ```
 
 ```
@@ -59987,11 +59808,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.704 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.409 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60000,11 +59821,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.460 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.188 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60013,11 +59834,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.136 </td>
+   <td style="text-align:center;"> 0.072 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60026,11 +59847,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.83 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.278 </td>
+   <td style="text-align:center;"> 0.113 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60039,11 +59860,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.877 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.401 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60052,11 +59873,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.363 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.945 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60065,11 +59886,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.173 </td>
+   <td style="text-align:center;"> 0.272 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60078,23 +59899,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.40 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.707 </td>
+   <td style="text-align:center;"> 0.215 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 3.97 </td>
+   <td style="text-align:center;"> 5.92 </td>
+   <td style="text-align:center;"> 8.82 </td>
+   <td style="text-align:center;"> 1.20 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60102,12 +59923,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 2.33 </td>
+   <td style="text-align:center;"> 3.67 </td>
+   <td style="text-align:center;"> 0.54 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60115,25 +59936,25 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.99 </td>
+   <td style="text-align:center;"> 4.21 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.073 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 6.87 </td>
+   <td style="text-align:center;"> 9.72 </td>
+   <td style="text-align:center;"> 13.76 </td>
+   <td style="text-align:center;"> 1.72 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60141,12 +59962,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 2.58 </td>
+   <td style="text-align:center;"> 3.79 </td>
+   <td style="text-align:center;"> 0.51 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60154,14 +59975,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 3.46 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.090 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60169,76 +59990,76 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.492 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.172 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 2.11 </td>
-   <td style="text-align:center;"> 3.80 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.014 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.050 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.097 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.411 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.516 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
    <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 2.46 </td>
-   <td style="text-align:center;"> 8.01 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.136 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 2.07 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.401 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.291 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.487 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_6 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 4.58 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.401 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60247,12 +60068,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 2.17 </td>
-   <td style="text-align:center;"> 3.48 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 2.47 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.054 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60260,12 +60081,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.59 </td>
-   <td style="text-align:center;"> 2.43 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.034 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.566 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60273,11 +60094,152 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.129 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>
+
+```
+Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-4.png" width="100%" />
+
+```r
+# practical barriers
+do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,barriers.pred.participation.binary ))
+```
+
+```
+Joining, by = "predictor"
+```
+
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 1.55 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.202 </td>
+   <td style="text-align:center;"> 0.980 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.211 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.715 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.090 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.792 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.418 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.341 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.161 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60286,10 +60248,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60299,10 +60261,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60313,9 +60275,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -60323,91 +60285,82 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.348 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 2.38 </td>
+   <td style="text-align:center;"> 3.62 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.853 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.412 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 2.19 </td>
+   <td style="text-align:center;"> 2.83 </td>
+   <td style="text-align:center;"> 3.65 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 2.17 </td>
+   <td style="text-align:center;"> 0.24 </td>
    <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.031 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.140 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 2.19 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.732 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test", 
-    BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH", 
-    BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend", 
-    BLOODS_6.BLOODS_6 = "I have a fear of needles", BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample", 
-    PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme", 
-    PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire", 
-    PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-4.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
 
 ```r
 # attitudes and knowledge of genetics and genetic feedback
@@ -60594,12 +60547,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
-    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
-    GENTEST.GENTEST = "Have you ever had a genetic test?", GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say", 
-    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
-    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
+</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-6.png" width="100%" />
 
 ### multinomial outcomes  yes/ no 
 

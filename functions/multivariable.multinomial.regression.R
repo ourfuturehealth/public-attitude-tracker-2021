@@ -6,7 +6,7 @@
 do.multivariable.multinomial.regression<- function(dataframe, outcome, independent.variable.list ) {
   
   # create the formula
-  glm.formula <<- paste(set.largest.ref(outcome), paste(set.largest.ref(independent.variable.list), collapse=" + "), sep=" ~ ")
+  glm.formula <<- paste(outcome, paste(independent.variable.list, collapse=" + "), sep=" ~ ")
   dataframe <<- dataframe
   
   print("#####")
@@ -68,7 +68,7 @@ do.multivariable.multinomial.regression<- function(dataframe, outcome, independe
   
   ## print forest plot
   
-  label.text <- dput((sapply(dataframe[independent.variable.list],label)))
+  label.text <- (sapply(dataframe[independent.variable.list],label))
   label.text.ordered <- label.text[order(names(label.text))]
   plot_caption <- paste(unlist(label.text.ordered),collapse="\n")
 
