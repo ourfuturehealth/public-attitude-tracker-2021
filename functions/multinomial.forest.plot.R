@@ -3,9 +3,10 @@
 multinomial.forest.plot <- function(data.in,
                             title,
                             colourpal,
+                            caption.text="",
                             pointsize=2,linesize=1,errorsize=1,
                       axistext=12,axistitle=16,legtitle=12,stripsize=12,
-                      lowlim=0.2,uplim=3.5,dodge=0.5,
+                      lowlim=0.2,uplim=7,dodge=0.5,
                       title.size=14)
   
   {
@@ -57,7 +58,8 @@ multinomial.forest.plot <- function(data.in,
           strip.background = element_rect(fill = "light grey"),
           panel.border = element_rect(colour = "grey",fill = NA)) +
     # guides(color = guide_legend(reverse = TRUE)) 
-    coord_flip() 
+    coord_flip() +
+    labs(caption = caption.text)
 
   return(p)
 }

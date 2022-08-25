@@ -65,7 +65,11 @@ do.multivariable.binomial.regression<- function(dataframe, outcome, independent.
     
     ## print forest plot
     
+    plot_caption <- paste(unlist(dput((sapply(dataframe[independent.variable.list],label)))),collapse="\n")
+    print(plot_caption)
+    
     print(binomial.forest.plot(data.in=df,
+                               caption.text=plot_caption,
                                   title=paste(paste("Binomial logistic regression of variables predicting",label(dataframe[[outcome]]),sep=" "),
                                               "Reference level:", df$outcome.reference[1],sep = "\n"),
                                   colourpal= c("#FFC62B")))

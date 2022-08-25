@@ -178,6 +178,7 @@ Would want genetic feedback for ancestry (**GENFBACK_3**)
 **GENFBACK_ancestry_all**
 
 
+
 ```{r create new variables}
 
 factor_df <- factor_df %>%
@@ -334,6 +335,40 @@ table(factor_df$RELIGIOSITY)
 
 ```
 
+
+## capture all labels
+
+
+```{r capture labels, results='hide'}
+
+all_labels <- dput(sapply(factor_df,label))
+
+```
+
+## Create three category responses (agree, niether, disagree) for all agreement question types 
+
+```{r recode agree type questions}
+
+ agree_var_list<- factor_df %>% 
+  select(names(which(lapply(factor_df, function (x) "Strongly agree" %in% levels(x)) == TRUE))) %>%
+  colnames()
+
+agree_labels <- dput(sapply(factor_df[agree_var_list],label))
+
+
+factor_df <- 
+  factor_df %>% 
+  mutate_at(vars(agree_var_list),
+         list(~recode(.,"Strongly agree" = "Agree",
+                               "Agree" ="Agree",
+                               "Neither agree nor disagree" = "Neither",
+                               "Disagree" = "Disagree",
+                               "Strongly disagree" = "Disagree",
+                      "Don't know" = "Don't know")))
+
+# label(factor_df[agree_var_list]) = as.list(agree_labels[match(names(factor_df[agree_var_list]), names(agree_labels))])
+```
+
 ## rename SEX to gender to match question text
 We ask about gender, we do not know about biological sex assigned at birth
 
@@ -342,6 +377,9 @@ We ask about gender, we do not know about biological sex assigned at birth
 factor_df <- factor_df %>%
   rename(GENDER=SEX)
 ```
+
+
+
 
 ## Transform to numeric where appropriate
 
@@ -381,7 +419,7 @@ factor_df <- factor_df %>%
 
 add the labels back
 ```{r add trust labels back}
-label(factor_df[trust_vars]) = as.list(trust_labels[match(names(factor_df[trust_vars]), names(trust_labels))])
+# label(factor_df[trust_vars]) = dput(trust_labels[match(names(factor_df[trust_vars]), names(trust_labels))])
 ```
 
 Check this all worked as expected
@@ -437,7 +475,7 @@ factor_df <- factor_df %>%
 
 add the labels back
 ```{r add perception labels back}
-label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
+# label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
 ```
 
 Check this all worked as expected
@@ -560,6 +598,7 @@ trust_cols <- factor_df %>%
 lapply(factor_df[trust_cols],label)
 
 ```
+
 ### create sum scores.
 
 use column vectors to mutate new columns
@@ -587,6 +626,8 @@ maximum score = 15 (very confident for all)
 
 factor_df = apply_labels(factor_df, 
 DIGPROF_TOTAL="Composite score indicating overall ease of use of internet for life admin. Minimum 0 indicating not at all confident and maximum of 15 indicating very confident")
+
+all_labels <- append(sapply(factor_df["DIGPROF_TOTAL"],label),all_labels)
 ```
 
 #### Pro social 
@@ -609,6 +650,8 @@ Maximum score = 3 (donated blood, donated money to charity, volunteered EVER)
 factor_df = apply_labels(factor_df, 
 PROSO_EVER_TOTAL="Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed",
 PROSO4W_TOTAL="Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+
+all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL","PROSO4W_TOTAL"],label),all_labels)
 ```
 
 #### Trust in science 
@@ -636,6 +679,8 @@ Score of 0 indicates neutrality
 
 factor_df = apply_labels(factor_df, 
 SCITRUST_TOTAL="Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+
+all_labels <- append(sapply(factor_df["SCITRUST_TOTAL"],label),all_labels)
 ```
 
 #### Research participation
@@ -663,6 +708,9 @@ Maximum score = 8 (used any medium to search for maximum amount of health scienc
 
 factor_df = apply_labels(factor_df, 
 HEALTHSEEK_TOTAL="Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+
+all_labels <- append(sapply(factor_df["HEALTHSEEK_TOTAL"],label),all_labels)
+
 ```
 
 #### Total score for actively seeking health information
@@ -683,6 +731,8 @@ Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
 
 factor_df = apply_labels(factor_df, 
 HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+
+all_labels <- append(sapply(factor_df["HRES_TOTAL"],label),all_labels)
 ```
 
 #### Total score for trusting organisations
@@ -705,6 +755,8 @@ Medical researchers and universities
 
 factor_df = apply_labels(factor_df, 
 TRUSTORG_TOTAL="Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+
+all_labels <- append(sapply(factor_df["TRUSTORG_TOTAL"],label),all_labels)
 ```
 
 
@@ -891,7 +943,7 @@ Retain don't know and prefer not to say in factor df for summaries.
 
 Capture a list of variable labels as these get lost in the NA process
 
-```{r capture labels, results='hide'}
+```{r capture labels maybe defunct, results='hide'}
 label_list <- dput(sapply(factor_df,label))
 ```
 
@@ -960,8 +1012,8 @@ regression_df$GENFBACK_ancestry_all <-  relevel(regression_df$GENFBACK_ancestry_
 
 ```{r add labels to factor df}
 
-label(factor_df) = as.list(label_list[match(names(factor_df), names(label_list))])
-label(regression_df) = as.list(label_list[match(names(regression_df), names(label_list))])
+label(factor_df) = as.list(all_labels[match(names(factor_df), names(all_labels))])
+label(regression_df) = as.list(all_labels[match(names(regression_df), names(all_labels))])
 
 ```
 
@@ -1345,27 +1397,25 @@ significant.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO
 
 lapply(regression_df[significant.pred.participation.binary],label)
 
-characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL",
-                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
-                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL",
+                                          "DISABFAM","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTORG_TOTAL",
                                           "SCITRUST_TOTAL","COVRES",
-                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                        "DISABEVER"
                                           )
 
-ofh.attitudes.pred.participation.binary <- c("OFHAWARE","UNDERST",
-                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
-                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
-                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL"
+ofh.attitudes.pred.participation.binary <- c("OFHPAIR_A","OFHPAIR_D",
+                                          "OFHBEN_2","OFHBEN_4",
+                                         "OFHBENCL"
                                           )
 
-data.security.attitudes.pred.participation.binary <- c("BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
-                                          "BARRSB_1","BARRSB_2")
+data.security.attitudes.pred.participation.binary <- c("BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1")
 
 practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
-                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                         "BLOODS_4","BLOODS_6","BLOODS_7",
                                           "PRACBAR_1","PRACBAR_2","PRACBAR_3")
 
-genetic.pred.participation.binary <- c("GENFAM","GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+genetic.pred.participation.binary <- c("GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
                                           "GENFBACK_ancestry_agree")
 ```
 
@@ -1395,6 +1445,57 @@ do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepar
 do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepart.binary.covariates,genetic.pred.participation.binary))
 
 ```
+
+### multinomial outcomes  yes/ no 
+```{r multivariable with covariates predictor groups binomial, results='asis'}
+
+# personal characteristics
+do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,characteristics.pred.participation.multi))
+
+# attitudes and awareness about our future health
+do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,ofh.attitudes.pred.participation.multi ))
+
+# data security concerns 
+do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,data.security.attitudes.pred.participation.multi))
+
+# practical barriers
+do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,practical.barriers.pred.participation.multi ))
+
+# attitudes and knowledge of genetics and genetic feedback
+do.multivariable.multinomial.regression(regression_df,"ofhact_all",append(takepart.multi.covariates,genetic.pred.participation.multi))
+
+
+Based on this, we drop similar variables that are not highly associated when controlling for other variables.
+NB note - we need to revisit this method of variable selection in a more robust way (considering varibale correlations, changing order or predictors, looking at overall model fit and comparing between models, sensitivity models) but for now this will be a reasonable way of showing the most important relationships.
+
+
+We will drop the following from predictor lists:
+
+*characteristics:*    
+PROSO4W_TOTAL
+HEALTH
+TRUSTGEN
+TRUSTORG_A-E
+SCIINF
+SCIINT
+DISAB1
+DISABILITY
+
+*ofh attitudes*
+OFHAWARE
+UNDERST
+OFHPAIR_B,C,E
+OFHBEN_1,3,5,6,7,8,9
+
+*data security*
+BARRSA_1
+BARRSB_2
+
+*practical barriers*
+BLOODS_3,5
+
+*Genetic knowledge and attitudes*
+GENFAM
 
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Data cleaning and preparation for Kantar Public Attitude Tracker 2022 data"
 author: "K L Purves"
-date: '24 August, 2022'
+date: '25 August, 2022'
 output:
   html_document:
     
@@ -59,10 +59,6 @@ editor_options:
 ```
 
 ```
-## #Uighur
-```
-
-```
 ## 
 ## Attaching package: 'psych'
 ```
@@ -90,7 +86,7 @@ editor_options:
 
 ```
 ## 
-## To get total summary skip 'by' argument: take_all(mtcars, mean)
+## To select rows from data: rows(mtcars, am==0)
 ```
 
 ```
@@ -106,7 +102,7 @@ editor_options:
 
 ```
 ## 
-## Use 'expss_output_viewer()' to display tables in the RStudio Viewer.
+## Use 'expss_output_rnotebook()' to display tables inside R Notebooks.
 ##  To return to the console output, use 'expss_output_default()'.
 ```
 
@@ -3599,6 +3595,7 @@ Would want genetic feedback for ancestry (**GENFBACK_3**)
 
 
 
+
 ```r
 factor_df <- factor_df %>%
   mutate(ofhact_agree = 
@@ -3778,6 +3775,75 @@ Missing reponse      Practising  Not practising   Not religious
              10             899             562            1296 
 ```
 
+
+## capture all labels
+
+
+
+```r
+all_labels <- dput(sapply(factor_df,label))
+```
+
+## Create three category responses (agree, niether, disagree) for all agreement question types 
+
+
+```r
+ agree_var_list<- factor_df %>% 
+  select(names(which(lapply(factor_df, function (x) "Strongly agree" %in% levels(x)) == TRUE))) %>%
+  colnames()
+
+agree_labels <- dput(sapply(factor_df[agree_var_list],label))
+```
+
+```
+c(HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well", 
+SCITRU = "To what extent do you agree or disagree - The information I hear about science is generally true", 
+SCILIFE = "To what extent do you agree or disagree - In general, scientists want to make life better for the average person", 
+SCIBEN = "To what extent do you agree or disagree - The benefits of science are greater than any harms", 
+UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme", 
+OFHBEN_1 = "OFH will... advance medical research", OFHBEN_2 = "OFH will... better treatments", 
+OFHBEN_3 = "OFH will... early detection", OFHBEN_4 = "OFH will... help me", 
+OFHBEN_5 = "OFH will... help family/friends", OFHBEN_6 = "OFH will... help community", 
+OFHBEN_7 = "OFH will... help people in UK", OFHBEN_8 = "OFH will... help people in world", 
+OFHBEN_9 = "OFH will... help representation of people like me", 
+OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me", 
+BARRSA_1 = "Comfortable health info in large database", BARRSA_2 = "Comfortable share health info with OFH", 
+BARRSA_3 = "Comfortable how OFH use health info", BARRSA_4 = "Comfortable OFH access to medical records", 
+BARRSB_1 = "Comfortable academics access to health records", 
+BARRSB_2 = "Comfortable companies access to health records", 
+BLOODS_1 = "Willing give sample if part of routine blood test", 
+BLOODS_2 = "Willing give sample if soley for OFH", BLOODS_3 = "Difficult to give sample on weekday", 
+BLOODS_4 = "Difficult to give sample on weekend", BLOODS_5 = "The thought of providing a blood sample makes me anxious", 
+BLOODS_6 = "I have a fear of needles", BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample", 
+PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme", 
+PRACBAR_2 = "have time for 10 min questionnaire", PRACBAR_3 = "have time for 30 min questionnaire", 
+PARTNA = "Partnerships with charities and industry will improve the Our Future Health research programme"
+)
+```
+
+```r
+factor_df <- 
+  factor_df %>% 
+  mutate_at(vars(agree_var_list),
+         list(~recode(.,"Strongly agree" = "Agree",
+                               "Agree" ="Agree",
+                               "Neither agree nor disagree" = "Neither",
+                               "Disagree" = "Disagree",
+                               "Strongly disagree" = "Disagree",
+                      "Don't know" = "Don't know")))
+```
+
+```
+Note: Using an external vector in selections is ambiguous.
+ℹ Use `all_of(agree_var_list)` instead of `agree_var_list` to silence this message.
+ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+This message is displayed once per session.
+```
+
+```r
+# label(factor_df[agree_var_list]) = as.list(agree_labels[match(names(factor_df[agree_var_list]), names(agree_labels))])
+```
+
 ## rename SEX to gender to match question text
 We ask about gender, we do not know about biological sex assigned at birth
 
@@ -3786,6 +3852,9 @@ We ask about gender, we do not know about biological sex assigned at birth
 factor_df <- factor_df %>%
   rename(GENDER=SEX)
 ```
+
+
+
 
 ## Transform to numeric where appropriate
 
@@ -3832,7 +3901,7 @@ factor_df <- factor_df %>%
 add the labels back
 
 ```r
-label(factor_df[trust_vars]) = as.list(trust_labels[match(names(factor_df[trust_vars]), names(trust_labels))])
+# label(factor_df[trust_vars]) = dput(trust_labels[match(names(factor_df[trust_vars]), names(trust_labels))])
 ```
 
 Check this all worked as expected
@@ -3965,12 +4034,9 @@ dput(sapply(factor_df[trust_vars],label))
 ```
 
 ```
-list(TRUSTGEN.TRUSTGEN = "How much do you trust most people", 
-    TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS", 
-    TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government", 
-    TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies", 
-    TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities", 
-    TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+c(TRUSTGEN = NA_character_, TRUSTORG_A = NA_character_, TRUSTORG_B = NA_character_, 
+TRUSTORG_C = NA_character_, TRUSTORG_D = NA_character_, TRUSTORG_E = NA_character_
+)
 ```
 
 ### Perceptions of taking part in oFH
@@ -4022,7 +4088,7 @@ factor_df <- factor_df %>%
 add the labels back
 
 ```r
-label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
+# label(factor_df[perception_vars]) = as.list(perception_labels[match(names(factor_df[perception_vars]), names(perception_labels))])
 ```
 
 Check this all worked as expected
@@ -4148,11 +4214,8 @@ dput(sapply(factor_df[perception_vars],label))
 ```
 
 ```
-list(OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?", 
-    OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?", 
-    OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?", 
-    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
-    OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
+c(OFHPAIR_A = NA_character_, OFHPAIR_B = NA_character_, OFHPAIR_C = NA_character_, 
+OFHPAIR_D = NA_character_, OFHPAIR_E = NA_character_)
 ```
 
 ## create summed variables 
@@ -4337,29 +4400,21 @@ lapply(factor_df[trust_cols],label)
 
 ```
 $TRUSTORG_A
-$TRUSTORG_A$TRUSTORG_A
-[1] "How much do you trust the NHS"
-
+[1] NA
 
 $TRUSTORG_B
-$TRUSTORG_B$TRUSTORG_B
-[1] "How much do you trust the Government"
-
+[1] NA
 
 $TRUSTORG_C
-$TRUSTORG_C$TRUSTORG_C
-[1] "How much do you trust Pharmaceutical companies"
-
+[1] NA
 
 $TRUSTORG_D
-$TRUSTORG_D$TRUSTORG_D
-[1] "How much do you trust Medical charities"
-
+[1] NA
 
 $TRUSTORG_E
-$TRUSTORG_E$TRUSTORG_E
-[1] "How much do you trust Medical researchers in universities"
+[1] NA
 ```
+
 ### create sum scores.
 
 use column vectors to mutate new columns
@@ -4387,6 +4442,8 @@ maximum score = 15 (very confident for all)
 
 factor_df = apply_labels(factor_df, 
 DIGPROF_TOTAL="Composite score indicating overall ease of use of internet for life admin. Minimum 0 indicating not at all confident and maximum of 15 indicating very confident")
+
+all_labels <- append(sapply(factor_df["DIGPROF_TOTAL"],label),all_labels)
 ```
 
 #### Pro social 
@@ -4409,6 +4466,8 @@ Maximum score = 3 (donated blood, donated money to charity, volunteered EVER)
 factor_df = apply_labels(factor_df, 
 PROSO_EVER_TOTAL="Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed",
 PROSO4W_TOTAL="Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+
+all_labels <- append(sapply(factor_df["PROSO_EVER_TOTAL","PROSO4W_TOTAL"],label),all_labels)
 ```
 
 #### Trust in science 
@@ -4436,6 +4495,8 @@ Score of 0 indicates neutrality
 
 factor_df = apply_labels(factor_df, 
 SCITRUST_TOTAL="Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+
+all_labels <- append(sapply(factor_df["SCITRUST_TOTAL"],label),all_labels)
 ```
 
 #### Research participation
@@ -4463,6 +4524,8 @@ Maximum score = 8 (used any medium to search for maximum amount of health scienc
 
 factor_df = apply_labels(factor_df, 
 HEALTHSEEK_TOTAL="Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+
+all_labels <- append(sapply(factor_df["HEALTHSEEK_TOTAL"],label),all_labels)
 ```
 
 #### Total score for actively seeking health information
@@ -4483,6 +4546,8 @@ Maximum score = 3 (taken part in clinical trials, focus groups and surveys)
 
 factor_df = apply_labels(factor_df, 
 HRES_TOTAL="Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+
+all_labels <- append(sapply(factor_df["HRES_TOTAL"],label),all_labels)
 ```
 
 #### Total score for trusting organisations
@@ -4505,6 +4570,8 @@ Medical researchers and universities
 
 factor_df = apply_labels(factor_df, 
 TRUSTORG_TOTAL="Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+
+all_labels <- append(sapply(factor_df["TRUSTORG_TOTAL"],label),all_labels)
 ```
 
 
@@ -5861,14 +5928,12 @@ HEALTH
 Label: To what extent do you agree or disagree - I am someone who looks after my health very well  
 Type: Factor  
 
-                          Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
------------------------ ------ --------- -------------- --------- --------------
-         Strongly agree    529     19.12          19.12     19.12          19.12
-                  Agree   1523     55.04          74.16     55.04          74.16
-               Disagree    646     23.35          97.51     23.35          97.51
-      Strongly disagree     69      2.49         100.00      2.49         100.00
-                   <NA>      0                               0.00         100.00
-                  Total   2767    100.00         100.00    100.00         100.00
+                 Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+-------------- ------ --------- -------------- --------- --------------
+         Agree   2052     74.16          74.16     74.16          74.16
+      Disagree    715     25.84         100.00     25.84         100.00
+          <NA>      0                               0.00         100.00
+         Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-29.png" width="100%" />
@@ -5917,7 +5982,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTGEN  
-Label: How much do you trust most people  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -5942,7 +6006,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTORG_A  
-Label: How much do you trust the NHS  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -5967,7 +6030,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTORG_B  
-Label: How much do you trust the Government  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -5992,7 +6054,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTORG_C  
-Label: How much do you trust Pharmaceutical companies  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6017,7 +6078,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTORG_D  
-Label: How much do you trust Medical charities  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6042,7 +6102,6 @@ Type: Numeric
 ```
 Frequencies  
 TRUSTORG_E  
-Label: How much do you trust Medical researchers in universities  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6177,19 +6236,13 @@ Type: Numeric
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
 ----------- ------ --------- -------------- --------- --------------
-         -6      3      0.11           0.11      0.11           0.11
-         -5      4      0.14           0.25      0.14           0.25
-         -4     12      0.43           0.69      0.43           0.69
-         -3     26      0.94           1.63      0.94           1.63
-         -2     59      2.13           3.76      2.13           3.76
-         -1    115      4.16           7.91      4.16           7.91
-          0    441     15.94          23.85     15.94          23.85
-          1    453     16.37          40.22     16.37          40.22
-          2    576     20.82          61.04     20.82          61.04
-          3    633     22.88          83.92     22.88          83.92
-          4    226      8.17          92.09      8.17          92.09
-          5    153      5.53          97.61      5.53          97.61
-          6     66      2.39         100.00      2.39         100.00
+         -3     26      0.94           0.94      0.94           0.94
+         -2     49      1.77           2.71      1.77           2.71
+         -1    134      4.84           7.55      4.84           7.55
+          0    448     16.19          23.74     16.19          23.74
+          1    495     17.89          41.63     17.89          41.63
+          2    671     24.25          65.88     24.25          65.88
+          3    944     34.12         100.00     34.12         100.00
        <NA>      0                               0.00         100.00
       Total   2767    100.00         100.00    100.00         100.00
 ```
@@ -6238,16 +6291,14 @@ UNDERST
 Label: To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    754     27.25          27.25     27.25          27.25
-                           Agree   1552     56.09          83.34     56.09          83.34
-      Neither agree nor disagree    300     10.84          94.18     10.84          94.18
-                        Disagree     70      2.53          96.71      2.53          96.71
-               Strongly disagree     26      0.94          97.65      0.94          97.65
-                      Don't know     65      2.35         100.00      2.35         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   2306     83.34          83.34     83.34          83.34
+         Neither    300     10.84          94.18     10.84          94.18
+        Disagree     96      3.47          97.65      3.47          97.65
+      Don't know     65      2.35         100.00      2.35         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-44.png" width="100%" />
@@ -6274,7 +6325,6 @@ Type: Factor
 ```
 Frequencies  
 OFHPAIR_A  
-Label: How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6295,7 +6345,6 @@ Type: Numeric
 ```
 Frequencies  
 OFHPAIR_B  
-Label: How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6316,7 +6365,6 @@ Type: Numeric
 ```
 Frequencies  
 OFHPAIR_C  
-Label: How boring or interesting do you think taking part in the Our Future Health research programme would be?  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6337,7 +6385,6 @@ Type: Numeric
 ```
 Frequencies  
 OFHPAIR_D  
-Label: How hard or easy do you think taking part in the Our Future Health research programme would be?  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6358,7 +6405,6 @@ Type: Numeric
 ```
 Frequencies  
 OFHPAIR_E  
-Label: How slow or fast you think taking part in the Our Future Health research programme would be?  
 Type: Numeric  
 
               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
@@ -6382,16 +6428,14 @@ OFHBEN_1
 Label: OFH will... advance medical research  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    670     24.21          24.21     24.21          24.21
-                           Agree   1329     48.03          72.24     48.03          72.24
-      Neither agree nor disagree    549     19.84          92.09     19.84          92.09
-                        Disagree     57      2.06          94.15      2.06          94.15
-               Strongly disagree     58      2.10          96.24      2.10          96.24
-                      Don't know    104      3.76         100.00      3.76         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1999     72.24          72.24     72.24          72.24
+         Neither    549     19.84          92.09     19.84          92.09
+        Disagree    115      4.16          96.24      4.16          96.24
+      Don't know    104      3.76         100.00      3.76         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-51.png" width="100%" />
@@ -6402,16 +6446,14 @@ OFHBEN_2
 Label: OFH will... better treatments  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    625     22.59          22.59     22.59          22.59
-                           Agree   1457     52.66          75.24     52.66          75.24
-      Neither agree nor disagree    484     17.49          92.74     17.49          92.74
-                        Disagree     63      2.28          95.01      2.28          95.01
-               Strongly disagree     42      1.52          96.53      1.52          96.53
-                      Don't know     96      3.47         100.00      3.47         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   2082     75.24          75.24     75.24          75.24
+         Neither    484     17.49          92.74     17.49          92.74
+        Disagree    105      3.79          96.53      3.79          96.53
+      Don't know     96      3.47         100.00      3.47         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-52.png" width="100%" />
@@ -6422,16 +6464,14 @@ OFHBEN_3
 Label: OFH will... early detection  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    675     24.39          24.39     24.39          24.39
-                           Agree   1476     53.34          77.74     53.34          77.74
-      Neither agree nor disagree    445     16.08          93.82     16.08          93.82
-                        Disagree     55      1.99          95.81      1.99          95.81
-               Strongly disagree     38      1.37          97.18      1.37          97.18
-                      Don't know     78      2.82         100.00      2.82         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   2151     77.74          77.74     77.74          77.74
+         Neither    445     16.08          93.82     16.08          93.82
+        Disagree     93      3.36          97.18      3.36          97.18
+      Don't know     78      2.82         100.00      2.82         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-53.png" width="100%" />
@@ -6442,16 +6482,14 @@ OFHBEN_4
 Label: OFH will... help me  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    248      8.96           8.96      8.96           8.96
-                           Agree    765     27.65          36.61     27.65          36.61
-      Neither agree nor disagree   1086     39.25          75.86     39.25          75.86
-                        Disagree    393     14.20          90.06     14.20          90.06
-               Strongly disagree    119      4.30          94.36      4.30          94.36
-                      Don't know    156      5.64         100.00      5.64         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1013     36.61          36.61     36.61          36.61
+         Neither   1086     39.25          75.86     39.25          75.86
+        Disagree    512     18.50          94.36     18.50          94.36
+      Don't know    156      5.64         100.00      5.64         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-54.png" width="100%" />
@@ -6462,16 +6500,14 @@ OFHBEN_5
 Label: OFH will... help family/friends  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    324     11.71          11.71     11.71          11.71
-                           Agree   1087     39.28          50.99     39.28          50.99
-      Neither agree nor disagree    916     33.10          84.10     33.10          84.10
-                        Disagree    215      7.77          91.87      7.77          91.87
-               Strongly disagree     82      2.96          94.83      2.96          94.83
-                      Don't know    143      5.17         100.00      5.17         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1411     50.99          50.99     50.99          50.99
+         Neither    916     33.10          84.10     33.10          84.10
+        Disagree    297     10.73          94.83     10.73          94.83
+      Don't know    143      5.17         100.00      5.17         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-55.png" width="100%" />
@@ -6482,16 +6518,14 @@ OFHBEN_6
 Label: OFH will... help community  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    416     15.03          15.03     15.03          15.03
-                           Agree   1385     50.05          65.09     50.05          65.09
-      Neither agree nor disagree    669     24.18          89.27     24.18          89.27
-                        Disagree    116      4.19          93.46      4.19          93.46
-               Strongly disagree     55      1.99          95.45      1.99          95.45
-                      Don't know    126      4.55         100.00      4.55         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1801     65.09          65.09     65.09          65.09
+         Neither    669     24.18          89.27     24.18          89.27
+        Disagree    171      6.18          95.45      6.18          95.45
+      Don't know    126      4.55         100.00      4.55         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-56.png" width="100%" />
@@ -6502,16 +6536,14 @@ OFHBEN_7
 Label: OFH will... help people in UK  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    530     19.15          19.15     19.15          19.15
-                           Agree   1506     54.43          73.58     54.43          73.58
-      Neither agree nor disagree    525     18.97          92.56     18.97          92.56
-                        Disagree     67      2.42          94.98      2.42          94.98
-               Strongly disagree     44      1.59          96.57      1.59          96.57
-                      Don't know     95      3.43         100.00      3.43         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   2036     73.58          73.58     73.58          73.58
+         Neither    525     18.97          92.56     18.97          92.56
+        Disagree    111      4.01          96.57      4.01          96.57
+      Don't know     95      3.43         100.00      3.43         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-57.png" width="100%" />
@@ -6522,16 +6554,14 @@ OFHBEN_8
 Label: OFH will... help people in world  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    512     18.50          18.50     18.50          18.50
-                           Agree   1397     50.49          68.99     50.49          68.99
-      Neither agree nor disagree    593     21.43          90.42     21.43          90.42
-                        Disagree     93      3.36          93.78      3.36          93.78
-               Strongly disagree     48      1.73          95.52      1.73          95.52
-                      Don't know    124      4.48         100.00      4.48         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1909     68.99          68.99     68.99          68.99
+         Neither    593     21.43          90.42     21.43          90.42
+        Disagree    141      5.10          95.52      5.10          95.52
+      Don't know    124      4.48         100.00      4.48         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-58.png" width="100%" />
@@ -6542,16 +6572,14 @@ OFHBEN_9
 Label: OFH will... help representation of people like me  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    476     17.20          17.20     17.20          17.20
-                           Agree   1271     45.93          63.14     45.93          63.14
-      Neither agree nor disagree    728     26.31          89.45     26.31          89.45
-                        Disagree    114      4.12          93.57      4.12          93.57
-               Strongly disagree     62      2.24          95.81      2.24          95.81
-                      Don't know    116      4.19         100.00      4.19         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1747     63.14          63.14     63.14          63.14
+         Neither    728     26.31          89.45     26.31          89.45
+        Disagree    176      6.36          95.81      6.36          95.81
+      Don't know    116      4.19         100.00      4.19         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-59.png" width="100%" />
@@ -6562,16 +6590,14 @@ OFHBENCL
 Label: The potential benefits of taking part in the Our Future Health research programme are clear to me  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    463     16.73          16.73     16.73          16.73
-                           Agree   1449     52.37          69.10     52.37          69.10
-      Neither agree nor disagree    647     23.38          92.48     23.38          92.48
-                        Disagree    107      3.87          96.35      3.87          96.35
-               Strongly disagree     28      1.01          97.36      1.01          97.36
-                      Don't know     73      2.64         100.00      2.64         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1912     69.10          69.10     69.10          69.10
+         Neither    647     23.38          92.48     23.38          92.48
+        Disagree    135      4.88          97.36      4.88          97.36
+      Don't know     73      2.64         100.00      2.64         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-60.png" width="100%" />
@@ -6582,16 +6608,14 @@ BARRSA_1
 Label: Comfortable health info in large database  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    288     10.41          10.41     10.41          10.41
-                           Agree    886     32.02          42.43     32.02          42.43
-      Neither agree nor disagree    635     22.95          65.38     22.95          65.38
-                        Disagree    496     17.93          83.30     17.93          83.30
-               Strongly disagree    384     13.88          97.18     13.88          97.18
-                      Don't know     78      2.82         100.00      2.82         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1174     42.43          42.43     42.43          42.43
+         Neither    635     22.95          65.38     22.95          65.38
+        Disagree    880     31.80          97.18     31.80          97.18
+      Don't know     78      2.82         100.00      2.82         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-61.png" width="100%" />
@@ -6602,16 +6626,14 @@ BARRSA_2
 Label: Comfortable share health info with OFH  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    294     10.63          10.63     10.63          10.63
-                           Agree   1033     37.33          47.96     37.33          47.96
-      Neither agree nor disagree    632     22.84          70.80     22.84          70.80
-                        Disagree    427     15.43          86.23     15.43          86.23
-               Strongly disagree    319     11.53          97.76     11.53          97.76
-                      Don't know     62      2.24         100.00      2.24         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1327     47.96          47.96     47.96          47.96
+         Neither    632     22.84          70.80     22.84          70.80
+        Disagree    746     26.96          97.76     26.96          97.76
+      Don't know     62      2.24         100.00      2.24         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-62.png" width="100%" />
@@ -6622,16 +6644,14 @@ BARRSA_3
 Label: Comfortable how OFH use health info  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    278     10.05          10.05     10.05          10.05
-                           Agree   1034     37.37          47.42     37.37          47.42
-      Neither agree nor disagree    669     24.18          71.59     24.18          71.59
-                        Disagree    420     15.18          86.77     15.18          86.77
-               Strongly disagree    282     10.19          96.96     10.19          96.96
-                      Don't know     84      3.04         100.00      3.04         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1312     47.42          47.42     47.42          47.42
+         Neither    669     24.18          71.59     24.18          71.59
+        Disagree    702     25.37          96.96     25.37          96.96
+      Don't know     84      3.04         100.00      3.04         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-63.png" width="100%" />
@@ -6642,16 +6662,14 @@ BARRSA_4
 Label: Comfortable OFH access to medical records  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    266      9.61           9.61      9.61           9.61
-                           Agree    956     34.55          44.16     34.55          44.16
-      Neither agree nor disagree    571     20.64          64.80     20.64          64.80
-                        Disagree    523     18.90          83.70     18.90          83.70
-               Strongly disagree    370     13.37          97.07     13.37          97.07
-                      Don't know     81      2.93         100.00      2.93         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1222     44.16          44.16     44.16          44.16
+         Neither    571     20.64          64.80     20.64          64.80
+        Disagree    893     32.27          97.07     32.27          97.07
+      Don't know     81      2.93         100.00      2.93         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-64.png" width="100%" />
@@ -6662,16 +6680,14 @@ BARRSB_1
 Label: Comfortable academics access to health records  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    319     11.53          11.53     11.53          11.53
-                           Agree   1081     39.07          50.60     39.07          50.60
-      Neither agree nor disagree    556     20.09          70.69     20.09          70.69
-                        Disagree    447     16.15          86.84     16.15          86.84
-               Strongly disagree    292     10.55          97.40     10.55          97.40
-                      Don't know     72      2.60         100.00      2.60         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1400     50.60          50.60     50.60          50.60
+         Neither    556     20.09          70.69     20.09          70.69
+        Disagree    739     26.71          97.40     26.71          97.40
+      Don't know     72      2.60         100.00      2.60         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-65.png" width="100%" />
@@ -6682,16 +6698,14 @@ BARRSB_2
 Label: Comfortable companies access to health records  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    231      8.35           8.35      8.35           8.35
-                           Agree    834     30.14          38.49     30.14          38.49
-      Neither agree nor disagree    625     22.59          61.08     22.59          61.08
-                        Disagree    577     20.85          81.93     20.85          81.93
-               Strongly disagree    425     15.36          97.29     15.36          97.29
-                      Don't know     75      2.71         100.00      2.71         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+---------------- ------ --------- -------------- --------- --------------
+           Agree   1065     38.49          38.49     38.49          38.49
+         Neither    625     22.59          61.08     22.59          61.08
+        Disagree   1002     36.21          97.29     36.21          97.29
+      Don't know     75      2.71         100.00      2.71         100.00
+            <NA>      0                               0.00         100.00
+           Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-66.png" width="100%" />
@@ -6702,16 +6716,14 @@ BLOODS_1
 Label: Willing give sample if part of routine blood test  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    391     14.13          14.13     14.13          14.13
-                           Agree   1157     41.81          55.95     41.81          55.95
-      Neither agree nor disagree    406     14.67          70.62     14.67          70.62
-                        Disagree    380     13.73          84.35     13.73          84.35
-               Strongly disagree    327     11.82          96.17     11.82          96.17
-           Not sure / it depends    106      3.83         100.00      3.83         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree   1548     55.95          55.95     55.95          55.95
+                    Neither    406     14.67          70.62     14.67          70.62
+                   Disagree    707     25.55          96.17     25.55          96.17
+      Not sure / it depends    106      3.83         100.00      3.83         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-67.png" width="100%" />
@@ -6722,16 +6734,14 @@ BLOODS_2
 Label: Willing give sample if soley for OFH  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    330     11.93          11.93     11.93          11.93
-                           Agree    997     36.03          47.96     36.03          47.96
-      Neither agree nor disagree    473     17.09          65.05     17.09          65.05
-                        Disagree    482     17.42          82.47     17.42          82.47
-               Strongly disagree    370     13.37          95.84     13.37          95.84
-           Not sure / it depends    115      4.16         100.00      4.16         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree   1327     47.96          47.96     47.96          47.96
+                    Neither    473     17.09          65.05     17.09          65.05
+                   Disagree    852     30.79          95.84     30.79          95.84
+      Not sure / it depends    115      4.16         100.00      4.16         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-68.png" width="100%" />
@@ -6742,16 +6752,14 @@ BLOODS_3
 Label: Difficult to give sample on weekday  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    310     11.20          11.20     11.20          11.20
-                           Agree    664     24.00          35.20     24.00          35.20
-      Neither agree nor disagree    590     21.32          56.52     21.32          56.52
-                        Disagree    694     25.08          81.60     25.08          81.60
-               Strongly disagree    384     13.88          95.48     13.88          95.48
-           Not sure / it depends    125      4.52         100.00      4.52         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    974     35.20          35.20     35.20          35.20
+                    Neither    590     21.32          56.52     21.32          56.52
+                   Disagree   1078     38.96          95.48     38.96          95.48
+      Not sure / it depends    125      4.52         100.00      4.52         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-69.png" width="100%" />
@@ -6762,16 +6770,14 @@ BLOODS_4
 Label: Difficult to give sample on weekend  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    187      6.76           6.76      6.76           6.76
-                           Agree    476     17.20          23.96     17.20          23.96
-      Neither agree nor disagree    638     23.06          47.02     23.06          47.02
-                        Disagree    916     33.10          80.12     33.10          80.12
-               Strongly disagree    412     14.89          95.01     14.89          95.01
-           Not sure / it depends    138      4.99         100.00      4.99         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    663     23.96          23.96     23.96          23.96
+                    Neither    638     23.06          47.02     23.06          47.02
+                   Disagree   1328     47.99          95.01     47.99          95.01
+      Not sure / it depends    138      4.99         100.00      4.99         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-70.png" width="100%" />
@@ -6782,16 +6788,14 @@ BLOODS_5
 Label: The thought of providing a blood sample makes me anxious  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    251      9.07           9.07      9.07           9.07
-                           Agree    514     18.58          27.65     18.58          27.65
-      Neither agree nor disagree    490     17.71          45.36     17.71          45.36
-                        Disagree    800     28.91          74.27     28.91          74.27
-               Strongly disagree    658     23.78          98.05     23.78          98.05
-           Not sure / it depends     54      1.95         100.00      1.95         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    765     27.65          27.65     27.65          27.65
+                    Neither    490     17.71          45.36     17.71          45.36
+                   Disagree   1458     52.69          98.05     52.69          98.05
+      Not sure / it depends     54      1.95         100.00      1.95         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-71.png" width="100%" />
@@ -6802,16 +6806,14 @@ BLOODS_6
 Label: I have a fear of needles  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    223      8.06           8.06      8.06           8.06
-                           Agree    344     12.43          20.49     12.43          20.49
-      Neither agree nor disagree    350     12.65          33.14     12.65          33.14
-                        Disagree    964     34.84          67.98     34.84          67.98
-               Strongly disagree    848     30.65          98.63     30.65          98.63
-           Not sure / it depends     38      1.37         100.00      1.37         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    567     20.49          20.49     20.49          20.49
+                    Neither    350     12.65          33.14     12.65          33.14
+                   Disagree   1812     65.49          98.63     65.49          98.63
+      Not sure / it depends     38      1.37         100.00      1.37         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-72.png" width="100%" />
@@ -6822,16 +6824,14 @@ BLOODS_7
 Label: I have a fear of needles that would stop me from providing a blood sample  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    145      5.24           5.24      5.24           5.24
-                           Agree    204      7.37          12.61      7.37          12.61
-      Neither agree nor disagree    325     11.75          24.36     11.75          24.36
-                        Disagree   1054     38.09          62.45     38.09          62.45
-               Strongly disagree    994     35.92          98.37     35.92          98.37
-           Not sure / it depends     45      1.63         100.00      1.63         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    349     12.61          12.61     12.61          12.61
+                    Neither    325     11.75          24.36     11.75          24.36
+                   Disagree   2048     74.02          98.37     74.02          98.37
+      Not sure / it depends     45      1.63         100.00      1.63         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-73.png" width="100%" />
@@ -6842,16 +6842,14 @@ PRACBAR_1
 Label: I don't have time to take part in the Our Future Health research programme  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    203      7.34           7.34      7.34           7.34
-                           Agree    528     19.08          26.42     19.08          26.42
-      Neither agree nor disagree    731     26.42          52.84     26.42          52.84
-                        Disagree    839     30.32          83.16     30.32          83.16
-               Strongly disagree    344     12.43          95.59     12.43          95.59
-           Not sure / it depends    122      4.41         100.00      4.41         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree    731     26.42          26.42     26.42          26.42
+                    Neither    731     26.42          52.84     26.42          52.84
+                   Disagree   1183     42.75          95.59     42.75          95.59
+      Not sure / it depends    122      4.41         100.00      4.41         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-74.png" width="100%" />
@@ -6862,16 +6860,14 @@ PRACBAR_2
 Label: have time for 10 min questionnaire  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    582     21.03          21.03     21.03          21.03
-                           Agree   1593     57.57          78.60     57.57          78.60
-      Neither agree nor disagree    348     12.58          91.18     12.58          91.18
-                        Disagree    111      4.01          95.19      4.01          95.19
-               Strongly disagree     82      2.96          98.16      2.96          98.16
-           Not sure / it depends     51      1.84         100.00      1.84         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree   2175     78.60          78.60     78.60          78.60
+                    Neither    348     12.58          91.18     12.58          91.18
+                   Disagree    193      6.98          98.16      6.98          98.16
+      Not sure / it depends     51      1.84         100.00      1.84         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-75.png" width="100%" />
@@ -6882,16 +6878,14 @@ PRACBAR_3
 Label: have time for 30 min questionnaire  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    356     12.87          12.87     12.87          12.87
-                           Agree   1122     40.55          53.42     40.55          53.42
-      Neither agree nor disagree    587     21.21          74.63     21.21          74.63
-                        Disagree    483     17.46          92.09     17.46          92.09
-               Strongly disagree    138      4.99          97.07      4.99          97.07
-           Not sure / it depends     81      2.93         100.00      2.93         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree   1478     53.42          53.42     53.42          53.42
+                    Neither    587     21.21          74.63     21.21          74.63
+                   Disagree    621     22.44          97.07     22.44          97.07
+      Not sure / it depends     81      2.93         100.00      2.93         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-76.png" width="100%" />
@@ -6902,16 +6896,14 @@ PARTNA
 Label: Partnerships with charities and industry will improve the Our Future Health research programme  
 Type: Factor  
 
-                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
--------------------------------- ------ --------- -------------- --------- --------------
-                  Strongly agree    402     14.53          14.53     14.53          14.53
-                           Agree   1317     47.60          62.13     47.60          62.13
-      Neither agree nor disagree    781     28.23          90.35     28.23          90.35
-                        Disagree     89      3.22          93.57      3.22          93.57
-               Strongly disagree     35      1.26          94.83      1.26          94.83
-           Not sure / it depends    143      5.17         100.00      5.17         100.00
-                            <NA>      0                               0.00         100.00
-                           Total   2767    100.00         100.00    100.00         100.00
+                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+--------------------------- ------ --------- -------------- --------- --------------
+                      Agree   1719     62.13          62.13     62.13          62.13
+                    Neither    781     28.23          90.35     28.23          90.35
+                   Disagree    124      4.48          94.83      4.48          94.83
+      Not sure / it depends    143      5.17         100.00      5.17         100.00
+                       <NA>      0                               0.00         100.00
+                      Total   2767    100.00         100.00    100.00         100.00
 ```
 
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/summaries of predictor variables-77.png" width="100%" />
@@ -7094,8 +7086,8 @@ regression_df$GENFBACK_ancestry_all <-  relevel(regression_df$GENFBACK_ancestry_
 
 
 ```r
-label(factor_df) = as.list(label_list[match(names(factor_df), names(label_list))])
-label(regression_df) = as.list(label_list[match(names(regression_df), names(label_list))])
+label(factor_df) = as.list(all_labels[match(names(factor_df), names(all_labels))])
+label(regression_df) = as.list(all_labels[match(names(regression_df), names(all_labels))])
 ```
 
 
@@ -7387,7 +7379,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of Would you describe yourself as… predicting Would you take part in it if you were invited to?
+<caption><b>Binomial logistic regression of NA predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends </b></caption>
  <thead>
   <tr>
@@ -9814,7 +9806,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of Would you describe yourself as… predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+<caption><b>Binomial logistic regression of NA predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say </b></caption>
  <thead>
   <tr>
@@ -12241,7 +12233,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of Would you describe yourself as… predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+<caption><b>Binomial logistic regression of NA predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
  <thead>
   <tr>
@@ -14668,7 +14660,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
   </tr>
 </tbody>
 </table><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of Would you describe yourself as… predicting Genetic feedback for ancestry?
+<caption><b>Binomial logistic regression of NA predicting Genetic feedback for ancestry?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say </b></caption>
  <thead>
   <tr>
@@ -17195,7 +17187,7 @@ iter  10 value 2788.517426
 final  value 2788.515317 
 converged
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Multinomial regression of Would you describe yourself as… predicting Would you take part in it if you were invited to?
+<caption><b>Multinomial regression of NA predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
   <tr>
@@ -21120,7 +21112,7 @@ iter  10 value 1895.082121
 final  value 1895.077724 
 converged
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Multinomial regression of Would you describe yourself as… predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
+<caption><b>Multinomial regression of NA predicting Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say </b></caption>
  <thead>
   <tr>
@@ -25045,7 +25037,7 @@ iter  10 value 2375.689704
 final  value 2375.688721 
 converged
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Multinomial regression of Would you describe yourself as… predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
+<caption><b>Multinomial regression of NA predicting Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say </b></caption>
  <thead>
   <tr>
@@ -28966,7 +28958,7 @@ iter  10 value 1900.464686
 final  value 1900.325108 
 converged
 <table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Multinomial regression of Would you describe yourself as… predicting Genetic feedback for ancestry?
+<caption><b>Multinomial regression of NA predicting Genetic feedback for ancestry?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say </b></caption>
  <thead>
   <tr>
@@ -32913,7 +32905,13 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
+    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
+[1] "Is this an Asian respondent?\nSample frame (PV): IMD quintile within country\nWhat is your age band?\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.binomial.regression(regression_df,"GENFBACK_prevent_agree",demo.pred.prevent.binary)
@@ -33273,7 +33271,13 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
+    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
+    AGE_BAND.AGE_BAND = "What is your age band?", RELIGIOSITY.RELIGIOSITY = "Religiosity", 
+    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status", 
+    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
+    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
+[1] "Is this a black respondent?\nSample frame (PV): IMD quintile within country\nWhat is your age band?\nReligiosity\nDegree (yes/no)\nWorking status\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
 
 ```
 Warning: Transformation introduced infinite values in continuous y-axis
@@ -33742,7 +33746,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(AGE_BAND.AGE_BAND = "What is your age band?", GENDER.NA = NA_character_, 
+    ETHNICITY.ETHNICITY = "Ethnic group (detailed)", DEGREE.DEGREE = "Degree (yes/no)", 
+    WorkingStatus.WorkingStatus = "Working status", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
+[1] "What is your age band?\nNA\nEthnic group (detailed)\nDegree (yes/no)\nWorking status\nWorking (yes/no)"
 
 ```
 Warning: Transformation introduced infinite values in continuous y-axis
@@ -33904,7 +33911,13 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
+</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
+    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
+    GENDER.NA = NA_character_, RELIGIOSITY.RELIGIOSITY = "Religiosity", 
+    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
+[1] "Is this a black respondent?\nIs this an Asian respondent?\nSample frame (PV): IMD quintile within country\nNA\nReligiosity\nDegree (yes/no)\nWorking (yes/no)"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run binomial multivariable-4.png" width="100%" />
 
 ### Multinomial regression
 
@@ -34341,7 +34354,13 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
+</table>list(MDQuintile.MDQuintile = "Sample frame (PV): IMD quintile within country", 
+    AGE_BAND.AGE_BAND = "What is your age band?", GENDER.NA = NA_character_, 
+    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
+    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
+[1] "Sample frame (PV): IMD quintile within country\nWhat is your age band?\nNA\nIs this an Asian respondent?\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-1.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_prevent_all",demo.pred.prevent.multi)
@@ -34745,7 +34764,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
+</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", RELIGIOSITY.RELIGIOSITY = "Religiosity", 
+    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)", 
+    TENURE.TENURE = "Housing tenure, reduced to 3 categories")
+[1] "Is this a black respondent?\nWhat is your age band?\nReligiosity\nDegree (yes/no)\nWorking (yes/no)\nHousing tenure, reduced to 3 categories"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-2.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_no_prevent_all",demo.pred.noprevent.multi)
@@ -35631,7 +35655,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
+</table>list(AGE_BAND.AGE_BAND = "What is your age band?", ETHNICITY.ETHNICITY = "Ethnic group (detailed)", 
+    DEGREE.DEGREE = "Degree (yes/no)", WorkingStatus.WorkingStatus = "Working status")
+[1] "What is your age band?\nEthnic group (detailed)\nDegree (yes/no)\nWorking status"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-3.png" width="100%" />
 
 ```r
 do.multivariable.multinomial.regression(regression_df,"GENFBACK_ancestry_all",demo.pred.ancestry.multi)
@@ -35838,7 +35865,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
+</table>list(Black_filter.Black_filter = "Is this a black respondent?", 
+    Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    RELIGIOSITY.RELIGIOSITY = "Religiosity", DEGREE.DEGREE = "Degree (yes/no)", 
+    WorkingStatus_Binary.WorkingStatus_Binary = "Working (yes/no)")
+[1] "Is this a black respondent?\nIs this an Asian respondent?\nReligiosity\nDegree (yes/no)\nWorking (yes/no)"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run multinomial multivariable-4.png" width="100%" />
 
 ## final list of covariates for each model
 
@@ -36018,7 +36050,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nIn the last 12 months have you experienced a major life event?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36166,7 +36201,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    PROSO_EVER_TOTAL.NA = NA_character_)
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -36314,7 +36352,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComposite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
 
 ```
 Joining, by = "predictor"
@@ -36457,7 +36498,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have a family history of any disease or health condition?"
 
 ```
 Joining, by = "predictor"
@@ -36600,7 +36644,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENTEST.GENTEST = "Have you ever had a genetic test?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a genetic test?"
 
 ```
 Joining, by = "predictor"
@@ -36743,7 +36790,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -36886,7 +36936,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWhether have caring responsibilities for someone with LT illness/disability inside/outside home"
 
 ```
 Joining, by = "predictor"
@@ -36918,8 +36971,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.85 </td>
    <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -36931,11 +36984,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.012 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -36943,11 +36996,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.921 </td>
+   <td style="text-align:center;"> 0.828 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -36956,9 +37009,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.09 </td>
    <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 1.82 </td>
    <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.008 </td>
    <td style="text-align:center;"> xx </td>
@@ -36969,11 +37022,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.383 </td>
+   <td style="text-align:center;"> 0.339 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -36982,12 +37035,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 1.92 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.013 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 1.98 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -36995,11 +37048,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.415 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.500 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -37008,11 +37061,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.59 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -37021,41 +37074,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> HEALTH </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.328 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.74 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.70 </td>
    <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.473 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.035 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nTo what extent do you agree or disagree - I am someone who looks after my health very well"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37203,7 +37233,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups."
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37351,7 +37384,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37499,7 +37535,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTGEN.TRUSTGEN = "How much do you trust most people")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust most people"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37647,7 +37686,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust the NHS"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37795,7 +37837,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust the Government"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -37943,7 +37988,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Pharmaceutical companies"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38091,7 +38139,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Medical charities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38239,7 +38290,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you trust Medical researchers in universities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38387,7 +38441,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities"
 
 ```
 Joining, by = "predictor"
@@ -38569,7 +38626,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    SCIINT.SCIINT = "How interested are you in science?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow interested are you in science?"
 
 ```
 Joining, by = "predictor"
@@ -38751,7 +38811,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow well informed do you feel about science and scientific developments?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -38789,7 +38852,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.58 </td>
    <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.86 </td>
    <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -38800,11 +38863,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.94 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.012 </td>
+   <td style="text-align:center;"> 0.017 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -38813,11 +38876,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.33 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.783 </td>
+   <td style="text-align:center;"> 0.712 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -38826,11 +38889,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.024 </td>
+   <td style="text-align:center;"> 0.027 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -38839,11 +38902,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.49 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.296 </td>
+   <td style="text-align:center;"> 0.337 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -38852,11 +38915,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 1.87 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.84 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.034 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -38865,11 +38928,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.293 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.245 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -38878,11 +38941,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.42 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> 0.027 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -38891,15 +38954,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> SCITRUST_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall."
 
 ```
 Joining, by = "predictor"
@@ -39068,7 +39134,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow much do you think scientific medical research has helped prevent and treat COVID-19?"
 
 ```
 Joining, by = "predictor"
@@ -39224,7 +39293,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you heard of the Our Future Health research programme?"
 
 ```
 Joining, by = "predictor"
@@ -39255,11 +39327,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.190000e+00 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.698 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.141 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39268,12 +39340,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.050000e+00 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.105 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.046 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39281,11 +39353,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.450000e+00 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.41 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.344 </td>
+   <td style="text-align:center;"> 0.414 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39294,12 +39366,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.760000e+00 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.84 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.035 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.010 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39307,11 +39379,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.510000e+00 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.51 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.357 </td>
+   <td style="text-align:center;"> 0.326 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39320,12 +39392,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 1.970000e+00 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 2.00 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.020 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.010 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39333,11 +39405,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.630000e+00 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.637 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.897 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -39346,12 +39418,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.380000e+00 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.079 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -39359,10 +39431,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> UNDERST </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 5.000000e-01 </td>
    <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -39371,51 +39443,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> UNDERST </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 4.400000e-01 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.60 </td>
-   <td style="text-align:center;"> 3.15 </td>
-   <td style="text-align:center;"> 3.830000e+00 </td>
    <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 3.353602e+238 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.957 </td>
-   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nTo what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39563,11 +39603,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?"
 
 ```
-Warning: Removed 1 rows containing missing values (geom_point).
-non-vector elements will be ignored
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -39711,7 +39754,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -39859,7 +39905,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow boring or interesting do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40007,7 +40056,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow hard or easy do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -40155,7 +40207,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow slow or fast you think taking part in the Our Future Health research programme would be?"
 
 ```
 Joining, by = "predictor"
@@ -40186,11 +40241,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.439 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.055 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40199,12 +40254,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.91 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.010 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40212,11 +40267,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.39 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.837 </td>
+   <td style="text-align:center;"> 0.609 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40225,12 +40280,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.80 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.071 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.034 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40238,11 +40293,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.78 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.66 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.166 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40251,11 +40306,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 2.04 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.96 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.031 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -40265,10 +40320,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.808 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.725 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40277,11 +40332,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.355 </td>
+   <td style="text-align:center;"> 0.301 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40290,58 +40345,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 4.30 </td>
-   <td style="text-align:center;"> 5.49 </td>
-   <td style="text-align:center;"> 7.01 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.675 </td>
-   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... advance medical research"
 
 ```
 Joining, by = "predictor"
@@ -40372,11 +40400,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.178 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.051 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40385,11 +40413,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.94 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> 0.020 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -40398,11 +40426,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.38 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.890 </td>
+   <td style="text-align:center;"> 0.621 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40411,12 +40439,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.86 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.062 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.016 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40424,11 +40452,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 1.85 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.047 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.045 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -40437,11 +40465,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 2.05 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.016 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -40450,11 +40478,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.559 </td>
+   <td style="text-align:center;"> 0.596 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40463,11 +40491,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.50 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.012 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -40476,58 +40504,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 4.28 </td>
-   <td style="text-align:center;"> 5.49 </td>
-   <td style="text-align:center;"> 7.03 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.031 </td>
-   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... better treatments"
 
 ```
 Joining, by = "predictor"
@@ -40558,12 +40559,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.052 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40571,12 +40572,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.067 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.038 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40584,11 +40585,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.856 </td>
+   <td style="text-align:center;"> 0.832 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40597,36 +40598,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 1.71 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.096 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.36 </td>
    <td style="text-align:center;"> 1.79 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.070 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 1.99 </td>
-   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.19 </td>
    <td style="text-align:center;"> 0.029 </td>
    <td style="text-align:center;"> x </td>
   </tr>
@@ -40635,12 +40610,38 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.098 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.96 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.023 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.716 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.529 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40649,12 +40650,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.023 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40662,10 +40663,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40674,46 +40675,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 4.50 </td>
-   <td style="text-align:center;"> 5.70 </td>
-   <td style="text-align:center;"> 7.23 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.106 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... early detection"
 
 ```
 Joining, by = "predictor"
@@ -40744,7 +40718,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.49 </td>
    <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.76 </td>
    <td style="text-align:center;"> 0.07 </td>
@@ -40757,11 +40731,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.110 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.087 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40770,9 +40744,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.77 </td>
    <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.994 </td>
    <td style="text-align:center;">  </td>
@@ -40785,9 +40759,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 1.73 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.074 </td>
+   <td style="text-align:center;"> 0.077 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40797,10 +40771,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.55 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.362 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.54 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.376 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40809,12 +40783,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 2.24 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 2.12 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -40822,11 +40796,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.61 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.644 </td>
+   <td style="text-align:center;"> 0.791 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40837,7 +40811,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 1.50 </td>
-   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -40846,12 +40820,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> Neither </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 2.77 </td>
-   <td style="text-align:center;"> 3.40 </td>
-   <td style="text-align:center;"> 4.16 </td>
-   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 3.49 </td>
+   <td style="text-align:center;"> 4.24 </td>
+   <td style="text-align:center;"> 5.14 </td>
+   <td style="text-align:center;"> 0.42 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40859,47 +40833,20 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> Neither </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 7.15 </td>
-   <td style="text-align:center;"> 10.90 </td>
-   <td style="text-align:center;"> 16.64 </td>
-   <td style="text-align:center;"> 2.35 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_4.OFHBEN_4 = "OFH will... help me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help me"
 
 ```
 Joining, by = "predictor"
@@ -40933,7 +40880,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.54 </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -40943,11 +40890,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.274 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.195 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40956,11 +40903,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 1.44 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.477 </td>
+   <td style="text-align:center;"> 0.459 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40983,10 +40930,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 1.72 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.112 </td>
+   <td style="text-align:center;"> 0.103 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -40995,11 +40942,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 2.01 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.99 </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.025 </td>
+   <td style="text-align:center;"> 0.027 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -41008,11 +40955,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.400 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.323 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41021,9 +40968,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.50 </td>
-   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.76 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -41034,9 +40981,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_5 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -41046,42 +40993,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.17 </td>
    <td style="text-align:center;"> 0.21 </td>
    <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.31 </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.15 </td>
-   <td style="text-align:center;"> 3.02 </td>
-   <td style="text-align:center;"> 4.24 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help family/friends"
 
 ```
 Joining, by = "predictor"
@@ -41112,12 +41036,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41126,10 +41050,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.010 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.007 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -41138,11 +41062,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.995 </td>
+   <td style="text-align:center;"> 0.883 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41151,11 +41075,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.08 </td>
    <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 1.90 </td>
+   <td style="text-align:center;"> 1.89 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.016 </td>
+   <td style="text-align:center;"> 0.013 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -41164,11 +41088,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.81 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.058 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.081 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41177,12 +41101,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.58 </td>
-   <td style="text-align:center;"> 2.20 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41190,11 +41114,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.894 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.706 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41203,12 +41127,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.56 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41216,10 +41140,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_6 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41228,46 +41152,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 3.37 </td>
-   <td style="text-align:center;"> 4.56 </td>
-   <td style="text-align:center;"> 6.19 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_6.OFHBEN_6 = "OFH will... help community")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help community"
 
 ```
 Joining, by = "predictor"
@@ -41298,12 +41195,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41313,8 +41210,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.43 </td>
    <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41324,11 +41221,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.872 </td>
+   <td style="text-align:center;"> 0.928 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41337,12 +41234,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 1.97 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.88 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.017 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41350,11 +41247,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.055 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.123 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41363,12 +41260,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 2.27 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.10 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.012 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41376,11 +41273,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.741 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.520 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41390,10 +41287,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.023 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -41402,10 +41299,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_7 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41414,46 +41311,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 3.09 </td>
-   <td style="text-align:center;"> 3.98 </td>
-   <td style="text-align:center;"> 5.12 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help people in UK"
 
 ```
 Joining, by = "predictor"
@@ -41484,12 +41354,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.005 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41497,11 +41367,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.48 </td>
    <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.006 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -41510,11 +41380,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.939 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.870 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41523,12 +41393,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 2.02 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.005 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.010 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41536,11 +41406,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.75 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.65 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.160 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41549,12 +41419,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 2.27 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 2.09 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41562,11 +41432,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.663 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.385 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41575,9 +41445,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.56 </td>
    <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
@@ -41588,10 +41458,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_8 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41600,42 +41470,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.20 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.69 </td>
-   <td style="text-align:center;"> 3.46 </td>
-   <td style="text-align:center;"> 4.46 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help people in world"
 
 ```
 Joining, by = "predictor"
@@ -41667,9 +41514,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41679,11 +41526,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.024 </td>
+   <td style="text-align:center;"> 0.012 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -41693,10 +41540,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.882 </td>
+   <td style="text-align:center;"> 0.820 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41705,12 +41552,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 1.95 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.89 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.010 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41718,11 +41565,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.060 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.103 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41731,12 +41578,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.58 </td>
-   <td style="text-align:center;"> 2.19 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 2.05 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41744,11 +41591,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.734 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.476 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41757,11 +41604,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.53 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> 0.006 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -41770,22 +41617,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_9 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.17 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -41795,29 +41629,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.50 </td>
-   <td style="text-align:center;"> 3.26 </td>
-   <td style="text-align:center;"> 4.26 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nOFH will... help representation of people like me"
 
 ```
 Joining, by = "predictor"
@@ -41848,11 +41672,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.080000e+00 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.193 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.054 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41861,12 +41685,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.010000e+00 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.061 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.031 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41874,11 +41698,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.350000e+00 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.832 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.966 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41887,12 +41711,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 1.780000e+00 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.84 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.057 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.027 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -41900,11 +41724,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.640000e+00 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.220 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.60 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.248 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41913,10 +41737,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 2.270000e+00 </td>
-   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 2.25 </td>
+   <td style="text-align:center;"> 0.27 </td>
    <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
@@ -41926,11 +41750,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.460000e+00 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.841 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.496 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -41939,11 +41763,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.470000e+00 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.032 </td>
+   <td style="text-align:center;"> 0.020 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -41952,10 +41776,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBENCL </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 1.000000e-01 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -41964,55 +41788,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 2.000000e-01 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.76 </td>
-   <td style="text-align:center;"> 3.64 </td>
-   <td style="text-align:center;"> 4.810000e+00 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 3.928061e+224 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.953 </td>
-   <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 
 ```
 Joining, by = "predictor"
@@ -42043,11 +41831,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.367 </td>
+   <td style="text-align:center;"> 0.280 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42058,10 +41846,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.50 </td>
    <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.050 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.055 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -42069,11 +41857,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.40 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.850 </td>
+   <td style="text-align:center;"> 0.727 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42082,11 +41870,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.72 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.180 </td>
+   <td style="text-align:center;"> 0.150 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42095,11 +41883,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.75 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.206 </td>
+   <td style="text-align:center;"> 0.169 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42108,11 +41896,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 1.87 </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.144 </td>
+   <td style="text-align:center;"> 0.136 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42121,11 +41909,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.117 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42134,11 +41922,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 1.34 </td>
    <td style="text-align:center;"> 1.63 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -42147,54 +41935,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 2.68 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable health info in large database"
 
 ```
 Joining, by = "predictor"
@@ -42225,11 +41990,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.767 </td>
+   <td style="text-align:center;"> 0.718 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42242,7 +42007,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.65 </td>
    <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 0.018 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -42251,11 +42016,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.682 </td>
+   <td style="text-align:center;"> 0.574 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42264,11 +42029,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 1.76 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.208 </td>
+   <td style="text-align:center;"> 0.161 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42281,7 +42046,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 1.73 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.245 </td>
+   <td style="text-align:center;"> 0.242 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42290,11 +42055,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.370 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.20 </td>
+   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.336 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42303,11 +42068,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.255 </td>
+   <td style="text-align:center;"> 0.322 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42317,10 +42082,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.50 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.51 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.054 </td>
+   <td style="text-align:center;"> 0.051 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42330,53 +42095,30 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.58 </td>
-   <td style="text-align:center;"> 2.39 </td>
-   <td style="text-align:center;"> 3.62 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable share health info with OFH"
 
 ```
 Joining, by = "predictor"
@@ -42407,11 +42149,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.854 </td>
+   <td style="text-align:center;"> 0.720 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42422,9 +42164,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.43 </td>
    <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.89 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> 0.009 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -42433,11 +42175,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.635 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.538 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42446,11 +42188,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 1.72 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.186 </td>
+   <td style="text-align:center;"> 0.172 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42461,9 +42203,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.89 </td>
    <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.76 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.190 </td>
+   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.199 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42472,11 +42214,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.198 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.185 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42485,11 +42227,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.129 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.152 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42498,50 +42240,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.62 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 1.63 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 2.66 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 0.005 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -42549,16 +42252,32 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:left;"> Disagree </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable how OFH use health info"
 
 ```
 Joining, by = "predictor"
@@ -42589,11 +42308,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.388 </td>
+   <td style="text-align:center;"> 0.302 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42615,11 +42334,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.907 </td>
+   <td style="text-align:center;"> 0.980 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42628,11 +42347,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.86 </td>
    <td style="text-align:center;"> 1.19 </td>
    <td style="text-align:center;"> 1.65 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.312 </td>
+   <td style="text-align:center;"> 0.303 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42641,11 +42360,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.73 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.242 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.268 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42654,11 +42373,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.60 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.603 </td>
+   <td style="text-align:center;"> 0.592 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42668,10 +42387,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.60 </td>
    <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.031 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -42680,11 +42399,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 1.59 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.013 </td>
+   <td style="text-align:center;"> 0.012 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -42693,54 +42412,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_4 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 2.22 </td>
-   <td style="text-align:center;"> 3.44 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable OFH access to medical records"
 
 ```
 Joining, by = "predictor"
@@ -42772,10 +42468,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.21 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.714 </td>
+   <td style="text-align:center;"> 0.672 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42797,11 +42493,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.968 </td>
+   <td style="text-align:center;"> 0.937 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42810,11 +42506,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.75 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.143 </td>
+   <td style="text-align:center;"> 0.125 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42824,10 +42520,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.86 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.85 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.084 </td>
+   <td style="text-align:center;"> 0.088 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42836,11 +42532,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.81 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.201 </td>
+   <td style="text-align:center;"> 0.188 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42852,8 +42548,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.40 </td>
    <td style="text-align:center;"> 0.63 </td>
    <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.046 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.044 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -42862,11 +42558,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.555 </td>
+   <td style="text-align:center;"> 0.453 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42875,54 +42571,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSB_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 1.96 </td>
-   <td style="text-align:center;"> 2.78 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable academics access to health records"
 
 ```
 Joining, by = "predictor"
@@ -42957,7 +42630,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.83 </td>
    <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.129 </td>
+   <td style="text-align:center;"> 0.127 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42967,10 +42640,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -42980,10 +42653,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.96 </td>
    <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.737 </td>
+   <td style="text-align:center;"> 0.778 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -42992,11 +42665,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.81 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.084 </td>
+   <td style="text-align:center;"> 0.064 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43006,10 +42679,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.85 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.072 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.078 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43018,11 +42691,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.83 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.152 </td>
+   <td style="text-align:center;"> 0.139 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43031,11 +42704,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.207 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.263 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43044,9 +42717,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 1.84 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 1.53 </td>
+   <td style="text-align:center;"> 1.86 </td>
    <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -43057,9 +42730,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSB_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -43069,42 +42742,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 2.06 </td>
-   <td style="text-align:center;"> 3.22 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable companies access to health records"
 
 ```
 Joining, by = "predictor"
@@ -43135,11 +42785,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.274 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.138 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43148,11 +42798,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.038 </td>
+   <td style="text-align:center;"> 0.044 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -43161,11 +42811,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.58 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.317 </td>
+   <td style="text-align:center;"> 0.264 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43174,11 +42824,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.71 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.170 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.097 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43187,11 +42837,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.58 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 1.60 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.432 </td>
+   <td style="text-align:center;"> 0.377 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43200,11 +42850,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.61 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.540 </td>
+   <td style="text-align:center;"> 0.470 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43213,11 +42863,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.10 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.114 </td>
+   <td style="text-align:center;"> 0.123 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43226,11 +42876,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.39 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.286 </td>
+   <td style="text-align:center;"> 0.168 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43239,10 +42889,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43251,11 +42901,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43265,41 +42915,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.36 </td>
-   <td style="text-align:center;"> 3.35 </td>
-   <td style="text-align:center;"> 4.75 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.16 </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if part of routine blood test"
 
 ```
 Joining, by = "predictor"
@@ -43330,11 +42957,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.585 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.459 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43344,10 +42971,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.179 </td>
+   <td style="text-align:center;"> 0.187 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43358,9 +42985,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.79 </td>
+   <td style="text-align:center;"> 1.78 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.068 </td>
+   <td style="text-align:center;"> 0.066 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43369,11 +42996,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.82 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.117 </td>
+   <td style="text-align:center;"> 0.095 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43383,10 +43010,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.66 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.64 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.332 </td>
+   <td style="text-align:center;"> 0.347 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43395,11 +43022,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.50 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.862 </td>
+   <td style="text-align:center;"> 0.810 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43408,11 +43035,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.371 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.437 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43421,11 +43048,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.101 </td>
+   <td style="text-align:center;"> 0.062 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43434,10 +43061,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43446,10 +43073,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -43460,41 +43087,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 2.43 </td>
-   <td style="text-align:center;"> 3.62 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if soley for OFH"
 
 ```
 Joining, by = "predictor"
@@ -43555,7 +43159,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 1.33 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.668 </td>
+   <td style="text-align:center;"> 0.665 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43581,7 +43185,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 1.46 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.413 </td>
+   <td style="text-align:center;"> 0.414 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43607,7 +43211,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.564 </td>
+   <td style="text-align:center;"> 0.572 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43629,10 +43233,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_3 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43641,11 +43245,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_3 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.62 </td>
    <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43656,40 +43260,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
    <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.89 </td>
    <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.010 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.828 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDifficult to give sample on weekday"
 
 ```
 Joining, by = "predictor"
@@ -43734,10 +43315,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.017 </td>
+   <td style="text-align:center;"> 0.015 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -43748,9 +43329,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.82 </td>
    <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.734 </td>
+   <td style="text-align:center;"> 0.771 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43763,7 +43344,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.41 </td>
    <td style="text-align:center;"> 1.82 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> 0.010 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -43773,10 +43354,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.343 </td>
+   <td style="text-align:center;"> 0.354 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43786,8 +43367,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 1.98 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.97 </td>
    <td style="text-align:center;"> 0.22 </td>
    <td style="text-align:center;"> 0.009 </td>
    <td style="text-align:center;"> xx </td>
@@ -43798,11 +43379,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.38 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.850 </td>
+   <td style="text-align:center;"> 0.794 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43811,9 +43392,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.56 </td>
    <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -43824,21 +43405,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 0.68 </td>
    <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
@@ -43849,24 +43417,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.075 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -43875,16 +43430,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.239 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.039 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDifficult to give sample on weekend"
 
 ```
 Joining, by = "predictor"
@@ -43917,9 +43475,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.65 </td>
    <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.96 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.024 </td>
+   <td style="text-align:center;"> 0.020 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -43932,7 +43490,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.112 </td>
+   <td style="text-align:center;"> 0.110 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43941,11 +43499,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 1.55 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.111 </td>
+   <td style="text-align:center;"> 0.113 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43955,10 +43513,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.017 </td>
+   <td style="text-align:center;"> 0.016 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -43967,11 +43525,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.40 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.612 </td>
+   <td style="text-align:center;"> 0.638 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43980,11 +43538,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.78 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.084 </td>
+   <td style="text-align:center;"> 0.063 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -43993,11 +43551,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.17 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.335 </td>
+   <td style="text-align:center;"> 0.240 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44008,7 +43566,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 1.56 </td>
    <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -44019,10 +43577,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_5 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44031,11 +43589,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_5 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44045,41 +43603,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_5 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nThe thought of providing a blood sample makes me anxious"
 
 ```
 Joining, by = "predictor"
@@ -44110,11 +43645,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -44138,9 +43673,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.377 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.390 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44149,11 +43684,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 1.75 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.022 </td>
+   <td style="text-align:center;"> 0.021 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44165,8 +43700,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.658 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.649 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44176,10 +43711,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.83 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.039 </td>
+   <td style="text-align:center;"> 0.036 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44188,11 +43723,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.284 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.165 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44201,9 +43736,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.58 </td>
    <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -44214,24 +43749,24 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.037 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -44240,41 +43775,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.084 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 1.95 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.017 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_6.BLOODS_6 = "I have a fear of needles")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI have a fear of needles"
 
 ```
 Joining, by = "predictor"
@@ -44305,11 +43817,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.96 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.037 </td>
+   <td style="text-align:center;"> 0.018 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44318,7 +43830,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.55 </td>
    <td style="text-align:center;"> 0.73 </td>
    <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.11 </td>
@@ -44335,7 +43847,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 1.44 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.314 </td>
+   <td style="text-align:center;"> 0.315 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44344,11 +43856,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 0.014 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44359,9 +43871,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.83 </td>
    <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 1.42 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.528 </td>
+   <td style="text-align:center;"> 0.536 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44372,9 +43884,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.81 </td>
+   <td style="text-align:center;"> 1.80 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> 0.046 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44383,11 +43895,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.374 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.222 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44409,11 +43921,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -44421,11 +43933,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -44435,41 +43947,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 1.77 </td>
-   <td style="text-align:center;"> 2.12 </td>
-   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI have a fear of needles that would stop me from providing a blood sample"
 
 ```
 Joining, by = "predictor"
@@ -44501,10 +43990,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 1.09 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.223 </td>
+   <td style="text-align:center;"> 0.241 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44513,11 +44002,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.114 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.086 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44528,9 +44017,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.80 </td>
    <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.751 </td>
+   <td style="text-align:center;"> 0.790 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44541,7 +44030,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.75 </td>
+   <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.19 </td>
    <td style="text-align:center;"> 0.065 </td>
    <td style="text-align:center;">  </td>
@@ -44553,10 +44042,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.628 </td>
+   <td style="text-align:center;"> 0.603 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44566,10 +44055,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.53 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.546 </td>
+   <td style="text-align:center;"> 0.530 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44578,12 +44067,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.060 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.049 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -44592,11 +44081,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.43 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.045 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.055 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -44604,9 +44093,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -44616,10 +44105,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.30 </td>
    <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -44630,41 +44119,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 1.94 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.024 </td>
-   <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nI don't have time to take part in the Our Future Health research programme"
 
 ```
 Joining, by = "predictor"
@@ -44695,11 +44161,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -44709,10 +44175,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.046 </td>
+   <td style="text-align:center;"> 0.039 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44721,11 +44187,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.975 </td>
+   <td style="text-align:center;"> 0.904 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44734,12 +44200,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 1.89 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.011 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -44747,11 +44213,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 1.65 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.071 </td>
+   <td style="text-align:center;"> 0.107 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44760,11 +44226,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 2.20 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 2.11 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -44773,11 +44239,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.68 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.540 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.57 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.773 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44786,12 +44252,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.51 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -44799,22 +44265,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.32 </td>
    <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -44824,42 +44277,32 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.01 </td>
-   <td style="text-align:center;"> 2.48 </td>
-   <td style="text-align:center;"> 3.06 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nhave time for 10 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -44890,11 +44333,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.70 </td>
    <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 1.07 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.194 </td>
+   <td style="text-align:center;"> 0.174 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44903,11 +44346,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.035 </td>
+   <td style="text-align:center;"> 0.045 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44916,11 +44359,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.957 </td>
+   <td style="text-align:center;"> 0.937 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44929,12 +44372,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 1.67 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.73 </td>
    <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.084 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.045 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -44942,11 +44385,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.41 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.641 </td>
+   <td style="text-align:center;"> 0.671 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44956,10 +44399,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 1.92 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.93 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.026 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -44969,10 +44412,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.50 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.52 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.967 </td>
+   <td style="text-align:center;"> 0.921 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -44981,23 +44424,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.60 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.61 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -45006,11 +44436,24 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -45020,41 +44463,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 2.02 </td>
-   <td style="text-align:center;"> 2.68 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nhave time for 30 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -45236,7 +44656,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRisk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)"
 
 ```
 Joining, by = "predictor"
@@ -45418,7 +44841,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRisk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)"
 
 ```
 Joining, by = "predictor"
@@ -45600,7 +45026,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nAncestry (where your relatives and ancestors likely came from and lived a long time ago)"
 
 ```
 Joining, by = "predictor"
@@ -45743,7 +45172,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    RECONTACT.RECONTACT = "Recontact for future qualitative research")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nRecontact for future qualitative research"
 
 ```
 Joining, by = "predictor"
@@ -45886,11 +45318,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46046,11 +45477,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46193,11 +45623,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46353,11 +45782,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46500,11 +45928,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46660,11 +46087,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -46833,7 +46259,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    DISABILITY.DISABILITY = "Long-term ill health/disability status")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nLong-term ill health/disability status"
 
 ```
 Joining, by = "predictor"
@@ -46976,7 +46405,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nDo you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -47119,7 +46551,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> x </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor binomial with covariates-67.png" width="100%" />
 
 ### Categorical (yes/no/unsure)
 
@@ -47296,7 +46732,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nIn the last 12 months have you experienced a major life event?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -47470,7 +46909,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, PROSO_EVER_TOTAL.NA = NA_character_)
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nNA"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -47644,7 +47086,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, PROSO4W_TOTAL.PROSO4W_TOTAL = "Composite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComposite score indicating number of pro social activities undertaken in the past 4 weeks. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
 
 ```
 Joining, by = "predictor"
@@ -47813,7 +47258,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFAM.GENFAM = "Do you have a family history of any disease or health condition?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have a family history of any disease or health condition?"
 
 ```
 Joining, by = "predictor"
@@ -47982,7 +47430,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENTEST.GENTEST = "Have you ever had a genetic test?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you ever had a genetic test?"
 
 ```
 Joining, by = "predictor"
@@ -48151,7 +47602,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -48320,7 +47774,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, AID.AID = "Whether have caring responsibilities for someone with LT illness/disability inside/outside home")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWhether have caring responsibilities for someone with LT illness/disability inside/outside home"
 
 ```
 Joining, by = "predictor"
@@ -48352,9 +47809,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.73 </td>
    <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
@@ -48364,11 +47821,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 0.74 </td>
    <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.042 </td>
+   <td style="text-align:center;"> 0.045 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -48377,11 +47834,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.834 </td>
+   <td style="text-align:center;"> 0.860 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48390,11 +47847,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.74 </td>
    <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.891 </td>
+   <td style="text-align:center;"> 0.879 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48407,7 +47864,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.589 </td>
+   <td style="text-align:center;"> 0.598 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48416,11 +47873,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.39 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.951 </td>
+   <td style="text-align:center;"> 0.908 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48429,11 +47886,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> 0.018 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -48442,9 +47899,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.75 </td>
    <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -48455,11 +47912,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 7.50 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 0.645 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 7.72 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.615 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48468,11 +47925,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.74 </td>
    <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 1.03 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.112 </td>
+   <td style="text-align:center;"> 0.108 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -48482,40 +47939,17 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
    <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.152 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.242 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.887 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.076 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, HEALTH.HEALTH = "To what extent do you agree or disagree - I am someone who looks after my health very well")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nTo what extent do you agree or disagree - I am someone who looks after my health very well"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48689,7 +48123,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups."
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -48863,7 +48300,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49037,7 +48477,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTGEN.TRUSTGEN = "How much do you trust most people")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust most people"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49211,7 +48654,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_A.TRUSTORG_A = "How much do you trust the NHS")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust the NHS"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49385,7 +48831,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_B.TRUSTORG_B = "How much do you trust the Government")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust the Government"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49559,7 +49008,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_C.TRUSTORG_C = "How much do you trust Pharmaceutical companies")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Pharmaceutical companies"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49733,7 +49185,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_D.TRUSTORG_D = "How much do you trust Medical charities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Medical charities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -49907,7 +49362,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_E.TRUSTORG_E = "How much do you trust Medical researchers in universities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you trust Medical researchers in universities"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50081,7 +49539,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities"
 
 ```
 Joining, by = "predictor"
@@ -50289,7 +49750,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, SCIINT.SCIINT = "How interested are you in science?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow interested are you in science?"
 
 ```
 Joining, by = "predictor"
@@ -50497,7 +49961,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, SCIINF.SCIINF = "How well informed do you feel about science and scientific developments?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow well informed do you feel about science and scientific developments?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -50534,8 +50001,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.91 </td>
    <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.005 </td>
    <td style="text-align:center;"> xxx </td>
@@ -50546,12 +50013,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.048 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.055 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -50560,10 +50027,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.897 </td>
+   <td style="text-align:center;"> 0.944 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -50573,10 +50040,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.584 </td>
+   <td style="text-align:center;"> 0.560 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -50585,11 +50052,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.608 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.567 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -50599,10 +50066,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.755 </td>
+   <td style="text-align:center;"> 0.695 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -50611,11 +50078,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.85 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> 0.006 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -50624,12 +50091,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.58 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -50637,11 +50104,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 7.48 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.662 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 7.80 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.617 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -50650,12 +50117,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.94 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -50663,15 +50130,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> SCITRUST_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall."
 
 ```
 Joining, by = "predictor"
@@ -50866,7 +50336,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow much do you think scientific medical research has helped prevent and treat COVID-19?"
 
 ```
 Joining, by = "predictor"
@@ -51048,7 +50521,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHAWARE.OFHAWARE = "Have you heard of the Our Future Health research programme?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you heard of the Our Future Health research programme?"
 
 ```
 Joining, by = "predictor"
@@ -51079,11 +50555,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.799 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.298 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51092,11 +50568,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.198 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.116 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51106,10 +50582,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.34 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.797 </td>
+   <td style="text-align:center;"> 0.854 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51118,11 +50594,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.390 </td>
+   <td style="text-align:center;"> 0.640 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51131,11 +50607,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.638 </td>
+   <td style="text-align:center;"> 0.672 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51144,11 +50620,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.907 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.920 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51157,11 +50633,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.178 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.076 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51170,12 +50646,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.64 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -51183,11 +50659,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 6.95 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.774 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 7.36 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.696 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51196,11 +50672,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.111 </td>
+   <td style="text-align:center;"> 0.135 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -51209,54 +50685,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> UNDERST </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.20 </td>
-   <td style="text-align:center;"> 2.76 </td>
-   <td style="text-align:center;"> 3.46 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> UNDERST </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.47 </td>
    <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, UNDERST.UNDERST = "To what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nTo what extent do you agree or disagree - I understand what I would be asked to do if I joined the Our Future Health research programme"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51430,11 +50883,14 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?"
 
 ```
-Warning: Removed 1 rows containing missing values (geom_point).
-non-vector elements will be ignored
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -51604,7 +51060,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHPAIR_B.OFHPAIR_B = "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51778,7 +51237,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHPAIR_C.OFHPAIR_C = "How boring or interesting do you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow boring or interesting do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -51952,7 +51414,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow hard or easy do you think taking part in the Our Future Health research programme would be?"
 
 ```
 Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
@@ -52126,7 +51591,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHPAIR_E.OFHPAIR_E = "How slow or fast you think taking part in the Our Future Health research programme would be?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHow slow or fast you think taking part in the Our Future Health research programme would be?"
 
 ```
 Joining, by = "predictor"
@@ -52157,11 +51625,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.449 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.138 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52172,10 +51640,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.52 </td>
    <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.055 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.049 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52183,11 +51651,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.37 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.945 </td>
+   <td style="text-align:center;"> 0.832 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52196,11 +51664,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.273 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.415 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52209,11 +51677,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.33 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.984 </td>
+   <td style="text-align:center;"> 0.833 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52222,11 +51690,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.89 </td>
    <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.492 </td>
+   <td style="text-align:center;"> 0.510 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52235,11 +51703,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.41 </td>
    <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.039 </td>
+   <td style="text-align:center;"> 0.036 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -52248,11 +51716,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.46 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.058 </td>
+   <td style="text-align:center;"> 0.051 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52261,11 +51729,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 11.10 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.875 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 12.70 </td>
+   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 0.734 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52275,10 +51743,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.098 </td>
+   <td style="text-align:center;"> 0.069 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52287,9 +51755,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -52299,46 +51767,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 3.13 </td>
-   <td style="text-align:center;"> 4.23 </td>
-   <td style="text-align:center;"> 5.72 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.050 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_1.OFHBEN_1 = "OFH will... advance medical research")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... advance medical research"
 
 ```
 Joining, by = "predictor"
@@ -52369,11 +51810,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.217 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.101 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52382,11 +51823,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.094 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.077 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52395,11 +51836,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.36 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.998 </td>
+   <td style="text-align:center;"> 0.854 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52408,11 +51849,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.317 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.560 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52421,11 +51862,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 1.42 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.833 </td>
+   <td style="text-align:center;"> 0.808 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52434,11 +51875,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.702 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.810 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52447,11 +51888,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.91 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.012 </td>
+   <td style="text-align:center;"> 0.016 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -52460,12 +51901,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.36 </td>
    <td style="text-align:center;"> 1.64 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52473,11 +51914,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 1.65 </td>
-   <td style="text-align:center;"> 15.36 </td>
-   <td style="text-align:center;"> 1.88 </td>
-   <td style="text-align:center;"> 0.658 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 14.39 </td>
+   <td style="text-align:center;"> 1.82 </td>
+   <td style="text-align:center;"> 0.653 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52488,9 +51929,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.70 </td>
    <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.059 </td>
+   <td style="text-align:center;"> 0.055 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52499,22 +51940,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.19 </td>
    <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -52524,33 +51952,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 3.48 </td>
-   <td style="text-align:center;"> 4.76 </td>
-   <td style="text-align:center;"> 6.52 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_2.OFHBEN_2 = "OFH will... better treatments")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... better treatments"
 
 ```
 Joining, by = "predictor"
@@ -52581,12 +51995,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.105 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52594,11 +52008,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.169 </td>
+   <td style="text-align:center;"> 0.110 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52607,11 +52021,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.702 </td>
+   <td style="text-align:center;"> 0.879 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52620,11 +52034,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.125 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.273 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52634,10 +52048,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.834 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.771 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52646,11 +52060,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.540 </td>
+   <td style="text-align:center;"> 0.633 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52659,11 +52073,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 0.39 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.013 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -52672,12 +52086,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.63 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.65 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -52685,11 +52099,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.19 </td>
    <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 15.06 </td>
-   <td style="text-align:center;"> 1.85 </td>
-   <td style="text-align:center;"> 0.669 </td>
+   <td style="text-align:center;"> 14.26 </td>
+   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 0.659 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52698,11 +52112,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.035 </td>
+   <td style="text-align:center;"> 0.049 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -52711,22 +52125,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.22 </td>
    <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -52736,33 +52137,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 3.60 </td>
-   <td style="text-align:center;"> 4.86 </td>
-   <td style="text-align:center;"> 6.55 </td>
-   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.010 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_3.OFHBEN_3 = "OFH will... early detection")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... early detection"
 
 ```
 Joining, by = "predictor"
@@ -52793,7 +52180,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.51 </td>
    <td style="text-align:center;"> 0.64 </td>
    <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 0.08 </td>
@@ -52807,10 +52194,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.15 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.266 </td>
+   <td style="text-align:center;"> 0.255 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52820,10 +52207,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.793 </td>
+   <td style="text-align:center;"> 0.813 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52832,11 +52219,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.15 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.256 </td>
+   <td style="text-align:center;"> 0.281 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52845,11 +52232,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.259 </td>
+   <td style="text-align:center;"> 0.300 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52858,11 +52245,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.955 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.814 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52872,10 +52259,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.127 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.111 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52885,8 +52272,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 1.97 </td>
+   <td style="text-align:center;"> 1.63 </td>
+   <td style="text-align:center;"> 1.98 </td>
    <td style="text-align:center;"> 0.16 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -52897,11 +52284,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 8.10 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.819 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 7.42 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 0.749 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -52911,22 +52298,22 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.115 </td>
+   <td style="text-align:center;"> 0.133 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> Neither </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 2.42 </td>
-   <td style="text-align:center;"> 3.07 </td>
-   <td style="text-align:center;"> 3.90 </td>
-   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 2.98 </td>
+   <td style="text-align:center;"> 3.74 </td>
+   <td style="text-align:center;"> 4.70 </td>
+   <td style="text-align:center;"> 0.44 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -52934,47 +52321,20 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
+   <td style="text-align:center;"> Neither </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 5.38 </td>
-   <td style="text-align:center;"> 9.57 </td>
-   <td style="text-align:center;"> 17.02 </td>
-   <td style="text-align:center;"> 2.81 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_4.OFHBEN_4 = "OFH will... help me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help me"
 
 ```
 Joining, by = "predictor"
@@ -53018,11 +52378,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.413 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.361 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53033,9 +52393,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.78 </td>
    <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 1.39 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.800 </td>
+   <td style="text-align:center;"> 0.770 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53044,11 +52404,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.589 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.648 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53057,11 +52417,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.629 </td>
+   <td style="text-align:center;"> 0.713 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53074,7 +52434,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.631 </td>
+   <td style="text-align:center;"> 0.627 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53084,11 +52444,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.83 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53096,10 +52456,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.60 </td>
-   <td style="text-align:center;"> 1.94 </td>
-   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53110,10 +52470,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 2.75 </td>
-   <td style="text-align:center;"> 29.56 </td>
-   <td style="text-align:center;"> 3.33 </td>
-   <td style="text-align:center;"> 0.404 </td>
+   <td style="text-align:center;"> 2.83 </td>
+   <td style="text-align:center;"> 31.24 </td>
+   <td style="text-align:center;"> 3.47 </td>
+   <td style="text-align:center;"> 0.397 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53123,10 +52483,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.08 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.233 </td>
+   <td style="text-align:center;"> 0.260 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53135,10 +52495,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_5 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53147,42 +52507,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_5 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 2.78 </td>
-   <td style="text-align:center;"> 4.31 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_5.OFHBEN_5 = "OFH will... help family/friends")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help family/friends"
 
 ```
 Joining, by = "predictor"
@@ -53213,12 +52550,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.011 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53228,9 +52565,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.49 </td>
    <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> 0.018 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -53239,11 +52576,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.725 </td>
+   <td style="text-align:center;"> 0.814 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53252,11 +52589,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.466 </td>
+   <td style="text-align:center;"> 0.520 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53265,11 +52602,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.68 </td>
    <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.631 </td>
+   <td style="text-align:center;"> 0.648 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53278,11 +52615,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.941 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.849 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53292,10 +52629,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.023 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -53304,11 +52641,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.71 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -53319,9 +52656,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.22 </td>
    <td style="text-align:center;"> 2.11 </td>
-   <td style="text-align:center;"> 20.60 </td>
-   <td style="text-align:center;"> 2.45 </td>
-   <td style="text-align:center;"> 0.520 </td>
+   <td style="text-align:center;"> 20.40 </td>
+   <td style="text-align:center;"> 2.44 </td>
+   <td style="text-align:center;"> 0.518 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53330,11 +52667,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.106 </td>
+   <td style="text-align:center;"> 0.139 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53343,10 +52680,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_6 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53355,46 +52692,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_6 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.86 </td>
-   <td style="text-align:center;"> 4.26 </td>
-   <td style="text-align:center;"> 6.35 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_6.OFHBEN_6 = "OFH will... help community")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help community"
 
 ```
 Joining, by = "predictor"
@@ -53425,12 +52735,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.010 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53439,10 +52749,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -53455,7 +52765,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.547 </td>
+   <td style="text-align:center;"> 0.562 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53465,10 +52775,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.18 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.445 </td>
+   <td style="text-align:center;"> 0.388 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53477,11 +52787,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.653 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.522 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53490,11 +52800,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.767 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.601 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53503,11 +52813,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.018 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.011 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -53518,7 +52828,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.10 </td>
    <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 1.60 </td>
    <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
@@ -53529,11 +52839,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 2.62 </td>
-   <td style="text-align:center;"> 26.49 </td>
-   <td style="text-align:center;"> 3.09 </td>
-   <td style="text-align:center;"> 0.413 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 2.57 </td>
+   <td style="text-align:center;"> 25.92 </td>
+   <td style="text-align:center;"> 3.03 </td>
+   <td style="text-align:center;"> 0.424 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53542,11 +52852,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.02 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.064 </td>
+   <td style="text-align:center;"> 0.087 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53555,22 +52865,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_7 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -53580,29 +52877,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_7 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.37 </td>
-   <td style="text-align:center;"> 3.24 </td>
-   <td style="text-align:center;"> 4.41 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_7.OFHBEN_7 = "OFH will... help people in UK")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help people in UK"
 
 ```
 Joining, by = "predictor"
@@ -53633,12 +52920,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.016 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53647,10 +52934,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.032 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.027 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -53659,11 +52946,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.688 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.591 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53672,11 +52959,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.696 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.622 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53685,11 +52972,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.575 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.481 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53698,11 +52985,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.979 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.818 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53711,12 +52998,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.019 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53725,8 +53012,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 1.72 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -53737,11 +53024,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 2.01 </td>
-   <td style="text-align:center;"> 20.24 </td>
-   <td style="text-align:center;"> 2.37 </td>
-   <td style="text-align:center;"> 0.554 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 2.28 </td>
+   <td style="text-align:center;"> 22.19 </td>
+   <td style="text-align:center;"> 2.65 </td>
+   <td style="text-align:center;"> 0.477 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53750,11 +53037,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.086 </td>
+   <td style="text-align:center;"> 0.126 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53763,10 +53050,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_8 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53775,42 +53062,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_8 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.08 </td>
-   <td style="text-align:center;"> 2.83 </td>
-   <td style="text-align:center;"> 3.86 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_8.OFHBEN_8 = "OFH will... help people in world")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help people in world"
 
 ```
 Joining, by = "predictor"
@@ -53841,11 +53105,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -53854,11 +53118,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> 0.035 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -53867,11 +53131,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.592 </td>
+   <td style="text-align:center;"> 0.598 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53882,9 +53146,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.553 </td>
+   <td style="text-align:center;"> 0.530 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53893,11 +53157,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.587 </td>
+   <td style="text-align:center;"> 0.536 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53906,11 +53170,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.716 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.570 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53919,12 +53183,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.013 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -53932,9 +53196,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 1.67 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.68 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -53945,11 +53209,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 11.31 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.849 </td>
+   <td style="text-align:center;"> 1.43 </td>
+   <td style="text-align:center;"> 0.819 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53958,11 +53222,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.336 </td>
+   <td style="text-align:center;"> 0.398 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -53971,10 +53235,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBEN_9 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -53983,42 +53247,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBEN_9 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.24 </td>
-   <td style="text-align:center;"> 3.20 </td>
-   <td style="text-align:center;"> 4.58 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBEN_9.OFHBEN_9 = "OFH will... help representation of people like me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nOFH will... help representation of people like me"
 
 ```
 Joining, by = "predictor"
@@ -54049,12 +53290,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.093 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.041 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -54062,11 +53303,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.141 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.096 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54075,11 +53316,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.860 </td>
+   <td style="text-align:center;"> 0.744 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54088,11 +53329,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.19 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.316 </td>
+   <td style="text-align:center;"> 0.432 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54101,11 +53342,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 1.23 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.541 </td>
+   <td style="text-align:center;"> 0.511 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54114,11 +53355,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 1.41 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.987 </td>
+   <td style="text-align:center;"> 0.967 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54127,11 +53368,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.042 </td>
+   <td style="text-align:center;"> 0.40 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.019 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54140,11 +53381,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 1.67 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 1.69 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -54153,11 +53394,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 3.13 </td>
-   <td style="text-align:center;"> 28.14 </td>
-   <td style="text-align:center;"> 3.51 </td>
-   <td style="text-align:center;"> 0.308 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 3.01 </td>
+   <td style="text-align:center;"> 27.11 </td>
+   <td style="text-align:center;"> 3.37 </td>
+   <td style="text-align:center;"> 0.325 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54168,9 +53409,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.74 </td>
    <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.181 </td>
+   <td style="text-align:center;"> 0.159 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54179,54 +53420,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHBENCL </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 2.09 </td>
-   <td style="text-align:center;"> 2.90 </td>
-   <td style="text-align:center;"> 4.02 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 
 ```
 Joining, by = "predictor"
@@ -54257,11 +53475,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.10 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.358 </td>
+   <td style="text-align:center;"> 0.249 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54270,11 +53488,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.059 </td>
+   <td style="text-align:center;"> 0.106 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54283,11 +53501,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.915 </td>
+   <td style="text-align:center;"> 0.968 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54296,11 +53514,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.77 </td>
    <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.104 </td>
+   <td style="text-align:center;"> 0.115 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54309,11 +53527,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.389 </td>
+   <td style="text-align:center;"> 0.499 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54322,11 +53540,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.150 </td>
+   <td style="text-align:center;"> 0.183 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54335,10 +53553,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54348,9 +53566,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 1.88 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.52 </td>
+   <td style="text-align:center;"> 1.86 </td>
    <td style="text-align:center;"> 0.16 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -54361,11 +53579,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 3.17 </td>
-   <td style="text-align:center;"> 35.00 </td>
-   <td style="text-align:center;"> 3.89 </td>
-   <td style="text-align:center;"> 0.347 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 2.81 </td>
+   <td style="text-align:center;"> 30.85 </td>
+   <td style="text-align:center;"> 3.44 </td>
+   <td style="text-align:center;"> 0.399 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54374,11 +53592,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 0.98 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.031 </td>
+   <td style="text-align:center;"> 0.034 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54387,9 +53605,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -54399,42 +53617,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.36 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 2.09 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.269 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSA_1.BARRSA_1 = "Comfortable health info in large database")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable health info in large database"
 
 ```
 Joining, by = "predictor"
@@ -54465,11 +53660,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.764 </td>
+   <td style="text-align:center;"> 0.801 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54478,11 +53673,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.048 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54491,11 +53686,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.671 </td>
+   <td style="text-align:center;"> 0.788 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54504,11 +53699,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> 0.025 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54517,11 +53712,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.18 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.265 </td>
+   <td style="text-align:center;"> 0.290 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54530,11 +53725,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.035 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.047 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54543,11 +53738,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -54557,10 +53752,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 1.84 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -54569,11 +53764,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 8.73 </td>
    <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 9.94 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 0.954 </td>
+   <td style="text-align:center;"> 0.959 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54582,11 +53777,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.03 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.070 </td>
+   <td style="text-align:center;"> 0.089 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54595,54 +53790,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 2.80 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.072 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable share health info with OFH"
 
 ```
 Joining, by = "predictor"
@@ -54673,11 +53845,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.993 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.869 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54686,11 +53858,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.025 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.048 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54699,11 +53871,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.794 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.925 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54712,11 +53884,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.50 </td>
    <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.034 </td>
+   <td style="text-align:center;"> 0.033 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54727,9 +53899,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.60 </td>
    <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.20 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.377 </td>
+   <td style="text-align:center;"> 0.359 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54739,10 +53911,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.02 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.051 </td>
+   <td style="text-align:center;"> 0.060 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54751,10 +53923,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54764,9 +53936,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.50 </td>
-   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 1.87 </td>
    <td style="text-align:center;"> 0.16 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -54777,11 +53949,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 11.09 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 0.710 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 9.54 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 0.809 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54791,10 +53963,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> 0.044 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54803,9 +53975,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.05 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -54815,42 +53987,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 2.55 </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.104 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.23 </td>
    <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable how OFH use health info"
 
 ```
 Joining, by = "predictor"
@@ -54881,11 +54030,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.396 </td>
+   <td style="text-align:center;"> 0.280 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54894,11 +54043,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.046 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54907,11 +54056,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.692 </td>
+   <td style="text-align:center;"> 0.780 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54920,11 +54069,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.51 </td>
    <td style="text-align:center;"> 0.71 </td>
    <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.046 </td>
+   <td style="text-align:center;"> 0.042 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54937,7 +54086,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.86 </td>
    <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.411 </td>
+   <td style="text-align:center;"> 0.401 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -54946,11 +54095,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.032 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -54959,9 +54108,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -54973,9 +54122,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
    <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 1.78 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -54985,11 +54134,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 1.98 </td>
-   <td style="text-align:center;"> 13.22 </td>
-   <td style="text-align:center;"> 1.92 </td>
-   <td style="text-align:center;"> 0.481 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 10.10 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.639 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55000,9 +54149,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.66 </td>
    <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.031 </td>
+   <td style="text-align:center;"> 0.027 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -55011,9 +54160,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_4 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -55023,42 +54172,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_4 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.28 </td>
    <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 2.54 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.153 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable OFH access to medical records"
 
 ```
 Joining, by = "predictor"
@@ -55090,10 +54216,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 1.21 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.645 </td>
+   <td style="text-align:center;"> 0.654 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55102,11 +54228,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.85 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -55115,11 +54241,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.71 </td>
    <td style="text-align:center;"> 0.96 </td>
    <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.778 </td>
+   <td style="text-align:center;"> 0.787 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55128,11 +54254,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.55 </td>
    <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.099 </td>
+   <td style="text-align:center;"> 0.107 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55143,9 +54269,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.706 </td>
+   <td style="text-align:center;"> 0.703 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55154,11 +54280,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.13 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.147 </td>
+   <td style="text-align:center;"> 0.187 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55168,8 +54294,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.65 </td>
    <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -55180,11 +54306,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.48 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.090 </td>
+   <td style="text-align:center;"> 0.070 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55193,11 +54319,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 2.65 </td>
-   <td style="text-align:center;"> 17.26 </td>
-   <td style="text-align:center;"> 2.53 </td>
-   <td style="text-align:center;"> 0.308 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 2.12 </td>
+   <td style="text-align:center;"> 13.31 </td>
+   <td style="text-align:center;"> 1.99 </td>
+   <td style="text-align:center;"> 0.422 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55208,7 +54334,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
@@ -55219,54 +54345,31 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSB_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 2.19 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.122 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_1 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable academics access to health records"
 
 ```
 Joining, by = "predictor"
@@ -55299,9 +54402,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.07 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.188 </td>
+   <td style="text-align:center;"> 0.166 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55310,12 +54413,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.016 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -55323,11 +54426,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.642 </td>
+   <td style="text-align:center;"> 0.656 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55336,11 +54439,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.11 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.159 </td>
+   <td style="text-align:center;"> 0.198 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55351,9 +54454,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.824 </td>
+   <td style="text-align:center;"> 0.789 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55362,11 +54465,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.186 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.243 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55375,12 +54478,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -55388,9 +54491,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 1.66 </td>
-   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.69 </td>
+   <td style="text-align:center;"> 2.06 </td>
    <td style="text-align:center;"> 0.17 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -55401,11 +54504,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 8.06 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.793 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 5.25 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.915 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55416,47 +54519,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.97 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.028 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.97 </td>
-   <td style="text-align:center;"> 3.53 </td>
-   <td style="text-align:center;"> 0.59 </td>
    <td style="text-align:center;"> 0.023 </td>
    <td style="text-align:center;"> x </td>
   </tr>
@@ -55465,16 +54529,32 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:left;"> Disagree </td>
    <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSB_2 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BARRSB_2.BARRSB_2 = "Comfortable companies access to health records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nComfortable companies access to health records"
 
 ```
 Joining, by = "predictor"
@@ -55505,11 +54585,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.375 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.285 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55518,11 +54598,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.54 </td>
    <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.12 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.155 </td>
+   <td style="text-align:center;"> 0.169 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55531,11 +54611,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.628 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.674 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55544,11 +54624,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.059 </td>
+   <td style="text-align:center;"> 0.082 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55561,7 +54641,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.84 </td>
    <td style="text-align:center;"> 1.20 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.332 </td>
+   <td style="text-align:center;"> 0.339 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55570,11 +54650,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.020 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -55583,9 +54663,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.68 </td>
    <td style="text-align:center;"> 0.10 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -55596,11 +54676,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 1.56 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.60 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.034 </td>
+   <td style="text-align:center;"> 0.016 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -55609,11 +54689,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 9.68 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.867 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 9.40 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 0.817 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55623,10 +54703,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.91 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -55635,10 +54715,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -55647,11 +54727,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -55661,41 +54741,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.76 </td>
-   <td style="text-align:center;"> 2.92 </td>
-   <td style="text-align:center;"> 4.85 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWilling give sample if part of routine blood test"
 
 ```
 Joining, by = "predictor"
@@ -55726,11 +54783,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.73 </td>
    <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 1.20 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.577 </td>
+   <td style="text-align:center;"> 0.586 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55739,11 +54796,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.427 </td>
+   <td style="text-align:center;"> 0.518 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55754,9 +54811,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.66 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.264 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.263 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55765,11 +54822,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.101 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.130 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55779,10 +54836,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.472 </td>
+   <td style="text-align:center;"> 0.438 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55791,12 +54848,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.90 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.014 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -55804,12 +54861,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.017 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -55817,11 +54874,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 1.70 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -55831,10 +54888,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 1.85 </td>
-   <td style="text-align:center;"> 14.17 </td>
-   <td style="text-align:center;"> 1.92 </td>
-   <td style="text-align:center;"> 0.556 </td>
+   <td style="text-align:center;"> 1.87 </td>
+   <td style="text-align:center;"> 14.71 </td>
+   <td style="text-align:center;"> 1.97 </td>
+   <td style="text-align:center;"> 0.551 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55856,10 +54913,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.01 </td>
+   <td style="text-align:center;"> 0.00 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -55868,11 +54925,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -55882,41 +54939,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 3.17 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.032 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.00 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 0.43 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nWilling give sample if soley for OFH"
 
 ```
 Joining, by = "predictor"
@@ -55951,7 +54985,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.76 </td>
    <td style="text-align:center;"> 0.93 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> 0.008 </td>
    <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
@@ -55962,9 +54996,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.052 </td>
+   <td style="text-align:center;"> 0.058 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55977,7 +55011,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.999 </td>
+   <td style="text-align:center;"> 0.994 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -55988,9 +55022,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.75 </td>
    <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.913 </td>
+   <td style="text-align:center;"> 0.909 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56000,10 +55034,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.22 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.536 </td>
+   <td style="text-align:center;"> 0.545 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56013,10 +55047,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.34 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.36 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.911 </td>
+   <td style="text-align:center;"> 0.956 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56026,10 +55060,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.018 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.022 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -56038,7 +55072,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 1.49 </td>
    <td style="text-align:center;"> 1.77 </td>
    <td style="text-align:center;"> 0.13 </td>
@@ -56051,11 +55085,209 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 6.59 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 6.63 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.749 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENDER </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.109 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.72 </td>
    <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.758 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.106 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+</tbody>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_3.BLOODS_3 = "Difficult to give sample on weekday")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDifficult to give sample on weekday"
+
+```
+Joining, by = "predictor"
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.95 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.014 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.054 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.916 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.27 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.810 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.550 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.982 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.045 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENDER </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 7.18 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.682 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56068,82 +55300,257 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.126 </td>
+   <td style="text-align:center;"> 0.144 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.043 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.062 </td>
+   <td style="text-align:center;"> 0.082 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDifficult to give sample on weekend"
 
 ```
 Joining, by = "predictor"
 ```
 
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-47.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
+Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> outcome </th>
+   <th style="text-align:center;"> outcome.reference </th>
+   <th style="text-align:center;"> predictor </th>
+   <th style="text-align:center;"> predictor.reference.level </th>
+   <th style="text-align:left;"> predictor.level.tested </th>
+   <th style="text-align:center;"> LowerBoundOR </th>
+   <th style="text-align:center;"> OR </th>
+   <th style="text-align:center;"> UpperBoundOR </th>
+   <th style="text-align:center;"> OR.StdError </th>
+   <th style="text-align:center;"> p.value </th>
+   <th style="text-align:center;"> Sig </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> Asian_filter </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:left;"> Yes </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.067 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 18-24 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.241 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 25-34 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.312 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 45-54 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.646 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 55-64 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.281 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 65-74 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.438 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> AGE_BAND </td>
+   <td style="text-align:center;"> 35-44 </td>
+   <td style="text-align:left;"> 75+ </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> xxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> DEGREE </td>
+   <td style="text-align:center;"> No degree </td>
+   <td style="text-align:left;"> Degree educated </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.45 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENDER </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Identify in another way </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 7.89 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.600 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> GENDER </td>
+   <td style="text-align:center;"> Female </td>
+   <td style="text-align:left;"> Male </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.025 </td>
+   <td style="text-align:center;"> x </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BLOODS_5 </td>
+   <td style="text-align:center;"> Disagree </td>
+   <td style="text-align:left;"> Not sure / it depends </td>
+   <td style="text-align:center;"> 0.27 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.010 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+</tbody>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_5.BLOODS_5 = "The thought of providing a blood sample makes me anxious")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nThe thought of providing a blood sample makes me anxious"
+
+```
+Joining, by = "predictor"
+```
+
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
 Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
  <thead>
@@ -56181,453 +55588,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.056 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.953 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.819 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.569 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.976 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.052 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 1.73 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 7.54 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.639 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.132 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.094 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.42 </td>
    <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.936 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-48.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.074 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.262 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.262 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.646 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.300 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.413 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DEGREE </td>
-   <td style="text-align:center;"> No degree </td>
-   <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.44 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 1.68 </td>
-   <td style="text-align:center;"> 8.61 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 0.532 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENDER </td>
-   <td style="text-align:center;"> Female </td>
-   <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.021 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.018 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.316 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-</tbody>
-</table>
-
-```
-Joining, by = "predictor"
-```
-
-<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-49.png" width="100%" /><table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
-<caption><b>Binomial logistic regression of multiple variables predicting Would you take part in it if you were invited to?
-Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends </b></caption>
- <thead>
-  <tr>
-   <th style="text-align:center;"> outcome </th>
-   <th style="text-align:center;"> outcome.reference </th>
-   <th style="text-align:center;"> predictor </th>
-   <th style="text-align:center;"> predictor.reference.level </th>
-   <th style="text-align:left;"> predictor.level.tested </th>
-   <th style="text-align:center;"> LowerBoundOR </th>
-   <th style="text-align:center;"> OR </th>
-   <th style="text-align:center;"> UpperBoundOR </th>
-   <th style="text-align:center;"> OR.StdError </th>
-   <th style="text-align:center;"> p.value </th>
-   <th style="text-align:center;"> Sig </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> Asian_filter </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.64 </td>
    <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.016 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> AGE_BAND </td>
-   <td style="text-align:center;"> 35-44 </td>
-   <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.59 </td>
-   <td style="text-align:center;"> 0.79 </td>
    <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.107 </td>
+   <td style="text-align:center;"> 0.102 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56638,9 +55603,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 1.35 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.693 </td>
+   <td style="text-align:center;"> 0.735 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56653,7 +55618,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.94 </td>
    <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.657 </td>
+   <td style="text-align:center;"> 0.664 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56662,11 +55627,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.66 </td>
    <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.347 </td>
+   <td style="text-align:center;"> 0.349 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56675,11 +55640,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.69 </td>
    <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.29 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.675 </td>
+   <td style="text-align:center;"> 0.705 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56688,12 +55653,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 0.38 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -56701,8 +55666,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.47 </td>
    <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.000 </td>
@@ -56714,11 +55679,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 7.10 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 0.691 </td>
+   <td style="text-align:center;"> 0.26 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 6.68 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.738 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56731,7 +55696,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.86 </td>
    <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.069 </td>
+   <td style="text-align:center;"> 0.073 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56740,23 +55705,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.079 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56766,41 +55731,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.178 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.069 </td>
    <td style="text-align:center;">  </td>
   </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 1.74 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_6.BLOODS_6 = "I have a fear of needles")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI have a fear of needles"
 
 ```
 Joining, by = "predictor"
@@ -56831,11 +55773,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.01 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.094 </td>
+   <td style="text-align:center;"> 0.067 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56848,7 +55790,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.78 </td>
    <td style="text-align:center;"> 1.05 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.100 </td>
+   <td style="text-align:center;"> 0.097 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56861,7 +55803,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 1.08 </td>
    <td style="text-align:center;"> 1.40 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.562 </td>
+   <td style="text-align:center;"> 0.571 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56870,11 +55812,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.605 </td>
+   <td style="text-align:center;"> 0.656 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56887,7 +55829,7 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.87 </td>
    <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.352 </td>
+   <td style="text-align:center;"> 0.351 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56897,10 +55839,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.90 </td>
+   <td style="text-align:center;"> 0.91 </td>
    <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.521 </td>
+   <td style="text-align:center;"> 0.537 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56909,11 +55851,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -56935,11 +55877,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 6.93 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 0.730 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 6.61 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.762 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -56948,11 +55890,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.72 </td>
    <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.037 </td>
+   <td style="text-align:center;"> 0.046 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -56961,10 +55903,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56973,11 +55915,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -56987,41 +55929,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.045 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 1.22 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 1.82 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.45 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI have a fear of needles that would stop me from providing a blood sample"
 
 ```
 Joining, by = "predictor"
@@ -57053,10 +55972,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.15 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.417 </td>
+   <td style="text-align:center;"> 0.468 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57065,11 +55984,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.411 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.337 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57078,11 +55997,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.36 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.756 </td>
+   <td style="text-align:center;"> 0.840 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57091,11 +56010,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.353 </td>
+   <td style="text-align:center;"> 0.318 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57105,10 +56024,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
    <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.01 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.058 </td>
+   <td style="text-align:center;"> 0.052 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57130,11 +56049,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.30 </td>
    <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.71 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
@@ -57143,11 +56062,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.58 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 0.005 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -57156,11 +56075,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 8.95 </td>
-   <td style="text-align:center;"> 1.26 </td>
-   <td style="text-align:center;"> 0.824 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 7.50 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.915 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57169,11 +56088,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.72 </td>
    <td style="text-align:center;"> 0.86 </td>
    <td style="text-align:center;"> 1.03 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.092 </td>
+   <td style="text-align:center;"> 0.100 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57182,10 +56101,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.01 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -57194,9 +56113,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.35 </td>
    <td style="text-align:center;"> 0.44 </td>
    <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
@@ -57208,41 +56127,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.102 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
+   <td style="text-align:center;"> 0.42 </td>
    <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.808 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.105 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nI don't have time to take part in the Our Future Health research programme"
 
 ```
 Joining, by = "predictor"
@@ -57273,11 +56169,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.95 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.019 </td>
+   <td style="text-align:center;"> 0.013 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -57287,10 +56183,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.132 </td>
+   <td style="text-align:center;"> 0.116 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57299,11 +56195,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.755 </td>
+   <td style="text-align:center;"> 0.800 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57312,11 +56208,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 0.99 </td>
+   <td style="text-align:center;"> 1.32 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.812 </td>
+   <td style="text-align:center;"> 0.935 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57325,11 +56221,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.02 </td>
+   <td style="text-align:center;"> 1.38 </td>
    <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.795 </td>
+   <td style="text-align:center;"> 0.892 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57338,11 +56234,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.46 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.766 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.809 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57351,11 +56247,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 0.47 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.134 </td>
+   <td style="text-align:center;"> 0.096 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57364,10 +56260,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 1.37 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.13 </td>
    <td style="text-align:center;"> 0.001 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -57377,11 +56273,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 9.15 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 0.680 </td>
+   <td style="text-align:center;"> 0.32 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 10.59 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.499 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57391,10 +56287,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
    <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.10 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.350 </td>
+   <td style="text-align:center;"> 0.372 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57403,10 +56299,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -57415,10 +56311,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -57429,41 +56325,18 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.010 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.56 </td>
-   <td style="text-align:center;"> 2.00 </td>
-   <td style="text-align:center;"> 2.57 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.002 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nhave time for 10 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -57495,10 +56368,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
    <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.14 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.415 </td>
+   <td style="text-align:center;"> 0.422 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57507,11 +56380,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.58 </td>
+   <td style="text-align:center;"> 0.79 </td>
+   <td style="text-align:center;"> 1.08 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.128 </td>
+   <td style="text-align:center;"> 0.142 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57521,10 +56394,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
    <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.25 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 1.26 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.732 </td>
+   <td style="text-align:center;"> 0.761 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57533,11 +56406,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.17 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.307 </td>
+   <td style="text-align:center;"> 0.378 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57546,11 +56419,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.14 </td>
    <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.297 </td>
+   <td style="text-align:center;"> 0.267 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57559,11 +56432,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.28 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.558 </td>
+   <td style="text-align:center;"> 0.614 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57572,12 +56445,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.04 </td>
    <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.048 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.073 </td>
+   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_all </td>
@@ -57585,9 +56458,9 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 1.77 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 1.79 </td>
    <td style="text-align:center;"> 0.14 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -57598,11 +56471,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Identify in another way </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 7.86 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.779 </td>
+   <td style="text-align:center;"> 0.20 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 6.76 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.857 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57611,11 +56484,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENDER </td>
    <td style="text-align:center;"> Female </td>
    <td style="text-align:left;"> Male </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.165 </td>
+   <td style="text-align:center;"> 0.181 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -57624,9 +56497,22 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_all </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> PRACBAR_3 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:center;"> 0.37 </td>
    <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -57636,55 +56522,19 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.33 </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 2.14 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.015 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_all </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nhave time for 30 min questionnaire"
 
 ```
 Joining, by = "predictor"
@@ -57892,7 +56742,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_1.GENFBACK_1 = "Risk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRisk of serious diseases which ARE preventable or treatable (e.g. type 2 diabetes, heart disease)"
 
 ```
 Joining, by = "predictor"
@@ -58100,7 +56953,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_2.GENFBACK_2 = "Risk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRisk of serious diseases which are NOT preventable or treatable (e.g. some types of dementia)"
 
 ```
 Joining, by = "predictor"
@@ -58308,11 +57164,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_3.GENFBACK_3 = "Ancestry (where your relatives and ancestors likely came from and lived a long time ago)")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nAncestry (where your relatives and ancestors likely came from and lived a long time ago)"
 
 ```
 Joining, by = "predictor"
@@ -58481,7 +57336,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, RECONTACT.RECONTACT = "Recontact for future qualitative research")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nRecontact for future qualitative research"
 
 ```
 Joining, by = "predictor"
@@ -58650,11 +57508,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -58836,11 +57693,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_prevent_all.GENFBACK_prevent_all = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends, prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -59009,7 +57865,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -59191,11 +58050,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_no_prevent_all.GENFBACK_no_prevent_all = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -59364,11 +58222,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -59550,11 +58407,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, GENFBACK_ancestry_all.GENFBACK_ancestry_all = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not; Unsure = Not sure / it depends,prefer not to say"
 
 ```
 Joining, by = "predictor"
@@ -59749,7 +58605,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, DISABILITY.DISABILITY = "Long-term ill health/disability status")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nLong-term ill health/disability status"
 
 ```
 Joining, by = "predictor"
@@ -59918,7 +58777,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxx </td>
   </tr>
 </tbody>
-</table>
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, DISAB1.DISAB1 = "Do you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nDo you have any physical or mental health conditions or illnesses lasting or expected to last 12 months or more?"
 
 ```
 Joining, by = "predictor"
@@ -60087,7 +58949,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENDER.NA = NA_character_, DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nNA\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/run single predictor multinomial with covariates-67.png" width="100%" />
 
 ## significant predictors of participation from model 2
 When accounting for covariates, the following variables are significant precictors of participation and will be included in model 3
@@ -60126,8 +58992,8 @@ $LIFEEVENT$LIFEEVENT
 
 
 $PROSO_EVER_TOTAL
-$PROSO_EVER_TOTAL$PROSO_EVER_TOTAL
-[1] "Composite score indicating number of pro social activities ever undertaken. Minimum score of 0 indicates none of the three were endorsed, maximum of 3 indicates all activities endorsed"
+$PROSO_EVER_TOTAL$<NA>
+[1] NA
 
 
 $PROSO4W_TOTAL
@@ -60166,33 +59032,33 @@ $HEALTHSEEK_TOTAL$HEALTHSEEK_TOTAL
 
 
 $TRUSTGEN
-$TRUSTGEN$<NA>
-NULL
+$TRUSTGEN$TRUSTGEN
+[1] "How much do you trust most people"
 
 
 $TRUSTORG_A
-$TRUSTORG_A$<NA>
-NULL
+$TRUSTORG_A$TRUSTORG_A
+[1] "How much do you trust the NHS"
 
 
 $TRUSTORG_B
-$TRUSTORG_B$<NA>
-NULL
+$TRUSTORG_B$TRUSTORG_B
+[1] "How much do you trust the Government"
 
 
 $TRUSTORG_C
-$TRUSTORG_C$<NA>
-NULL
+$TRUSTORG_C$TRUSTORG_C
+[1] "How much do you trust Pharmaceutical companies"
 
 
 $TRUSTORG_D
-$TRUSTORG_D$<NA>
-NULL
+$TRUSTORG_D$TRUSTORG_D
+[1] "How much do you trust Medical charities"
 
 
 $TRUSTORG_E
-$TRUSTORG_E$<NA>
-NULL
+$TRUSTORG_E$TRUSTORG_E
+[1] "How much do you trust Medical researchers in universities"
 
 
 $SCIINT
@@ -60226,28 +59092,28 @@ $UNDERST$UNDERST
 
 
 $OFHPAIR_A
-$OFHPAIR_A$<NA>
-NULL
+$OFHPAIR_A$OFHPAIR_A
+[1] "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?"
 
 
 $OFHPAIR_B
-$OFHPAIR_B$<NA>
-NULL
+$OFHPAIR_B$OFHPAIR_B
+[1] "How confusing or straightforward do you feel that taking part in the Our Future Health research programme would be?"
 
 
 $OFHPAIR_C
-$OFHPAIR_C$<NA>
-NULL
+$OFHPAIR_C$OFHPAIR_C
+[1] "How boring or interesting do you think taking part in the Our Future Health research programme would be?"
 
 
 $OFHPAIR_D
-$OFHPAIR_D$<NA>
-NULL
+$OFHPAIR_D$OFHPAIR_D
+[1] "How hard or easy do you think taking part in the Our Future Health research programme would be?"
 
 
 $OFHPAIR_E
-$OFHPAIR_E$<NA>
-NULL
+$OFHPAIR_E$OFHPAIR_E
+[1] "How slow or fast you think taking part in the Our Future Health research programme would be?"
 
 
 $OFHBEN_1
@@ -60416,27 +59282,25 @@ $DISABEVER$DISABEVER
 ```
 
 ```r
-characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL","PROSO4W_TOTAL",
-                                          "DISABFAM","HEALTH","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTGEN","TRUSTORG_A",
-                                          "TRUSTORG_B","TRUSTORG_C","TRUSTORG_D","TRUSTORG_E","SCIINT","SCIINF",
+characteristics.pred.participation.binary <- c("LIFEEVENT","PROSO_EVER_TOTAL",
+                                          "DISABFAM","HRES_TOTAL","HEALTHSEEK_TOTAL","TRUSTORG_TOTAL",
                                           "SCITRUST_TOTAL","COVRES",
-                                          "RECONTACT","DISABILITY","DISAB1","DISABEVER"
+                                        "DISABEVER"
                                           )
 
-ofh.attitudes.pred.participation.binary <- c("OFHAWARE","UNDERST",
-                                          "OFHPAIR_A","OFHPAIR_B","OFHPAIR_C","OFHPAIR_D","OFHPAIR_E",
-                                          "OFHBEN_1","OFHBEN_2","OFHBEN_3","OFHBEN_4","OFHBEN_5",
-                                          "OFHBEN_6","OFHBEN_7","OFHBEN_8","OFHBEN_9","OFHBENCL"
+ofh.attitudes.pred.participation.binary <- c("OFHPAIR_A","OFHPAIR_D",
+                                          "OFHBEN_2","OFHBEN_4",
+                                         "OFHBENCL"
                                           )
 
-data.security.attitudes.pred.participation.binary <- c("BARRSA_1","BARRSA_2","BARRSA_3","BARRSA_4",
-                                          "BARRSB_1","BARRSB_2")
+data.security.attitudes.pred.participation.binary <- c("BARRSA_2","BARRSA_3","BARRSA_4",
+                                          "BARRSB_1")
 
 practical.barriers.pred.participation.binary <- c("BLOODS_1","BLOODS_2",
-                                          "BLOODS_3","BLOODS_4","BLOODS_5","BLOODS_6","BLOODS_7",
+                                         "BLOODS_4","BLOODS_6","BLOODS_7",
                                           "PRACBAR_1","PRACBAR_2","PRACBAR_3")
 
-genetic.pred.participation.binary <- c("GENFAM","GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
+genetic.pred.participation.binary <- c("GENTEST","GENFBACK_prevent_agree","GENFBACK_no_prevent_agree",
                                           "GENFBACK_ancestry_agree")
 ```
 
@@ -60488,11 +59352,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.650 </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.207 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60502,11 +59366,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
    <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.142 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.70 </td>
+   <td style="text-align:center;"> 0.96 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60514,11 +59378,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.601 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.40 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.564 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60527,12 +59391,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 1.89 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.073 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.44 </td>
+   <td style="text-align:center;"> 1.91 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.011 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60540,11 +59404,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 1.88 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.115 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.343 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60554,10 +59418,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 2.03 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.092 </td>
+   <td style="text-align:center;"> 1.31 </td>
+   <td style="text-align:center;"> 1.80 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.105 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60566,11 +59430,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.525 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.300 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60579,11 +59443,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.25 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.421 </td>
+   <td style="text-align:center;"> 0.638 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60592,11 +59456,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> LIFEEVENT </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 1.69 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.004 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.33 </td>
+   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -60605,25 +59469,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PROSO_EVER_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.16 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.005 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PROSO4W_TOTAL </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 0.92 </td>
    <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.316 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60631,50 +59482,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DISABFAM </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.378 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.657 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.56 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.193 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 2.38 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.754 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.762 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60683,207 +59495,38 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> HRES_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.68 </td>
-   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 1.30 </td>
+   <td style="text-align:center;"> 1.50 </td>
+   <td style="text-align:center;"> 1.73 </td>
+   <td style="text-align:center;"> 0.11 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> HEALTH </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> SEEK_TOTAL </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.025 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> HEALTHSEEK_TOTAL </td>
+   <td style="text-align:center;"> NA </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.08 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 0.02 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTGEN </td>
+   <td style="text-align:center;"> TRUSTORG_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.00 </td>
    <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.13 </td>
+   <td style="text-align:center;"> 1.20 </td>
    <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.882 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTORG_A </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.141 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTORG_B </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.143 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTORG_C </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;"> 0.206 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTORG_D </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.10 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.388 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> TRUSTORG_E </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.157 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINT </td>
-   <td style="text-align:center;"> Quite interested </td>
-   <td style="text-align:left;"> Neither interested nor not interested </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.419 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINT </td>
-   <td style="text-align:center;"> Quite interested </td>
-   <td style="text-align:left;"> Not at all interested </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.131 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINT </td>
-   <td style="text-align:center;"> Quite interested </td>
-   <td style="text-align:left;"> Not very interested </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.995 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINT </td>
-   <td style="text-align:center;"> Quite interested </td>
-   <td style="text-align:left;"> Very interested </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.57 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.257 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINF </td>
-   <td style="text-align:center;"> Fairly well informed </td>
-   <td style="text-align:left;"> Neither well informed nor not informed </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.065 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINF </td>
-   <td style="text-align:center;"> Fairly well informed </td>
-   <td style="text-align:left;"> Not at all informed </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.51 </td>
-   <td style="text-align:center;"> 3.16 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.272 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINF </td>
-   <td style="text-align:center;"> Fairly well informed </td>
-   <td style="text-align:left;"> Not very well informed </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.093 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> SCIINF </td>
-   <td style="text-align:center;"> Fairly well informed </td>
-   <td style="text-align:left;"> Very well informed </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 2.09 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.262 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60891,12 +59534,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> SCITRUST_TOTAL </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.02 </td>
    <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.018 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -60904,11 +59547,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> COVRES </td>
    <td style="text-align:center;"> A lot </td>
    <td style="text-align:left;"> Not at all </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.004 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -60917,11 +59560,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> COVRES </td>
    <td style="text-align:center;"> A lot </td>
    <td style="text-align:left;"> Not very much </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.80 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.271 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.82 </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.209 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -60930,77 +59573,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> COVRES </td>
    <td style="text-align:center;"> A lot </td>
    <td style="text-align:left;"> Quite a lot </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.292 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> RECONTACT </td>
-   <td style="text-align:center;"> Yes </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:center;"> 0.06 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DISABILITY </td>
-   <td style="text-align:center;"> No long-term ill health/disability </td>
-   <td style="text-align:left;"> Long-term ill health/disability that does not limit day-to-day activities </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.721 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DISABILITY </td>
-   <td style="text-align:center;"> No long-term ill health/disability </td>
-   <td style="text-align:left;"> Long-term ill health/disability that limits day-to-day activities a little </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.49 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.793 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DISABILITY </td>
-   <td style="text-align:center;"> No long-term ill health/disability </td>
-   <td style="text-align:left;"> Long-term ill health/disability that limits day-to-day activities a lot </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.763 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> DISAB1 </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.67 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -61008,20 +59586,25 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DISABEVER </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.681 </td>
+   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.490 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
-
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    LIFEEVENT.LIFEEVENT = "In the last 12 months have you experienced a major life event?", 
+    PROSO_EVER_TOTAL.NA = NA_character_, DISABFAM.DISABFAM = "Do you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?", 
+    HRES_TOTAL.HRES_TOTAL = "Summed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.", 
+    HEALTHSEEK_TOTAL.HEALTHSEEK_TOTAL = "Summed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics", 
+    TRUSTORG_TOTAL.TRUSTORG_TOTAL = "Score indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities", 
+    SCITRUST_TOTAL.SCITRUST_TOTAL = "Composite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.", 
+    COVRES.COVRES = "How much do you think scientific medical research has helped prevent and treat COVID-19?", 
+    DISABEVER.DISABEVER = "Have you ever had a physical or mental health condition or illness lasting 12 months or more?")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nIn the last 12 months have you experienced a major life event?\nNA\nDo you have a family member or close friend that has any physical or mental health condition or illness lasting or expected to last for 12 months or more?\nSummed score indicating research participation. Minimum value of 0 indicates no previous participation in research, maximum value of 3 indicates previous participation in survey, clinical trials and focus groups.\nSummed score indicating active healthseeking behaviour. 0 indicates no health information seeking, 8 indicates using all available mediums to seek information for both covid-19 and other health topics\nScore indicating average trust in organisations overall. Organisations assessed include NHS, Government, Pharmaceutical companies, Medical charities and medical researchers and universities\nComposite score indicating trust or distrust in science overall. A negative score indicates greater distrust overall and a positive score indicates greater trust overall.\nHow much do you think scientific medical research has helped prevent and treat COVID-19?\nHave you ever had a physical or mental health condition or illness lasting 12 months or more?"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-1.png" width="100%" />
 
 ```r
@@ -61030,9 +59613,8 @@ do.multivariable.binomial.regression(regression_df,"ofhact_agree",append(takepar
 ```
 
 ```
-Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-
-Warning: non-vector elements will be ignored
+Warning in stack.default(sapply(predictor.levels, "[[", 1)): non-vector elements
+will be ignored
 ```
 
 ```
@@ -61064,11 +59646,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.47 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.718 </td>
+   <td style="text-align:center;"> 0.72 </td>
+   <td style="text-align:center;"> 0.98 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.884 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61077,11 +59659,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.146 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 1.16 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.204 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61090,11 +59672,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 1.41 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.50 </td>
    <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.854 </td>
+   <td style="text-align:center;"> 0.814 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61103,11 +59685,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.61 </td>
+   <td style="text-align:center;"> 1.09 </td>
+   <td style="text-align:center;"> 1.63 </td>
    <td style="text-align:center;"> 2.45 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.028 </td>
+   <td style="text-align:center;"> 0.34 </td>
+   <td style="text-align:center;"> 0.018 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -61116,11 +59698,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 1.66 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.69 </td>
    <td style="text-align:center;"> 2.61 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.029 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.017 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -61129,11 +59711,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 1.81 </td>
-   <td style="text-align:center;"> 3.04 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.83 </td>
+   <td style="text-align:center;"> 3.00 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.017 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -61142,11 +59724,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.51 </td>
+   <td style="text-align:center;"> 0.81 </td>
+   <td style="text-align:center;"> 1.55 </td>
    <td style="text-align:center;"> 2.97 </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 0.236 </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.182 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61155,89 +59737,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.772 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHAWARE </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Not sure </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.64 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.577 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHAWARE </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.83 </td>
    <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 2.04 </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.836 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 2.08 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.678 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.91 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.662 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.990 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> UNDERST </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.979 </td>
+   <td style="text-align:center;"> 1.38 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.606 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61246,38 +59750,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHPAIR_A </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 3.49 </td>
-   <td style="text-align:center;"> 4.13 </td>
-   <td style="text-align:center;"> 4.90 </td>
-   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 3.83 </td>
+   <td style="text-align:center;"> 4.45 </td>
+   <td style="text-align:center;"> 5.17 </td>
+   <td style="text-align:center;"> 0.34 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_B </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.803 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_C </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.901 </td>
-   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -61285,562 +59763,99 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> OFHPAIR_D </td>
    <td style="text-align:center;"> NA </td>
    <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.047 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHPAIR_E </td>
-   <td style="text-align:center;"> NA </td>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.17 </td>
+   <td style="text-align:center;"> 1.31 </td>
    <td style="text-align:center;"> 0.07 </td>
-   <td style="text-align:center;"> 0.717 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 3.40 </td>
    <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.880 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.080 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.92 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.639 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 1.91 </td>
-   <td style="text-align:center;"> 7.75 </td>
-   <td style="text-align:center;"> 1.37 </td>
-   <td style="text-align:center;"> 0.368 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 3.76 </td>
-   <td style="text-align:center;"> 13.78 </td>
-   <td style="text-align:center;"> 2.49 </td>
-   <td style="text-align:center;"> 0.046 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.342 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 2.65 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.229 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 8.54 </td>
-   <td style="text-align:center;"> 1.05 </td>
-   <td style="text-align:center;"> 0.951 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 3.09 </td>
-   <td style="text-align:center;"> 13.11 </td>
-   <td style="text-align:center;"> 2.28 </td>
-   <td style="text-align:center;"> 0.126 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 2.08 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.532 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 2.13 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.431 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 2.46 </td>
-   <td style="text-align:center;"> 14.18 </td>
-   <td style="text-align:center;"> 2.20 </td>
-   <td style="text-align:center;"> 0.315 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 1.69 </td>
-   <td style="text-align:center;"> 2.38 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> xxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 1.07 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.093 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 2.04 </td>
-   <td style="text-align:center;"> 4.28 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 0.058 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_4 </td>
-   <td style="text-align:center;"> Neither agree nor disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.086 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.55 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.420 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 1.39 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.827 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.213 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_5 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 5.35 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.737 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 3.97 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 0.498 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.64 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.963 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.92 </td>
-   <td style="text-align:center;"> 1.90 </td>
-   <td style="text-align:center;"> 3.94 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 0.082 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_6 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 2.36 </td>
-   <td style="text-align:center;"> 16.04 </td>
-   <td style="text-align:center;"> 2.31 </td>
-   <td style="text-align:center;"> 0.381 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.67 </td>
-   <td style="text-align:center;"> 3.28 </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.624 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.75 </td>
    <td style="text-align:center;"> 1.36 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.337 </td>
+   <td style="text-align:center;"> 3.03 </td>
+   <td style="text-align:center;"> 0.55 </td>
+   <td style="text-align:center;"> 0.451 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
+   <td style="text-align:center;"> OFHBEN_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.571 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_7 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 5.19 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.526 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.089 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 1.01 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.973 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.89 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.714 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_8 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 4.15 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.729 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.39 </td>
    <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 1.29 </td>
-   <td style="text-align:center;"> 2.86 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.538 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.33 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.700 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.69 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.150 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBEN_9 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 2.35 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.220 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.037 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither </td>
+   <td style="text-align:left;"> Agree </td>
+   <td style="text-align:center;"> 1.47 </td>
+   <td style="text-align:center;"> 1.93 </td>
+   <td style="text-align:center;"> 2.53 </td>
+   <td style="text-align:center;"> 0.27 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> OFHBENCL </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.71 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.805 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> OFHBEN_4 </td>
+   <td style="text-align:center;"> Neither </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.42 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.87 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.007 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> OFHBENCL </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> Inf </td>
-   <td style="text-align:center;"> 0.00 </td>
-   <td style="text-align:center;"> 0.977 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.63 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.006 </td>
+   <td style="text-align:center;"> xx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> OFHBENCL </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.62 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Transformation introduced infinite values in continuous y-axis
-Transformation introduced infinite values in continuous y-axis
-```
-
-```
-Warning: Removed 2 rows containing missing values (geom_point).
-```
-
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    OFHPAIR_A.OFHPAIR_A = "How negative or positive do you feel about the idea of taking part in the Our Future Health research programme?", 
+    OFHPAIR_D.OFHPAIR_D = "How hard or easy do you think taking part in the Our Future Health research programme would be?", 
+    OFHBEN_2.OFHBEN_2 = "OFH will... better treatments", OFHBEN_4.OFHBEN_4 = "OFH will... help me", 
+    OFHBENCL.OFHBENCL = "The potential benefits of taking part in the Our Future Health research programme are clear to me")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHow negative or positive do you feel about the idea of taking part in the Our Future Health research programme?\nHow hard or easy do you think taking part in the Our Future Health research programme would be?\nOFH will... better treatments\nOFH will... help me\nThe potential benefits of taking part in the Our Future Health research programme are clear to me"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-2.png" width="100%" />
 
 ```r
@@ -61880,8 +59895,8 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.691 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.692 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61890,12 +59905,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.60 </td>
+   <td style="text-align:center;"> 0.88 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.021 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -61903,11 +59918,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.06 </td>
    <td style="text-align:center;"> 1.45 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.759 </td>
+   <td style="text-align:center;"> 0.739 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61917,10 +59932,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.87 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 1.76 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.74 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.235 </td>
+   <td style="text-align:center;"> 0.249 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61929,11 +59944,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.95 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.118 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 1.85 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.180 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61942,11 +59957,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 1.77 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.410 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 1.15 </td>
+   <td style="text-align:center;"> 1.71 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.490 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -61955,11 +59970,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.36 </td>
    <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 1.00 </td>
+   <td style="text-align:center;"> 0.99 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.049 </td>
+   <td style="text-align:center;"> 0.045 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -61968,63 +59983,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.073 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.515 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.63 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.447 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 2.47 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.711 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.43 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.330 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.21 </td>
+   <td style="text-align:center;"> 1.50 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.086 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62033,10 +59996,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.05 </td>
+   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.23 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62045,37 +60008,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.30 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.31 </td>
    <td style="text-align:center;"> 0.43 </td>
    <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 1.41 </td>
-   <td style="text-align:center;"> 3.34 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.430 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.07 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62085,126 +60022,61 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BARRSA_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.66 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.116 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> x </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSA_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.88 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.84 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> xx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 1.12 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.092 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.079 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.71 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.283 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 2.16 </td>
-   <td style="text-align:center;"> 5.16 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 0.083 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSA_4 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 1.14 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.100 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> 0.003 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.37 </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> BARRSA_4 </td>
+   <td style="text-align:center;"> Agree </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.74 </td>
+   <td style="text-align:center;"> 1.07 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.111 </td>
+   <td style="text-align:center;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ofhact_agree </td>
+   <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:left;"> Disagree </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.61 </td>
    <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -62214,81 +60086,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BARRSB_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.932 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.079 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.067 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.19 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.343 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 1.04 </td>
-   <td style="text-align:center;"> 2.08 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.910 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BARRSB_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.319 </td>
-   <td style="text-align:center;">  </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.65 </td>
+   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:center;"> 0.000 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BARRSA_2.BARRSA_2 = "Comfortable share health info with OFH", 
+    BARRSA_3.BARRSA_3 = "Comfortable how OFH use health info", 
+    BARRSA_4.BARRSA_4 = "Comfortable OFH access to medical records", 
+    BARRSB_1.BARRSB_1 = "Comfortable academics access to health records")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nComfortable share health info with OFH\nComfortable how OFH use health info\nComfortable OFH access to medical records\nComfortable academics access to health records"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-3.png" width="100%" />
 
 ```r
 # practical barriers
@@ -62324,11 +60138,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.78 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.36 </td>
+   <td style="text-align:center;"> 0.80 </td>
+   <td style="text-align:center;"> 1.05 </td>
+   <td style="text-align:center;"> 1.38 </td>
    <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.821 </td>
+   <td style="text-align:center;"> 0.704 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62337,11 +60151,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.57 </td>
-   <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.59 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.27 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.421 </td>
+   <td style="text-align:center;"> 0.460 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62350,11 +60164,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 1.25 </td>
-   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 0.93 </td>
+   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 1.76 </td>
    <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.182 </td>
+   <td style="text-align:center;"> 0.136 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62364,10 +60178,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
    <td style="text-align:center;"> 0.85 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.74 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 1.73 </td>
    <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.291 </td>
+   <td style="text-align:center;"> 0.278 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62376,11 +60190,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.73 </td>
-   <td style="text-align:center;"> 1.06 </td>
-   <td style="text-align:center;"> 1.55 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.759 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 1.03 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.877 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62390,10 +60204,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
    <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 0.84 </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.410 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.24 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.363 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62403,10 +60217,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
    <td style="text-align:center;"> 0.40 </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.194 </td>
+   <td style="text-align:center;"> 0.69 </td>
+   <td style="text-align:center;"> 1.18 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.173 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62415,11 +60229,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.28 </td>
+   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.30 </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.893 </td>
+   <td style="text-align:center;"> 0.707 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62428,10 +60242,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.06 </td>
+   <td style="text-align:center;"> 0.12 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.04 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62440,10 +60254,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.33 </td>
    <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.67 </td>
    <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -62454,38 +60268,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_1 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.94 </td>
    <td style="text-align:center;"> 0.17 </td>
-   <td style="text-align:center;"> 0.034 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.97 </td>
-   <td style="text-align:center;"> 3.61 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.028 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_1 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.25 </td>
-   <td style="text-align:center;"> 0.56 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.77 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.008 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -62493,10 +60281,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.13 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.15 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62505,10 +60293,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 0.33 </td>
+   <td style="text-align:center;"> 0.47 </td>
    <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
@@ -62519,233 +60307,51 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.13 </td>
+   <td style="text-align:center;"> 0.25 </td>
+   <td style="text-align:center;"> 0.50 </td>
+   <td style="text-align:center;"> 0.09 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.42 </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.59 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.553 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.05 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.02 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 0.88 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.467 </td>
+   <td style="text-align:center;"> 0.83 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.46 </td>
+   <td style="text-align:center;"> 0.16 </td>
+   <td style="text-align:center;"> 0.492 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.762 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.92 </td>
+   <td style="text-align:center;"> 1.23 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 0.18 </td>
+   <td style="text-align:center;"> 0.172 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
+   <td style="text-align:center;"> BLOODS_4 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.56 </td>
    <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.121 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 2.09 </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.320 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_3 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.75 </td>
-   <td style="text-align:center;"> 1.31 </td>
-   <td style="text-align:center;"> 2.30 </td>
-   <td style="text-align:center;"> 0.37 </td>
-   <td style="text-align:center;"> 0.342 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.645 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.82 </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 1.76 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.344 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 1.20 </td>
-   <td style="text-align:center;"> 2.53 </td>
-   <td style="text-align:center;"> 5.34 </td>
-   <td style="text-align:center;"> 0.96 </td>
-   <td style="text-align:center;"> 0.015 </td>
+   <td style="text-align:center;"> 2.11 </td>
+   <td style="text-align:center;"> 3.80 </td>
+   <td style="text-align:center;"> 0.64 </td>
+   <td style="text-align:center;"> 0.014 </td>
    <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.41 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.22 </td>
-   <td style="text-align:center;"> 0.304 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_4 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 0.14 </td>
-   <td style="text-align:center;"> 0.012 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.70 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.48 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.935 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.54 </td>
-   <td style="text-align:center;"> 0.19 </td>
-   <td style="text-align:center;"> 0.651 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 1.30 </td>
-   <td style="text-align:center;"> 3.47 </td>
-   <td style="text-align:center;"> 0.65 </td>
-   <td style="text-align:center;"> 0.604 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.99 </td>
-   <td style="text-align:center;"> 1.81 </td>
-   <td style="text-align:center;"> 0.30 </td>
-   <td style="text-align:center;"> 0.975 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_5 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 1.85 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.385 </td>
-   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -62754,10 +60360,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
    <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.77 </td>
-   <td style="text-align:center;"> 1.21 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.259 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.06 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.097 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62765,12 +60371,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.81 </td>
-   <td style="text-align:center;"> 1.24 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.321 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.57 </td>
+   <td style="text-align:center;"> 0.85 </td>
+   <td style="text-align:center;"> 1.26 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.411 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62779,37 +60385,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_6 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 2.18 </td>
-   <td style="text-align:center;"> 7.80 </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 0.229 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.90 </td>
-   <td style="text-align:center;"> 0.16 </td>
-   <td style="text-align:center;"> 0.023 </td>
-   <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_6 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.51 </td>
-   <td style="text-align:center;"> 0.83 </td>
-   <td style="text-align:center;"> 1.35 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.451 </td>
+   <td style="text-align:center;"> 0.75 </td>
+   <td style="text-align:center;"> 2.46 </td>
+   <td style="text-align:center;"> 8.01 </td>
+   <td style="text-align:center;"> 1.48 </td>
+   <td style="text-align:center;"> 0.136 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62818,24 +60398,24 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 1.27 </td>
-   <td style="text-align:center;"> 2.19 </td>
-   <td style="text-align:center;"> 3.79 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.005 </td>
-   <td style="text-align:center;"> xxx </td>
+   <td style="text-align:center;"> 1.35 </td>
+   <td style="text-align:center;"> 2.17 </td>
+   <td style="text-align:center;"> 3.48 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.001 </td>
+   <td style="text-align:center;"> xxxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> BLOODS_7 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 1.08 </td>
-   <td style="text-align:center;"> 1.69 </td>
-   <td style="text-align:center;"> 2.63 </td>
-   <td style="text-align:center;"> 0.38 </td>
-   <td style="text-align:center;"> 0.021 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 1.04 </td>
+   <td style="text-align:center;"> 1.59 </td>
+   <td style="text-align:center;"> 2.43 </td>
+   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 0.034 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -62845,36 +60425,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
    <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.247 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.81 </td>
-   <td style="text-align:center;"> 3.94 </td>
-   <td style="text-align:center;"> 8.57 </td>
-   <td style="text-align:center;"> 1.56 </td>
-   <td style="text-align:center;"> 0.001 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> BLOODS_7 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 1.11 </td>
-   <td style="text-align:center;"> 1.72 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.623 </td>
+   <td style="text-align:center;"> 0.44 </td>
+   <td style="text-align:center;"> 1.55 </td>
+   <td style="text-align:center;"> 0.28 </td>
+   <td style="text-align:center;"> 0.202 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62883,10 +60437,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Agree </td>
-   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.15 </td>
    <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.28 </td>
-   <td style="text-align:center;"> 0.03 </td>
+   <td style="text-align:center;"> 0.02 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62895,11 +60449,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.35 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.07 </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.41 </td>
+   <td style="text-align:center;"> 0.53 </td>
+   <td style="text-align:center;"> 0.06 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -62909,38 +60463,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_1 </td>
    <td style="text-align:center;"> Disagree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.61 </td>
-   <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.000 </td>
-   <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.04 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 0.53 </td>
    <td style="text-align:center;"> 0.08 </td>
-   <td style="text-align:center;"> 0.15 </td>
-   <td style="text-align:center;"> 0.03 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_1 </td>
-   <td style="text-align:center;"> Disagree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 2.43 </td>
-   <td style="text-align:center;"> 0.36 </td>
-   <td style="text-align:center;"> 0.081 </td>
-   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -62948,11 +60476,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 1.18 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.138 </td>
+   <td style="text-align:center;"> 0.46 </td>
+   <td style="text-align:center;"> 0.78 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.348 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -62960,12 +60488,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
+   <td style="text-align:left;"> Neither </td>
    <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.58 </td>
-   <td style="text-align:center;"> 0.84 </td>
+   <td style="text-align:center;"> 0.56 </td>
+   <td style="text-align:center;"> 0.81 </td>
    <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -62974,38 +60502,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_2 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.34 </td>
-   <td style="text-align:center;"> 1.09 </td>
-   <td style="text-align:center;"> 0.20 </td>
-   <td style="text-align:center;"> 0.069 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.53 </td>
-   <td style="text-align:center;"> 2.27 </td>
-   <td style="text-align:center;"> 0.31 </td>
-   <td style="text-align:center;"> 0.037 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.29 </td>
+   <td style="text-align:center;"> 0.89 </td>
+   <td style="text-align:center;"> 0.17 </td>
+   <td style="text-align:center;"> 0.031 </td>
    <td style="text-align:center;"> x </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_2 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.52 </td>
-   <td style="text-align:center;"> 1.45 </td>
-   <td style="text-align:center;"> 4.05 </td>
-   <td style="text-align:center;"> 0.76 </td>
-   <td style="text-align:center;"> 0.476 </td>
-   <td style="text-align:center;">  </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -63013,10 +60515,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Disagree </td>
-   <td style="text-align:center;"> 0.39 </td>
-   <td style="text-align:center;"> 0.53 </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 0.09 </td>
+   <td style="text-align:center;"> 0.36 </td>
+   <td style="text-align:center;"> 0.49 </td>
+   <td style="text-align:center;"> 0.66 </td>
+   <td style="text-align:center;"> 0.08 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -63025,13 +60527,13 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> No </td>
    <td style="text-align:center;"> PRACBAR_3 </td>
    <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Neither agree nor disagree </td>
-   <td style="text-align:center;"> 0.54 </td>
-   <td style="text-align:center;"> 0.72 </td>
-   <td style="text-align:center;"> 0.97 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.033 </td>
-   <td style="text-align:center;"> x </td>
+   <td style="text-align:left;"> Neither </td>
+   <td style="text-align:center;"> 0.51 </td>
+   <td style="text-align:center;"> 0.68 </td>
+   <td style="text-align:center;"> 0.91 </td>
+   <td style="text-align:center;"> 0.10 </td>
+   <td style="text-align:center;"> 0.009 </td>
+   <td style="text-align:center;"> xx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -63040,45 +60542,23 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Agree </td>
    <td style="text-align:left;"> Not sure / it depends </td>
    <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.55 </td>
-   <td style="text-align:center;"> 1.28 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.165 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly agree </td>
-   <td style="text-align:center;"> 0.63 </td>
-   <td style="text-align:center;"> 1.02 </td>
-   <td style="text-align:center;"> 1.67 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.924 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> PRACBAR_3 </td>
-   <td style="text-align:center;"> Agree </td>
-   <td style="text-align:left;"> Strongly disagree </td>
-   <td style="text-align:center;"> 0.27 </td>
-   <td style="text-align:center;"> 0.60 </td>
-   <td style="text-align:center;"> 1.32 </td>
-   <td style="text-align:center;"> 0.24 </td>
-   <td style="text-align:center;"> 0.203 </td>
+   <td style="text-align:center;"> 0.54 </td>
+   <td style="text-align:center;"> 1.22 </td>
+   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 0.140 </td>
    <td style="text-align:center;">  </td>
   </tr>
 </tbody>
-</table>
-
-```
-Warning: Removed 1 rows containing missing values (geom_point).
-```
-
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    BLOODS_1.BLOODS_1 = "Willing give sample if part of routine blood test", 
+    BLOODS_2.BLOODS_2 = "Willing give sample if soley for OFH", 
+    BLOODS_4.BLOODS_4 = "Difficult to give sample on weekend", 
+    BLOODS_6.BLOODS_6 = "I have a fear of needles", BLOODS_7.BLOODS_7 = "I have a fear of needles that would stop me from providing a blood sample", 
+    PRACBAR_1.PRACBAR_1 = "I don't have time to take part in the Our Future Health research programme", 
+    PRACBAR_2.PRACBAR_2 = "have time for 10 min questionnaire", 
+    PRACBAR_3.PRACBAR_3 = "have time for 30 min questionnaire")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nWilling give sample if part of routine blood test\nWilling give sample if soley for OFH\nDifficult to give sample on weekend\nI have a fear of needles\nI have a fear of needles that would stop me from providing a blood sample\nI don't have time to take part in the Our Future Health research programme\nhave time for 10 min questionnaire\nhave time for 30 min questionnaire"
 <img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-4.png" width="100%" />
 
 ```r
@@ -63115,11 +60595,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> Asian_filter </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.62 </td>
-   <td style="text-align:center;"> 0.79 </td>
-   <td style="text-align:center;"> 1.00 </td>
-   <td style="text-align:center;"> 0.09 </td>
-   <td style="text-align:center;"> 0.048 </td>
+   <td style="text-align:center;"> 0.61 </td>
+   <td style="text-align:center;"> 0.76 </td>
+   <td style="text-align:center;"> 0.94 </td>
+   <td style="text-align:center;"> 0.08 </td>
+   <td style="text-align:center;"> 0.012 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -63128,11 +60608,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 18-24 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.68 </td>
-   <td style="text-align:center;"> 0.95 </td>
-   <td style="text-align:center;"> 0.12 </td>
-   <td style="text-align:center;"> 0.026 </td>
+   <td style="text-align:center;"> 0.52 </td>
+   <td style="text-align:center;"> 0.71 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 0.11 </td>
+   <td style="text-align:center;"> 0.031 </td>
    <td style="text-align:center;"> x </td>
   </tr>
   <tr>
@@ -63141,11 +60621,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 25-34 </td>
-   <td style="text-align:center;"> 0.93 </td>
-   <td style="text-align:center;"> 1.23 </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 0.18 </td>
-   <td style="text-align:center;"> 0.154 </td>
+   <td style="text-align:center;"> 0.86 </td>
+   <td style="text-align:center;"> 1.10 </td>
+   <td style="text-align:center;"> 1.42 </td>
+   <td style="text-align:center;"> 0.14 </td>
+   <td style="text-align:center;"> 0.448 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -63154,12 +60634,12 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 45-54 </td>
-   <td style="text-align:center;"> 1.13 </td>
-   <td style="text-align:center;"> 1.52 </td>
-   <td style="text-align:center;"> 2.06 </td>
-   <td style="text-align:center;"> 0.23 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> xx </td>
+   <td style="text-align:center;"> 1.12 </td>
+   <td style="text-align:center;"> 1.49 </td>
+   <td style="text-align:center;"> 1.96 </td>
+   <td style="text-align:center;"> 0.21 </td>
+   <td style="text-align:center;"> 0.005 </td>
+   <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
    <td style="text-align:center;"> ofhact_agree </td>
@@ -63167,11 +60647,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 55-64 </td>
-   <td style="text-align:center;"> 0.98 </td>
-   <td style="text-align:center;"> 1.34 </td>
-   <td style="text-align:center;"> 1.83 </td>
-   <td style="text-align:center;"> 0.21 </td>
-   <td style="text-align:center;"> 0.067 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.29 </td>
+   <td style="text-align:center;"> 1.72 </td>
+   <td style="text-align:center;"> 0.19 </td>
+   <td style="text-align:center;"> 0.083 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -63180,10 +60660,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 65-74 </td>
-   <td style="text-align:center;"> 1.40 </td>
-   <td style="text-align:center;"> 1.97 </td>
-   <td style="text-align:center;"> 2.78 </td>
-   <td style="text-align:center;"> 0.35 </td>
+   <td style="text-align:center;"> 1.39 </td>
+   <td style="text-align:center;"> 1.91 </td>
+   <td style="text-align:center;"> 2.64 </td>
+   <td style="text-align:center;"> 0.31 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -63193,11 +60673,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> AGE_BAND </td>
    <td style="text-align:center;"> 35-44 </td>
    <td style="text-align:left;"> 75+ </td>
-   <td style="text-align:center;"> 0.74 </td>
-   <td style="text-align:center;"> 1.15 </td>
-   <td style="text-align:center;"> 1.79 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.525 </td>
+   <td style="text-align:center;"> 0.73 </td>
+   <td style="text-align:center;"> 1.11 </td>
+   <td style="text-align:center;"> 1.68 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.631 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -63206,24 +60686,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> DEGREE </td>
    <td style="text-align:center;"> No degree </td>
    <td style="text-align:left;"> Degree educated </td>
-   <td style="text-align:center;"> 0.94 </td>
-   <td style="text-align:center;"> 1.14 </td>
+   <td style="text-align:center;"> 0.97 </td>
+   <td style="text-align:center;"> 1.16 </td>
    <td style="text-align:center;"> 1.38 </td>
-   <td style="text-align:center;"> 0.11 </td>
-   <td style="text-align:center;"> 0.180 </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:center;"> ofhact_agree </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:center;"> GENFAM </td>
-   <td style="text-align:center;"> No </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 0.86 </td>
-   <td style="text-align:center;"> 1.03 </td>
-   <td style="text-align:center;"> 1.24 </td>
    <td style="text-align:center;"> 0.10 </td>
-   <td style="text-align:center;"> 0.761 </td>
+   <td style="text-align:center;"> 0.108 </td>
    <td style="text-align:center;">  </td>
   </tr>
   <tr>
@@ -63232,11 +60699,11 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENTEST </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 1.17 </td>
-   <td style="text-align:center;"> 1.61 </td>
-   <td style="text-align:center;"> 2.21 </td>
-   <td style="text-align:center;"> 0.26 </td>
-   <td style="text-align:center;"> 0.003 </td>
+   <td style="text-align:center;"> 1.19 </td>
+   <td style="text-align:center;"> 1.60 </td>
+   <td style="text-align:center;"> 2.15 </td>
+   <td style="text-align:center;"> 0.24 </td>
+   <td style="text-align:center;"> 0.002 </td>
    <td style="text-align:center;"> xxx </td>
   </tr>
   <tr>
@@ -63245,10 +60712,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENFBACK_prevent_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 2.18 </td>
-   <td style="text-align:center;"> 3.00 </td>
-   <td style="text-align:center;"> 4.11 </td>
-   <td style="text-align:center;"> 0.48 </td>
+   <td style="text-align:center;"> 2.27 </td>
+   <td style="text-align:center;"> 3.05 </td>
+   <td style="text-align:center;"> 4.09 </td>
+   <td style="text-align:center;"> 0.46 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -63258,10 +60725,10 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENFBACK_no_prevent_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 1.42 </td>
-   <td style="text-align:center;"> 1.80 </td>
-   <td style="text-align:center;"> 2.27 </td>
-   <td style="text-align:center;"> 0.22 </td>
+   <td style="text-align:center;"> 1.32 </td>
+   <td style="text-align:center;"> 1.64 </td>
+   <td style="text-align:center;"> 2.03 </td>
+   <td style="text-align:center;"> 0.18 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
@@ -63271,15 +60738,53 @@ Levels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely
    <td style="text-align:center;"> GENFBACK_ancestry_agree </td>
    <td style="text-align:center;"> No </td>
    <td style="text-align:left;"> Yes </td>
-   <td style="text-align:center;"> 1.62 </td>
-   <td style="text-align:center;"> 2.15 </td>
-   <td style="text-align:center;"> 2.84 </td>
-   <td style="text-align:center;"> 0.31 </td>
+   <td style="text-align:center;"> 1.69 </td>
+   <td style="text-align:center;"> 2.20 </td>
+   <td style="text-align:center;"> 2.86 </td>
+   <td style="text-align:center;"> 0.29 </td>
    <td style="text-align:center;"> 0.000 </td>
    <td style="text-align:center;"> xxxx </td>
   </tr>
 </tbody>
-</table><img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
+</table>list(Asian_filter.Asian_filter = "Is this an Asian respondent?", 
+    AGE_BAND.AGE_BAND = "What is your age band?", DEGREE.DEGREE = "Degree (yes/no)", 
+    GENTEST.GENTEST = "Have you ever had a genetic test?", GENFBACK_prevent_agree.GENFBACK_prevent_agree = "Genetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say", 
+    GENFBACK_no_prevent_agree.GENFBACK_no_prevent_agree = "Genetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say", 
+    GENFBACK_ancestry_agree.GENFBACK_ancestry_agree = "Genetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say")
+[1] "Is this an Asian respondent?\nWhat is your age band?\nDegree (yes/no)\nHave you ever had a genetic test?\nGenetic feedback for conditions that ARE prevetable or treatable (e.g. type 2 diabetes, heart disease)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends, prefer not to say\nGenetic feedback for conditions that ARE NOT prevetable or treatable (e.g. some types of dementia)?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say\nGenetic feedback for ancestry?\nLevels: Yes = Yes definitely Yes probably; No =  No, probably not No, definitely not Not sure / it depends,prefer not to say"
+<img src="PublicAttitudeTracker_followOnAnalyses_files/figure-html/multivariable with covariates predictor groups binomial-5.png" width="100%" />
+
+Based on this, we drop similar variables that are not highly associated when controlling for other variables.
+NB note - we need to revisit this method of variable selection in a more robust way (considering varibale correlations, changing order or predictors, looking at overall model fit and comparing between models, sensitivity models) but for now this will be a reasonable way of showing the most important relationships.
+
+
+We will drop the following from predictor lists:
+
+*characteristics:*    
+PROSO4W_TOTAL
+HEALTH
+TRUSTGEN
+TRUSTORG_A-E
+SCIINF
+SCIINT
+DISAB1
+DISABILITY
+
+*ofh attitudes*
+OFHAWARE
+UNDERST
+OFHPAIR_B,C,E
+OFHBEN_1,3,5,6,7,8,9
+
+*data security*
+BARRSA_1
+BARRSB_2
+
+*practical barriers*
+BLOODS_3,5
+
+*Genetic knowledge and attitudes*
+GENFAM
 
 
 
